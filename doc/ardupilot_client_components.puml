@@ -1,0 +1,29 @@
+@startuml
+
+left to right direction
+
+actor Pilote
+
+rectangle "Hôte A" {
+    component QGroundControl
+    component MAVProxy
+    component ArduSub
+    component "MAVSec proxy" as SecProxy1
+
+    Pilote -- QGroundControl : IHM
+    QGroundControl -left- MAVProxy : MAVLink
+    MAVProxy -- ArduSub : MAVLink
+    ArduSub -- SecProxy1 : MAVLink
+}
+
+rectangle "Hôte B" {
+    component "MAVSec proxy" as SecProxy2
+    component Simulateur <<Subsystem>>
+
+    SecProxy2 -left- Simulateur : MAVLink
+}
+
+SecProxy1 -- SecProxy2 : MAVSec
+QGroundControl -- Simulateur : H.264 chiffré
+
+@enduml
