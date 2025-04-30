@@ -1,0 +1,55 @@
+\documentclass{article}
+
+\usepackage{fancyvrb}
+\usepackage{appendix}
+\usepackage[french]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[style=french]{csquotes}
+\usepackage[margin=3cm]{geometry}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xifthen}
+
+% pour du code verbatim
+\lstnewenvironment{java}{\lstset{language=Java,basicstyle=\small}}{}
+\lstnewenvironment{shellcmds}{\lstset{language=Java,basicstyle=\small}}{}
+
+% abréviations latine
+\newcommand{\etal}{\textit{et al.}\@\xspace}
+\newcommand{\ie}{\textit{i.e.}\@\xspace}
+\newcommand{\eg}{\textit{e.g.}\@\xspace}
+
+% pour que make/latexmk genère les fichiers manquantes
+\newcommand{\makeincudegraphics}[2][]{%
+    \IfFileExists{#2}{\includegraphics[#1]{#2}}{\typeout{No file #2.}}}
+
+% pour avoir \verb dans les notes de bas de page
+\VerbatimFootnotes
+
+\title{Rapport SAE}
+\author{BA GUBAIR Emad \and BARTOS Tom \and MARÇAIS André \and ROBLIN Yann}
+
+\begin{document}
+\maketitle{}
+
+\begin{figure}
+    \makeincudegraphics[width=\textwidth]{classes.png}
+    \caption{Diagramme de classes}
+\end{figure}
+
+\begin{figure}
+    \makeincudegraphics[width=\textwidth]{simulateur_uc.png}
+    \caption{Diagramme de cas d'usage}
+\end{figure}
+
+\begin{figure}
+    \makeincudegraphics[width=\textwidth]{ardupilot_client_uc.png}
+    \caption{Diagramme de cas d'usage}
+\end{figure}
+
+\begin{figure}
+    \makeincudegraphics[width=\textwidth]{ardupilot_serveur_uc.png}
+    \caption{Diagramme de cas d'usage}
+\end{figure}
+
+\end{document}

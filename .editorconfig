@@ -1,0 +1,27 @@
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+charset = utf-8
+
+[Makefile]
+indent_style = tab
+indent_size = 8
+
+[*.xml]
+indent_size = 2
+indent_style = space
+
+[*.java]
+indent_size = 4
+indent_style = space
+
+[*.puml]
+indent_size = 4
+indent_style = space
+
+[todo.tsv]
+indent_style = tab
+indent_size = 16

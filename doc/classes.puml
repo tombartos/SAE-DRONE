@@ -1,0 +1,11 @@
+@startuml
+
+interface Controler
+class ArduSubControler implements Controler
+class VirtualDrone
+class PhysicsSimulator
+class Renerer
+
+Controler .. VirtualDrone
+
+@enduml
