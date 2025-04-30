@@ -22,6 +22,6 @@ indent_style = space
 indent_size = 4
 indent_style = space
 
-[todo.tsv]
+[TODO.tsv]
 indent_style = tab
 indent_size = 16
