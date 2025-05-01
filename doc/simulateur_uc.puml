@@ -31,10 +31,10 @@ rectangle Simulateur <<Subsystem>> {
     Observateur -- follow_drone
     Observateur -- (Consulter infos drones)
 
-    usecase (Configurer un drone) as cfg_drone
+    usecase (Ajouter un pilote) as cfg_drone
     usecase (Configurer connectivité) as cfg_conn
     usecase (Configurer crypto) as cfg_crypt
-    usecase (Configurer client en mode "lourd") as cfg_ardu_ss
+    usecase (Configurer client en mode "local") as cfg_ardu_ss
     usecase (Configurer client en mode "cloud") as cfg_ardu_cs
     usecase (Attitrer un drone) as cfg_attrib_drone
     usecase (Lancer une simulation) as cfg_sim
