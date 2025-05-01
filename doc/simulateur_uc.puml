@@ -24,11 +24,12 @@ rectangle Simulateur <<Subsystem>> {
 
     usecase (Suivre un drone) as follow_drone
 
-    follow_drone <.down. (Changer le mode\npremière/troisième personne) : extends
+    follow_drone <.down. (Changer le mode\npremière/troisième personne) : includes
 
     Observateur -- (Se deplacer librement)
-    Observateur -- (Voir drones et carte)
+    Observateur -- (Voir environement)
     Observateur -- follow_drone
+    Observateur -- (Consulter infos drones)
 
     usecase (Configurer un drone) as cfg_drone
     usecase (Configurer connectivité) as cfg_conn
@@ -42,8 +43,8 @@ rectangle Simulateur <<Subsystem>> {
 
     cfg_drone .down.> cfg_conn : includes
     cfg_conn <.down. cfg_crypt : extends
-    cfg_drone <|-- cfg_ardu_ss 
-    cfg_drone <|-- cfg_ardu_cs 
+    cfg_drone <|-- cfg_ardu_ss
+    cfg_drone <|-- cfg_ardu_cs
     cfg_ardu_ss .. mutex1
     cfg_ardu_cs .. mutex1
 
