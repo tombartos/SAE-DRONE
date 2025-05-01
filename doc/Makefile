@@ -4,7 +4,7 @@ rapport.pdf:
 	pandoc -s $< -o $@
 
 %.pdf: %.tex
-	latexmk -makeindexfudge -interaction=nonstopmode -pdf -use-make -M -MP -MF $(@:.pdf=.d) $<
+	latexmk -interaction=nonstopmode -pdf -use-make -M -MP -MF $(@:.pdf=.d) $<
 
 %.png: %.puml
 	plantuml $<

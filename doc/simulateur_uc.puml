@@ -13,6 +13,12 @@ rectangle "Système de Pilotage" <<Subsystem>> as SysPilot {
     Pilote -- (recevoir flux vidéo)
 }
 
+note right of SysPilot
+Le système de pilotage interagit avec le
+simulateur (ici noté abusivement comme un
+acteur premier).
+end note
+
 MDJ -left-|> Observateur
 
 rectangle Simulateur <<Subsystem>> {

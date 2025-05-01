@@ -9,6 +9,8 @@
 \usepackage{graphicx}
 \usepackage{listings}
 \usepackage{xifthen}
+\usepackage{hyperref}
+\usepackage{caption}
 
 % pour du code verbatim
 \lstnewenvironment{java}{\lstset{language=Java,basicstyle=\small}}{}
@@ -32,24 +34,33 @@
 \begin{document}
 \maketitle{}
 
-\begin{figure}
-    \makeincudegraphics[width=\textwidth]{classes.png}
-    \caption{Diagramme de classes}
-\end{figure}
-
+Le Maitre du Jeu (MDJ) gère les drones virtuelles et peut modifier leurs environnement.
+Le \emph{Système de Pilotage} (figure \ref{fig:uc})
+est implanter dans les figures
+\ref{fig:fwclient} et \ref{fig:fwserveur}.
+%
 \begin{figure}
     \makeincudegraphics[width=\textwidth]{simulateur_uc.png}
     \caption{Diagramme de cas d'usage}
+    \label{fig:uc}
 \end{figure}
-
+%
 \begin{figure}
     \makeincudegraphics[width=\textwidth]{ardupilot_client_components.png}
     \caption{Diagramme de composantes (micrologiciel coté client)}
+    \label{fig:fwclient}
 \end{figure}
-
+%
 \begin{figure}
     \makeincudegraphics[width=\textwidth]{ardupilot_server_components.png}
     \caption{Diagramme de composantes (micrologiciel coté serveur)}
+    \label{fig:fwserveur}
+\end{figure}
+%
+\begin{figure}
+    \makeincudegraphics[width=\textwidth]{classes.png}
+    \caption{Diagramme de classes}
+    \label{fig:classes}
 \end{figure}
 
 \end{document}
