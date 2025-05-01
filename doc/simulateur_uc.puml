@@ -42,16 +42,16 @@ rectangle Simulateur <<Subsystem>> {
 
     cfg_drone .down.> cfg_conn : includes
     cfg_conn <.down. cfg_crypt : extends
-    cfg_drone <|-- cfg_ardu_ss 
-    cfg_drone <|-- cfg_ardu_cs 
+    cfg_drone <|-- cfg_ardu_ss
+    cfg_drone <|-- cfg_ardu_cs
     cfg_ardu_ss .. mutex1
     cfg_ardu_cs .. mutex1
 
     MDJ -- (changer la carte)
     (changer la carte) .. note1
     MDJ -- (Gerer Simulation)
-    (Gerer Simulation) -- (gérer les condition météo)
-    (Gerer Simulation) -- (gérer les évènements)
+    (Gérer Simulation) -- (gérer les condition météo)
+    (Gérer Simulation) -- (gérer les évènements)
     MDJ -- cfg_drone
     MDJ -- cfg_attrib_drone
     MDJ -- cfg_sim
