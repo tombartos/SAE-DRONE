@@ -34,8 +34,8 @@ rectangle Simulateur <<Subsystem>> {
     usecase (Configurer un drone) as cfg_drone
     usecase (Configurer connectivité) as cfg_conn
     usecase (Configurer crypto) as cfg_crypt
-    usecase (Configurer ArduPilot coté serveur) as cfg_ardu_ss
-    usecase (Configurer micro logiciel coté client) as cfg_ardu_cs
+    usecase (Configurer client en mode "lourd") as cfg_ardu_ss
+    usecase (Configurer client en mode "cloud") as cfg_ardu_cs
     usecase (Attitrer un drone) as cfg_attrib_drone
     usecase (Lancer une simulation) as cfg_sim
     note "configurations incompatibles" as mutex1
@@ -47,6 +47,7 @@ rectangle Simulateur <<Subsystem>> {
     cfg_drone <|-- cfg_ardu_cs
     cfg_ardu_ss .. mutex1
     cfg_ardu_cs .. mutex1
+    cfg_drone <|--  cfg_attrib_drone
 
     MDJ -- (Changer la carte)
     (Changer la carte) .. note1
@@ -54,7 +55,6 @@ rectangle Simulateur <<Subsystem>> {
     (Gerer Simulation) <|-- (Gérer les condition météo)
     (Gerer Simulation) <|-- (Gérer les évènements)
     MDJ -- cfg_drone
-    MDJ -- cfg_attrib_drone
     MDJ -- cfg_sim
 
     Admin -- (Gérer les utilisateurs)
