@@ -12,6 +12,7 @@ rectangle "Système de Pilotage" <<Subsystem>> as SysPilot {
     Pilote -- (gérer flight path)
     Pilote -- (piloter manuelement)
     Pilote -- (recevoir flux vidéo)
+    Pilote -- (rejoindre une simulation)
 }
 
 
@@ -33,6 +34,8 @@ rectangle Simulateur <<Subsystem>> {
     usecase (configurer crypto) as cfg_crypt
     usecase (configurer ArduPilot coté serveur) as cfg_ardu_ss
     usecase (configurer micro logiciel coté client) as cfg_ardu_cs
+    usecase (Atitrer un drone) as cfg_attrib_drone
+    usecase (Lancer une simulation) as cfg_sim
     note "configurations incompatibles" as mutex1
 
     cfg_drone .down.> cfg_conn : includes
@@ -43,8 +46,12 @@ rectangle Simulateur <<Subsystem>> {
     cfg_ardu_cs .. mutex1
 
     MDJ -- (changer la carte)
-    MDJ -- (gérer les condition météo)
+    MDJ -- (Gerer Simulation)
+    (Gerer Simulation) -- (gérer les condition météo)
+    (Gerer Simulation) -- (gérer les évènements)
     MDJ -- cfg_drone
+    MDJ -- cfg_attrib_drone
+    MDJ -- cfg_sim
 
     Admin -- (gérer les utilisateurs)
 
