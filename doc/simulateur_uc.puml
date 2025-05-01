@@ -40,17 +40,14 @@ rectangle Simulateur <<Subsystem>> {
 
     cfg_drone .down.> cfg_conn : includes
     cfg_conn <.down. cfg_crypt : extends
-    cfg_drone <.down. cfg_ardu_ss : extends
-    cfg_drone <.down. cfg_ardu_cs : extends
+    cfg_drone <|-- cfg_ardu_ss 
+    cfg_drone <|-- cfg_ardu_cs 
     cfg_ardu_ss .. mutex1
     cfg_ardu_cs .. mutex1
 
     MDJ -- (changer la carte)
     MDJ -- (gérer les condition météo)
     MDJ -- cfg_drone
-
-    SysPilot -- (contrôler les moteurs)
-    SysPilot -- (lire les capteurs)
 
 }
 
