@@ -24,8 +24,8 @@ rectangle "Machine Client" {
     ArduSub -- SecProxy1 : MAVLink
 }
 
-component "Operator Client" as OperatorClient
-component "Admin Client" as AdminClient
+component "Operator API" as OperatorClient
+component "Admin API" as AdminClient
 
 rectangle "Machine Serveur" {
     component "MAVSec proxy" as SecProxy2
