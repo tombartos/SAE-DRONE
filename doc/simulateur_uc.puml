@@ -58,6 +58,9 @@ rectangle Simulateur <<Subsystem>> {
     MDJ -- cfg_sim
 
     Admin -- (Gérer les utilisateurs)
+    (Gérer les utilisateurs) <|-- (Créer utilisateur)
+    (Gérer les utilisateurs) <|-- (Supprimer utilisateur)
+    (Gérer les utilisateurs) <|-- (Exclure utilisateur)
 
 }
 
