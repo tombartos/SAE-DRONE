@@ -118,7 +118,28 @@ A.5 L'application affiche les informations de l'utilisateur\
 A.6 L'administrateur clique sur le bouton "Exclure l'utilisateur"\
 A.7 L'application affiche un message de confirmation indiquant que l'utilisateur a été exclu avec succès
 
+### UC ?? : Gérer les condition météo
+### Prérequis
+Le maitre de jeu accède à l’interface de contrôle de simulation.
 
+### Scénario nominal
+1. Le maitre de jeu clique sur le bouton "Conditions météo"
+2. Le système affiche les paramètres modifiables : vent, pluie, luminosité,etc.
+3. Le maitre de jeu ajuste les valeurs via des curseurs ou des champs numériques.
+4. Le maitre de jeu valide la configuration.
+5. Le simulateur applique dynamiquement les nouvelles conditions.
+6. Les drones actifs sont immédiatement soumis à ces contraintes physiques.
+
+### UC ?? : Gérer les évènements
+### Prérequis
+Le maitre de jeu accède à l’interface de contrôle de simulation.
+
+### Scénario nominal
+1. Le maitre de jeu clique sur le bouton "consulter événements"
+2. Le système affiche les événements disponibles : obstacle dynamique(comme un poisson, un bateau ou un filet), courant localisé imprévu, perturbation de signal, turbidité de l’eau.
+3. Le maitre de jeu valide et déclenche l’événement.
+4. Le simulateur applique immédiatement l’événement dans l’environnement 3D.
+5. Le drone réagit selon ses algorithmes embarqués (autonomie, retour au point sûr, etc.).
 
 
 
