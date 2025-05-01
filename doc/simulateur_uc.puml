@@ -9,33 +9,33 @@ actor Admin
 'actor Admin
 
 rectangle "Système de Pilotage" <<Subsystem>> as SysPilot {
-    Pilote -- (gérer flight path)
-    Pilote -- (piloter manuelement)
-    Pilote -- (recevoir flux vidéo)
-    Pilote -- (rejoindre une simulation)
+    Pilote -- (Piloter manuelement)
+    Pilote -- (Recevoir flux vidéo)
+    Pilote -- (Consulter les capteurs)
+
+    (Recevoir flux vidéo) ..> (Rejoindre une simulation) : includes
+    (Piloter manuelement) ..> (Rejoindre une simulation) : includes
+    (Consulter les capteurs) ..> (Rejoindre une simulation) : includes
 }
-
-
-
 
 MDJ -left-|> Observateur
 
 rectangle Simulateur <<Subsystem>> {
 
-    usecase (suivre un drone) as follow_drone
+    usecase (Suivre un drone) as follow_drone
 
-    follow_drone <.down. (changer le mode\npremière/troisième personne) : extends
+    follow_drone <.down. (Changer le mode\npremière/troisième personne) : extends
 
-    Observateur -- (se deplacer librement)
-    Observateur -- (voir drones et carte)
+    Observateur -- (Se deplacer librement)
+    Observateur -- (Voir drones et carte)
     Observateur -- follow_drone
 
-    usecase (configurer un drone) as cfg_drone
-    usecase (configurer connectivité) as cfg_conn
-    usecase (configurer crypto) as cfg_crypt
-    usecase (configurer ArduPilot coté serveur) as cfg_ardu_ss
-    usecase (configurer micro logiciel coté client) as cfg_ardu_cs
-    usecase (Atitrer un drone) as cfg_attrib_drone
+    usecase (Configurer un drone) as cfg_drone
+    usecase (Configurer connectivité) as cfg_conn
+    usecase (Configurer crypto) as cfg_crypt
+    usecase (Configurer ArduPilot coté serveur) as cfg_ardu_ss
+    usecase (Configurer micro logiciel coté client) as cfg_ardu_cs
+    usecase (Attitrer un drone) as cfg_attrib_drone
     usecase (Lancer une simulation) as cfg_sim
     note "configurations incompatibles" as mutex1
     note "Les cartes et leurs assets d'événements sont créés en amont par les développeurs." as note1
@@ -47,16 +47,16 @@ rectangle Simulateur <<Subsystem>> {
     cfg_ardu_ss .. mutex1
     cfg_ardu_cs .. mutex1
 
-    MDJ -- (changer la carte)
-    (changer la carte) .. note1
+    MDJ -- (Changer la carte)
+    (Changer la carte) .. note1
     MDJ -- (Gerer Simulation)
-    (Gerer Simulation) -- (gérer les condition météo)
-    (Gerer Simulation) -- (gérer les évènements)
+    (Gerer Simulation) <|-- (Gérer les condition météo)
+    (Gerer Simulation) <|-- (Gérer les évènements)
     MDJ -- cfg_drone
     MDJ -- cfg_attrib_drone
     MDJ -- cfg_sim
 
-    Admin -- (gérer les utilisateurs)
+    Admin -- (Gérer les utilisateurs)
 
 }
 

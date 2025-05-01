@@ -7,12 +7,17 @@ actor Operator
 actor Admin
 
 rectangle "Machine Client" {
+    component Launcher
     component QGroundControl
     component MAVProxy
     component ArduSub
     component "Jme Renderer" as JmeRenderer
 
     Pilote -- QGroundControl : IHM
+    Pilote -- Launcher : Lancer le client
+    note right of Launcher
+        Permet de démarrer les différents composants du client.
+    end note
     QGroundControl -left- MAVProxy : MAVLink
     MAVProxy -- ArduSub : MAVLink
     ArduSub -- JmeRenderer : MAVLink
