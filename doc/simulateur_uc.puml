@@ -25,8 +25,8 @@ rectangle Simulateur <<Subsystem>> {
     usecase (Suivre un drone) as follow_drone
 
     follow_drone <.down. (Changer le mode\npremière/troisième personne) : includes
+    (Voir environement) <.. (Se deplacer librement) : includes
 
-    Observateur -- (Se deplacer librement)
     Observateur -- (Voir environement)
     Observateur -- follow_drone
     Observateur -- (Consulter infos drones)
