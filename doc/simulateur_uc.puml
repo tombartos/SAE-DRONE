@@ -5,6 +5,7 @@ left to right direction
 actor Observateur
 actor MDJ
 actor Pilote
+actor Admin
 'actor Admin
 
 rectangle "Système de Pilotage" <<Subsystem>> as SysPilot {
@@ -13,11 +14,7 @@ rectangle "Système de Pilotage" <<Subsystem>> as SysPilot {
     Pilote -- (recevoir flux vidéo)
 }
 
-note right of SysPilot
-Le système de pilotage interagit avec le
-simulateur (ici noté abusivement comme un
-acteur premier).
-end note
+
 
 MDJ -left-|> Observateur
 
@@ -48,6 +45,8 @@ rectangle Simulateur <<Subsystem>> {
     MDJ -- (changer la carte)
     MDJ -- (gérer les condition météo)
     MDJ -- cfg_drone
+
+    Admin -- (gérer les utilisateurs)
 
 }
 
