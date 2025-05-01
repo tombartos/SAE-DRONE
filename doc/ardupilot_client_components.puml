@@ -3,8 +3,11 @@
 left to right direction
 
 actor Pilote
-actor Operator
+actor MDJ
 actor Admin
+actor Observateur
+
+MDJ -left-|> Observateur
 
 rectangle "Machine Client" {
     component Launcher
@@ -25,20 +28,22 @@ rectangle "Machine Client" {
     QGroundControl -down- JmeRenderer : H.264 video
 }
 
-component "Operator API" as OperatorClient
+component "MDJ / Observateur API" as MDJAPI
 component "Admin API" as AdminClient
+
 
 rectangle "Machine Serveur" {
     component "Jme Server" as JmeServer
     component "MAVSec proxy" as SecProxy2
 
     JmeRenderer -- JmeServer : UDP Custom Chiffré
-    OperatorClient -- JmeServer : Control
+    MDJAPI -- JmeServer : Control
     AdminClient -- JmeServer : Configuration
     SecProxy1 -- SecProxy2 : MAVSec
     SecProxy2 -left- JmeServer : MAVLink
 }
-Operator -- OperatorClient
+MDJ -- MDJAPI
 Admin -- AdminClient
+Observateur -- MDJAPI
 
 @enduml
