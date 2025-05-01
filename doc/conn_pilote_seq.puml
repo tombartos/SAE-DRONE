@@ -1,0 +1,61 @@
+@startuml
+
+!pragma teoz true
+
+skinparam BoxPadding 10
+
+actor Pilote
+
+box "Machine Client"
+    participant Lanceur
+    participant "MAVSec Proxy" as ProxyClient
+    participant "Renderer" as RendererLocal
+    participant "Proxy chiffrement\nde vidéo" as Décodeur
+end box
+
+box "Machine Serveur"
+    participant "Serveur\nd'Authentification" as Auth
+    participant "Renderer" as RendererRemote
+    participant Simulateur
+end box
+
+Pilote -> Lanceur : Renseigne identifiants
+Lanceur -> Auth : Authentification
+Auth -> Lanceur : OK
+Auth -> Lanceur : Liste de drones avec flux vidéo et clés associé
+Lanceur -> Pilote : Menu de sélection de drone
+Pilote -> Lanceur : Sélectionne un drone
+
+par
+
+Lanceur ->? : Lance ArduSub, QGroundControl, etc...
+
+else
+
+Lanceur -> ProxyClient ** : Configure connexion et clé de chiffrement
+
+ProxyClient -> Simulateur : Se connecte
+?<-> ProxyClient : échange des messages MAVLink
+& ProxyClient <-> Simulateur : Forward les messages MAVLink (chiffré)
+
+else
+
+alt emode rendu locale
+
+    Lanceur -> RendererLocal ** : Configure connexion au serveur JMonkey
+    RendererLocal -> Simulateur : Se connecte
+    RendererLocal <-> Simulateur : Synchronise la scène (chiffré)
+    & ?<- RendererLocal : Envoie la vidéo à l'interface de pilotage
+
+else mode rendu à distanc
+
+    Lanceur -> Décodeur ** : Configure source vidéo distante
+    Décodeur -> RendererRemote : Se connecte
+    Décodeur <- RendererRemote : Envoie vidéo (chiffré)
+    & ?<- Décodeur : Forward la vidéo à l'interface de pilotage
+
+end
+
+end
+
+@enduml
