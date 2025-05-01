@@ -56,9 +56,18 @@ est implanter dans les figures
     \caption{Diagramme de composantes (micrologiciel coté serveur)}
     \label{fig:fwserveur}
 \end{figure}
+
+L'interface \verb|Controler| correspond au micro contrôleur du drone virtuelle.
+La classe \verb|ArduSubControler| gère les messages MAVLink envoyé par une instance du ArduSub SITL.
+Le drone virtuelle appelle au contrôleur pour appliquer les forces/torseurs dynamiques
+(\enquote{screw} en anglais)
+sur le drone.
+Chaque drone a un \verb|Renderer| pour l'afficher dans la scène.
+Le rendu est ensuite envoyé sur le réseau.
 %
 \begin{figure}
-    \makeincudegraphics[width=\textwidth]{classes.png}
+    \centering
+    \makeincudegraphics[width=0.8\textwidth]{classes.png}
     \caption{Diagramme de classes}
     \label{fig:classes}
 \end{figure}
