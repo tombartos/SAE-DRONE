@@ -27,8 +27,8 @@ rectangle "Machine Client" {
     ArduSub -- SecProxy1 : MAVLink
 }
 
-component "MDJ / Observateur API" as MDJAPI
-component "Admin API" as AdminClient
+interface "MDJ / Observateur API" as MDJAPI
+interface "Admin API" as AdminClient
 
 rectangle "Machine Serveur" {
     component "MAVSec proxy" as SecProxy2
@@ -45,8 +45,8 @@ rectangle "Machine Serveur" {
 SecProxy1 -- SecProxy2 : MAVSec
 QGroundControl -- VideoDecoder : H.264 clair
 VideoDecoder -- JmeRenderer : H.264 chiffré
-Admin -- AdminClient
-Observateur -- MDJAPI
-MDJ -- MDJAPI
+Admin --( AdminClient
+Observateur --( MDJAPI
+MDJ --( MDJAPI
 
 @enduml
