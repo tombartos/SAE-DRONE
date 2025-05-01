@@ -44,17 +44,27 @@ est implanter dans les figures
     \caption{Diagramme de cas d'usage}
     \label{fig:uc}
 \end{figure}
-%
 \begin{figure}
     \makeincudegraphics[width=\textwidth]{ardupilot_client_components.png}
     \caption{Diagramme de composantes (micrologiciel coté client)}
     \label{fig:fwclient}
 \end{figure}
-%
 \begin{figure}
     \makeincudegraphics[width=\textwidth]{ardupilot_server_components.png}
     \caption{Diagramme de composantes (micrologiciel coté serveur)}
     \label{fig:fwserveur}
+\end{figure}
+
+Le serveur d'authentification, le simulateur, et le renderer (quand il est coté serveur)
+partagent les clés de chiffrement et l'adresse des flux vidéo comme nécessaire.
+%
+\begin{figure}
+    \makeincudegraphics[width=\textwidth]{conn_pilote_local_renderer_seq.png}
+    \caption{Connexion d'un pilote avec rendu en local.}
+\end{figure}
+\begin{figure}
+    \makeincudegraphics[width=\textwidth]{conn_pilote_remote_renderer_seq.png}
+    \caption{Connexion d'un pilote avec rendu à distance.}
 \end{figure}
 
 L'interface \verb|Controler| correspond au micro contrôleur du drone virtuelle.
