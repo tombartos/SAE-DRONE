@@ -3,27 +3,34 @@
 left to right direction
 
 actor Pilote
+actor Operator
+actor Admin
 
-rectangle "Hôte A" {
+rectangle "Machine Client" {
     component QGroundControl
     component MAVProxy
     component ArduSub
-    component "MAVSec proxy" as SecProxy1
+    component "Jme Renderer" as JmeRenderer
 
     Pilote -- QGroundControl : IHM
     QGroundControl -left- MAVProxy : MAVLink
     MAVProxy -- ArduSub : MAVLink
-    ArduSub -- SecProxy1 : MAVLink
+    ArduSub -- JmeRenderer : MAVLink
+    QGroundControl -down- JmeRenderer : H.264 video
 }
 
-rectangle "Hôte B" {
-    component "MAVSec proxy" as SecProxy2
-    component Simulateur <<Subsystem>>
+component "Operator Client" as OperatorClient
+component "Admin Client" as AdminClient
 
-    SecProxy2 -left- Simulateur : MAVLink
+rectangle "Machine Serveur" {
+    component "Jme Server" as JmeServer
+
+    JmeRenderer -- JmeServer : UDP Custom Chiffré
+    OperatorClient -- JmeServer : Control
+    AdminClient -- JmeServer : Configuration
 }
 
-SecProxy1 -- SecProxy2 : MAVSec
-QGroundControl -- Simulateur : H.264 chiffré
+Operator -- OperatorClient 
+Admin -- AdminClient
 
 @enduml
