@@ -12,6 +12,7 @@ rectangle "Machine Client" {
     component MAVProxy
     component ArduSub
     component "Jme Renderer" as JmeRenderer
+    component "MAVSec proxy" as SecProxy1
 
     Pilote -- QGroundControl : IHM
     Pilote -- Launcher : Lancer le client
@@ -20,7 +21,7 @@ rectangle "Machine Client" {
     end note
     QGroundControl -left- MAVProxy : MAVLink
     MAVProxy -- ArduSub : MAVLink
-    ArduSub -- JmeRenderer : MAVLink
+    ArduSub -- SecProxy1 : MAVLink
     QGroundControl -down- JmeRenderer : H.264 video
 }
 
@@ -29,13 +30,15 @@ component "Admin Client" as AdminClient
 
 rectangle "Machine Serveur" {
     component "Jme Server" as JmeServer
+    component "MAVSec proxy" as SecProxy2
 
     JmeRenderer -- JmeServer : UDP Custom Chiffré
     OperatorClient -- JmeServer : Control
     AdminClient -- JmeServer : Configuration
+    SecProxy1 -- SecProxy2 : MAVSec
+    SecProxy2 -left- JmeServer : MAVLink
 }
-
-Operator -- OperatorClient 
+Operator -- OperatorClient
 Admin -- AdminClient
 
 @enduml

@@ -33,7 +33,7 @@ rectangle "Machine Serveur" {
     component "Jme Renderer" as JmeRenderer
     component "Jme Server" as JmeServer
 
-    SecProxy2 -left- JmeRenderer : MAVLink
+    SecProxy2 -left- JmeServer : MAVLink
     JmeRenderer -- JmeServer : UDP Custom
     OperatorClient -- JmeServer : Control
     AdminClient -- JmeServer : Configuration
