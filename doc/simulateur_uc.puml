@@ -17,6 +17,7 @@ rectangle "Système de Pilotage" <<Subsystem>> as SysPilot {
 
 
 
+
 MDJ -left-|> Observateur
 
 rectangle Simulateur <<Subsystem>> {
@@ -37,6 +38,7 @@ rectangle Simulateur <<Subsystem>> {
     usecase (Atitrer un drone) as cfg_attrib_drone
     usecase (Lancer une simulation) as cfg_sim
     note "configurations incompatibles" as mutex1
+    note "Les cartes et leurs assets d'événements sont créés en amont par les développeurs." as note1
 
     cfg_drone .down.> cfg_conn : includes
     cfg_conn <.down. cfg_crypt : extends
@@ -46,6 +48,7 @@ rectangle Simulateur <<Subsystem>> {
     cfg_ardu_cs .. mutex1
 
     MDJ -- (changer la carte)
+    (changer la carte) .. note1
     MDJ -- (Gerer Simulation)
     (Gerer Simulation) -- (gérer les condition météo)
     (Gerer Simulation) -- (gérer les évènements)
