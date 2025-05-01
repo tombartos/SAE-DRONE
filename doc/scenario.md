@@ -152,18 +152,3 @@ E3. Le système ferme la fenêtre
 ### Scénario alternatif : Le controle utiliser n'est pas reconnu
 A2. Le Système indique au Pilote que l'action n'est pas reconnue
 A3. Retour à l'étape 1
-
-
-## UC ?? : Se déplacer librement
-### Prérequies
-- L'Observateur doit possèder un controleur configurer
-- L'Observateur doit être dans une simulation
-
-### Scénario nominal
-1. L'Observateur transmet des directives de déplacement à ça caméra avec son controleur
-2. Le Système déplace la caméra selon les directives reçues
-3. Retour à l'étape 1
-
-### Scénario alternatif : Le controle utiliser n'est pas reconnu
-A2. Le Système indique à l'Observateur que l'action n'est pas reconnue
-A3. Retour à l'étape 1
