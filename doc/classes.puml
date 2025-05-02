@@ -93,7 +93,6 @@ Simulateur "1" -- "1..n" Drone : gère
 Simulateur "1" -- "1" MDJ : gère
 Simulateur "1" -- "0..n" Observateur : observe
 Simulateur "1" -- "1..n" Pilote : gère
-Simulateur "1" -- "1" ControleurRéseau : communique
 Simulateur "1" -- "1" Admin : gère
 Simulateur "1" -- "0..n" Évènement : gère
 
