@@ -1,57 +1,92 @@
 @startuml
 
-interface Controler {
-    getSetMotorSpeed(index) -> float
-    setSensorReading(index, value)
+' Define classes
+package Simulation {
+    class Modele {
+        +name: String
+        +type: String
+        +weight: float
+        +dimensions: String
+    }
+
+    class Drone {
+        +id: String
+        +model: Model
+        +batteryLevel: int
+        +location: String
+        +videoStream: VideoStream
+        +sensors: List<Sensor>
+        +pilotDrone(): void
+    }
+
+    class Utilisateur {
+        +username: String
+        +password: String
+        +ValidKeys: List<String>
+    }
+
+    class Pilote {
+        +Drone drone
+        +pilotDrone(): void
+        +consultSensors(): void
+    }
+
+    class MDJ {
+
+    }
+
+    class Observateur {
+        +viewEnvironment(): void
+        +followDrone(drone: Drone): void
+        +consultDroneInfo(drone: Drone): void
+    }
+
+    class Admin {
+        +createUser(user: Utilisateur): void
+        +deleteUser(user: Utilisateur): void
+        +excludeUser(user: Utilisateur): void
+    }
+
+    class Évènement {
+        +type: String
+        +location: String
+        +description: String
+    }
+
+
+    class Simulateur {
+        +map: String
+        +weatherConditions: String
+        +startSimulation(): void
+        +stopSimulation(): void
+        +changeMap(): void
+        +manageSimulation(): void
+        +configureDrone(): void
+    }
 }
 
-class ArduSubControler implements Controler
-class LocalTestingControler implements Controler
-
-class VirtualDrone extends RigidBody implements Renderable {
-    preUpdate()
+package Réseau {
+    class ControleurRéseau {
+        receiveData(): void
+        sendData(): void
+    }
 }
 
-note left of VirtualDrone::preUpdate
-Utilise les valeurs retourner
-par getSetMotorSpeed() pour
-applyForce() sûr this.
-end note
 
-class PhysicsSimulator {
-    update(double timeStep)
-}
+' Define relationships
+Observateur <|-- MDJ
+Utilisateur <|-- Pilote
+Utilisateur <|-- Observateur
+Utilisateur <|-- Admin
 
-abstract class RigidBody {
-    displacement: Screw
-    applyForce(Screw force)
-    update(double timeStep)
-    {abstract} preUpdate()
-}
+Simulateur "1" -- "1..n" Drone : gère
+Simulateur "1" -- "1" MDJ : gère
+Simulateur "1" -- "0..n" Observateur : observe
+Simulateur "1" -- "1..n" Pilote : gère
+Simulateur "1" -- "1" ControleurRéseau : communique
+Simulateur "1" -- "1" Admin : gère
 
-class SceneRenderer {
-    renderScene()
-}
-
-interface Renderable {
-    getRender(): Renderer
-}
-
-interface Renderer {
-    render()
-}
-
-class DroneRenderer implements Renderer
-
-interface FrameConsumer
-class H264Streamer implements FrameConsumer
-class LocalTestingWindow implements FrameConsumer
-
-VirtualDrone "1" --> "1" Controler : controlled by
-RigidBody "0..n" --* "1" PhysicsSimulator : is in
-
-FrameConsumer "1" -left-> "1" SceneRenderer : displays frames
-SceneRenderer "1" --> "0..n" Renderer : calls
-DroneRenderer "1" --> "1" VirtualDrone : renders
+Pilote "1" -- "1" Drone : pilote
+Drone "1..n" -- "1" Modele : est un
 
 @enduml

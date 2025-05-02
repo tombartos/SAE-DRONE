@@ -1,0 +1,57 @@
+@startuml
+
+interface Controler {
+    getSetMotorSpeed(index) -> float
+    setSensorReading(index, value)
+}
+
+class ArduSubControler implements Controler
+class LocalTestingControler implements Controler
+
+class VirtualDrone extends RigidBody implements Renderable {
+    preUpdate()
+}
+
+note left of VirtualDrone::preUpdate
+Utilise les valeurs retourner
+par getSetMotorSpeed() pour
+applyForce() sûr this.
+end note
+
+class PhysicsSimulator {
+    update(double timeStep)
+}
+
+abstract class RigidBody {
+    displacement: Screw
+    applyForce(Screw force)
+    update(double timeStep)
+    {abstract} preUpdate()
+}
+
+class SceneRenderer {
+    renderScene()
+}
+
+interface Renderable {
+    getRender(): Renderer
+}
+
+interface Renderer {
+    render()
+}
+
+class DroneRenderer implements Renderer
+
+interface FrameConsumer
+class H264Streamer implements FrameConsumer
+class LocalTestingWindow implements FrameConsumer
+
+VirtualDrone "1" --> "1" Controler : controlled by
+RigidBody "0..n" --* "1" PhysicsSimulator : is in
+
+FrameConsumer "1" -left-> "1" SceneRenderer : displays frames
+SceneRenderer "1" --> "0..n" Renderer : calls
+DroneRenderer "1" --> "1" VirtualDrone : renders
+
+@enduml
