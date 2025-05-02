@@ -1,7 +1,6 @@
 @startuml
 
-' Define classes
-package Simulation {
+package simulation {
     class Modele {
         +name: String
         +type: String
@@ -27,9 +26,6 @@ package Simulation {
         +description: String
     }
 
-
-
-
     class Simulateur {
         +map: String
         +weatherConditions: String
@@ -41,7 +37,7 @@ package Simulation {
     }
 }
 
-package Réseau {
+package réseau {
     class ControleurRéseau {
         receiveData(): void
         sendData(): void
@@ -58,14 +54,14 @@ package Réseau {
 
 }
 
-package Testing{
+package testing{
     class LocalTestingControler {
     }
 
 }
 
 
-package Utilisateurs {
+package utilisateurs {
     class Pilote {
         +Drone drone
     }
