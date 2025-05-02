@@ -31,11 +31,10 @@ rectangle Simulateur <<Subsystem>> {
     Observateur -- follow_drone
     Observateur -- (Consulter infos drones)
 
-    usecase (Ajouter un pilote) as cfg_drone
+    usecase (Ajouter un drone) as cfg_drone
     usecase (Configurer crypto) as cfg_crypt
     usecase (Configurer client en mode "local") as cfg_ardu_ss
     usecase (Configurer client en mode "cloud") as cfg_ardu_cs
-    usecase (Attitrer un drone) as cfg_attrib_drone
     usecase (Lancer une simulation) as cfg_sim
     note "configurations incompatibles" as mutex1
     note "Les cartes et leurs assets d'événements sont créés en amont par les développeurs." as note1
@@ -44,7 +43,6 @@ rectangle Simulateur <<Subsystem>> {
     cfg_drone <|-- cfg_ardu_cs
     cfg_ardu_ss .. mutex1
     cfg_ardu_cs .. mutex1
-    cfg_drone <|--  cfg_attrib_drone
 
     MDJ -- (Changer la carte)
     (Changer la carte) .. note1
