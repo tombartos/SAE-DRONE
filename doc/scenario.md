@@ -49,7 +49,7 @@ A.2 L'application change le mode de vue de troisième personne à première pers
 2. L'application affiche l'environnement de la simulation en temps réel
 
 ### US 2 : Scénario alternatif
-3.A L'observateur bouge sa souris pour faire picoter la caméra
+3.A L'observateur bouge sa souris pour faire pivoter la caméra
 4.A L'application affiche l'environnement de la simulation en temps réel avec la nouvelle vue
 
 ## UC 6 : Déplacer la caméra
