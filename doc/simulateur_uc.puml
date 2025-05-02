@@ -24,7 +24,7 @@ rectangle Simulateur <<Subsystem>> {
 
     usecase (Suivre un drone) as follow_drone
 
-    follow_drone <.down. (Changer le mode\npremière/troisième personne) : includes
+    follow_drone <.down. (Changer le mode\npremière/troisième personne) : extendds
     (Voir environement) <.. (Se deplacer librement) : includes
 
     Observateur -- (Voir environement)
@@ -32,7 +32,6 @@ rectangle Simulateur <<Subsystem>> {
     Observateur -- (Consulter infos drones)
 
     usecase (Ajouter un pilote) as cfg_drone
-    usecase (Configurer connectivité) as cfg_conn
     usecase (Configurer crypto) as cfg_crypt
     usecase (Configurer client en mode "local") as cfg_ardu_ss
     usecase (Configurer client en mode "cloud") as cfg_ardu_cs
@@ -41,8 +40,6 @@ rectangle Simulateur <<Subsystem>> {
     note "configurations incompatibles" as mutex1
     note "Les cartes et leurs assets d'événements sont créés en amont par les développeurs." as note1
 
-    cfg_drone .down.> cfg_conn : includes
-    cfg_conn <.down. cfg_crypt : extends
     cfg_drone <|-- cfg_ardu_ss
     cfg_drone <|-- cfg_ardu_cs
     cfg_ardu_ss .. mutex1
