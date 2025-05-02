@@ -47,8 +47,8 @@ rectangle Simulateur <<Subsystem>> {
     MDJ -- (Changer la carte)
     (Changer la carte) .. note1
     MDJ -- (Gerer Simulation)
-    (Gerer Simulation) <|-- (Gérer les condition météo)
-    (Gerer Simulation) <|-- (Gérer les évènements)
+    (Gérer Simulation) <|-- (Gérer les condition météo)
+    (Gérer Simulation) <|-- (Gérer les évènements)
     MDJ -- cfg_drone
     MDJ -- cfg_sim
 
