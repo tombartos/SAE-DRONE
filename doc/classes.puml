@@ -53,6 +53,18 @@ package Simulation {
         +description: String
     }
 
+    interface ControleurDrone {
+        +getMotorSpeed(index: int): float
+        +getSensorReading(Sensor sensor): void
+        +setMotorSpeed(index: int, value: float): void
+    }
+
+    class ArduSubRemoteControler implements ControleurDrone {
+    }
+
+    class LocalTestingControler implements ControleurDrone {
+    }
+
 
     class Simulateur {
         +map: String
@@ -87,6 +99,7 @@ Simulateur "1" -- "1" ControleurRéseau : communique
 Simulateur "1" -- "1" Admin : gère
 
 Pilote "1" -- "1" Drone : pilote
-Drone "1..n" -- "1" Modele : est un
+Drone "1..n" -- "1" Modele : est un type
+Drone "1" -- "1" ControleurDrone : Possède
 
 @enduml
