@@ -6,6 +6,14 @@ insert_final_newline = true
 trim_trailing_whitespace = true
 charset = utf-8
 
+[.git/*]
+insert_final_newline = false
+trim_trailing_whitespace = false
+
+[*{.diff,.patch}]
+insert_final_newline = false
+trim_trailing_whitespace = false
+
 [Makefile]
 indent_style = tab
 indent_size = 4
