@@ -35,29 +35,22 @@ package simulation {
         +manageSimulation(): void
         +configureDrone(): void
     }
+
+
+    interface ControleurDrone {
+        +getMotorSpeed(index: int): float
+        +setSensorReading(index: int): void
+    }
 }
 
 package réseau {
-    class ControleurRéseau {
-        receiveData(): void
-        sendData(): void
+    class ArduSubRemoteControler implements simulation.ControleurDrone {
     }
-
-    abstract ControleurDrone {
-        +getMotorSpeed(index: int): float
-        +getSensorReading(Sensor sensor): void
-        +setMotorSpeed(index: int, value: float): void
-    }
-
-    class ArduSubRemoteControler {
-    }
-
 }
 
 package testing{
-    class LocalTestingControler {
+    class LocalTestingControler implements simulation.ControleurDrone {
     }
-
 }
 
 
@@ -86,7 +79,7 @@ package utilisateurs {
         +username: String
         +password: String
         +ValidKeys: List<String>
-}
+    }
 }
 
 
@@ -106,8 +99,6 @@ Simulateur "1" -- "0..n" Évènement : gère
 
 Pilote "1" -- "1" ControleurDrone : pilote
 Drone "1..n" -- "1" Modele : est un type
-Drone "1" -- "1" ControleurDrone : Possède
+Drone "1" -- "1" simulation.ControleurDrone : Possède
 
-LocalTestingControler --|> ControleurDrone
-ArduSubRemoteControler --|> ControleurDrone
 @enduml
