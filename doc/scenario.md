@@ -168,3 +168,29 @@ E3. Le système ferme la fenêtre
 ### US 2 : Scénario alternatif : Le controler utilisé n'est pas reconnu
 A2. Le Système indique au Pilote que l'action n'est pas reconnue\
 A3. Retour à l'étape 1
+
+## UC 14 : Un utilisateur se connecte
+### US 1 : Scénario nominal
+1. L'utilisateur renseigne nom d'utilisateur/mot de passe
+2. L'utilisateur est présenté :
+    - une liste de drone qui lui appartient
+    - les parties qu'il peut observer
+3. L'utilisateur sélectionne un drone
+4. L'utilisateur pilote le drone
+
+### US 1 : Scénario alternatif : L'utilisateur observe
+1. L'utilisateur renseigne nom d'utilisateur/mot de passe
+2. L'utilisateur est présenté :
+    - une liste de drone qui lui appartient
+    - les parties qu'il peut observer
+3. L'utilisateur sélectionne une partie
+4. L'utilisateur est observateur dans la partie
+
+### US 1 : Scénario alternatif : L'utilisateur peut être MDJ
+1. L'utilisateur renseigne nom d'utilisateur/mot de passe
+2. L'utilisateur est présenté :
+    - une liste de drone qui lui appartient
+    - les parties qu'il peut observer
+    - un bouton "démarrer partie"
+3. L'utilisateur démarre une partie
+4. L'utilisateur est présenté l'interface de gestion de partie
