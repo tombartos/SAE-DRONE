@@ -60,7 +60,7 @@ A.2 L'application change le mode de vue de troisième personne à première pers
 1. L'observateur appuie sur les touches de déplacement pour déplacer la caméra
 2. L'application affiche l'environnement de la simulation en temps réel avec la nouvelle vue
 
-## UC 7 : Ajouter un pilote
+## UC 7 : Ajouter un drone
 ### Prérequis
 -Le maitre de jeu est connecté au simulateur
 
