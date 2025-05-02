@@ -28,14 +28,14 @@ Pilote -> Lanceur : Sélectionne un drone
 
 par
 
-Lanceur ->? : Lance ArduSub, QGroundControl, etc...
+Lanceur ->? : Lance ArduSub, QGroundControl, etc...\n(c.f., diagramme composantes)
 
 else
 
 Lanceur -> ProxyClient ** : Configure connexion et clé de chiffrement
 
 ProxyClient -> Simulateur : Se connecte
-?<-> ProxyClient : échange des messages MAVLink
+?<-> ProxyClient : échange des messages MAVLink\n(c.f., diagramme composantes)
 & ProxyClient <-> Simulateur : Forward les messages MAVLink (chiffré)
 
 else
@@ -45,14 +45,14 @@ alt emode rendu locale
     Lanceur -> RendererLocal ** : Configure connexion au serveur JMonkey
     RendererLocal -> Simulateur : Se connecte
     RendererLocal <-> Simulateur : Synchronise la scène (chiffré)
-    & ?<- RendererLocal : Envoie la vidéo à l'interface de pilotage
+    & ?<- RendererLocal : Envoie la vidéo à l'interface de pilotage\n(c.f., diagramme composantes)
 
 else mode rendu à distanc
 
     Lanceur -> Décodeur ** : Configure source vidéo distante
     Décodeur -> RendererRemote : Se connecte
     Décodeur <- RendererRemote : Envoie vidéo (chiffré)
-    & ?<- Décodeur : Forward la vidéo à l'interface de pilotage
+    & ?<- Décodeur : Forward la vidéo à l'interface de pilotage\n(c.f., diagramme composantes)
 
 end
 
