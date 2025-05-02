@@ -55,21 +55,21 @@ package testing{
 
 
 package utilisateurs {
-    class Pilote {
+    class Pilote extends Utilisateur {
         +Drone drone
     }
 
-    class MDJ {
+    class MDJ extends Utilisateur {
 
     }
 
-    class Observateur {
+    class Observateur extends Utilisateur {
         +viewEnvironment(): void
         +followDrone(drone: Drone): void
         +consultDroneInfo(drone: Drone): void
     }
 
-    class Admin {
+    class Admin extends Utilisateur {
         +createUser(user: Utilisateur): void
         +deleteUser(user: Utilisateur): void
         +excludeUser(user: Utilisateur): void
@@ -81,13 +81,6 @@ package utilisateurs {
         +ValidKeys: List<String>
     }
 }
-
-
-' Define relationships
-Observateur <|-- MDJ
-Utilisateur <|-- Pilote
-Utilisateur <|-- Observateur
-Utilisateur <|-- Admin
 
 Simulateur "1" -- "1..n" Drone : gère
 Simulateur "1" -- "1" MDJ : gère
