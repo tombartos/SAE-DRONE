@@ -12,6 +12,6 @@ out/
 *.log
 *.tmp
 *.bak
-*.swp   
+*.swp
 *.swo
 *.DS_Store
