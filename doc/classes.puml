@@ -6,24 +6,26 @@ package simulation {
         +type: String
         +weight: float
         +dimensions: String
+        +mesh: Mesh3D
+        +motors: MotorDescription[]
+        +sensors: SensorDescription[]
     }
 
     class Drone {
         +id: String
-        +model: Model
         +batteryLevel: int
-        +location: String
-        +videoStream: VideoStream
-        +sensors: List<Sensor>
-        +pilotDrone(): void
+        +location: Vec3
     }
 
 
 
-    class Évènement {
-        +type: String
+    abstract class Évènement {
+        +{static}shortDescription: String
+        +{static}longDescription: String
         +location: String
-        +description: String
+        +trigger()
+        +schedule(time)
+        +cancel()
     }
 
     class Simulateur {
@@ -75,21 +77,21 @@ package utilisateurs {
         +excludeUser(user: Utilisateur): void
     }
 
-    class Utilisateur {
+    abstract class Utilisateur {
         +username: String
         +password: String
         +ValidKeys: List<String>
     }
 }
 
-Simulateur "1" -- "1..n" Drone : gère
-Simulateur "1" -- "1" MDJ : gère
-Simulateur "1" -- "0..n" Observateur : observe
-Simulateur "1" -- "1..n" Pilote : gère
-Simulateur "1" -- "1" Admin : gère
-Simulateur "1" -- "0..n" Évènement : gère
+MDJ "1" -down- "0..n" Évènement : crée/annule
+Observateur "0..n" -down- "1" Simulateur : observe
+Pilote "1" -- "1" ArduSubRemoteControler : pilote
+Admin -- Utilisateur : crée/supprime
 
-Pilote "1" -- "1" ControleurDrone : pilote
+Simulateur "1" -- "0..n" Évènement : réagit
+Simulateur "1" -- "1..n" Drone : gère
+
 Drone "1..n" -- "1" Modele : est un type
 Drone "1" -- "1" simulation.ControleurDrone : Possède
 

@@ -8,7 +8,7 @@ actor Pilote
 
 box "Machine Client"
     participant Lanceur
-    participant "MAVSec Proxy" as ProxyClient
+    participant "MAVSec Proxy\nClient" as ProxyClient
     participant "Renderer" as RendererLocal
     participant "Proxy chiffrement\nde vidéo" as Décodeur
 end box
@@ -40,14 +40,14 @@ ProxyClient -> Simulateur : Se connecte
 
 else
 
-alt emode rendu locale
+alt mode rendu locale
 
     Lanceur -> RendererLocal ** : Configure connexion au serveur JMonkey
     RendererLocal -> Simulateur : Se connecte
     RendererLocal <-> Simulateur : Synchronise la scène (chiffré)
     & ?<- RendererLocal : Envoie la vidéo à l'interface de pilotage\n(c.f., diagramme composantes)
 
-else mode rendu à distanc
+else mode rendu à distance
 
     Lanceur -> Décodeur ** : Configure source vidéo distante
     Décodeur -> RendererRemote : Se connecte
