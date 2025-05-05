@@ -93,6 +93,16 @@
             </goals>
           </execution>
         </executions>
+        <configuration>
+          <excludes>
+            <exclude>doc/*.aux</exclude>
+            <exclude>doc/*.d</exclude>
+            <exclude>doc/*.fdb_latexmk</exclude>
+            <exclude>doc/*.fls</exclude>
+            <exclude>doc/*.log</exclude>
+            <exclude>doc/*.out</exclude>
+          </excludes>
+        </configuration>
       </plugin>
 
     </plugins>
