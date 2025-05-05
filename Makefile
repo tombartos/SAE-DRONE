@@ -1,13 +1,15 @@
-all: doc maven-compile
+all: doc verify
 
 doc:
 	$(MAKE) -C doc
 
-maven-compile:
+compile:
 	mvn compile
+verify:
+	mvn verify
 
 clean:
 	-mvn clean
 	-$(MAKE) -C doc clean
 
-.PHONY: all clean doc maven-compile
+.PHONY: all clean doc compile verify
