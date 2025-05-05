@@ -3,6 +3,7 @@ target
 .settings/
 .factorypath
 .project
+.vscode/
 
 *.java
 *.iml
