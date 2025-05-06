@@ -19,6 +19,23 @@ package Simulation {
         +pilotDrone(): void
     }
 
+    abstract class Module{
+    }
+
+    class Capteur{
+        +type: String
+        +data: String
+        +getData(): String
+    }
+
+    class Systeme{
+        +name: String
+        +type: String
+        +status: String
+        +getStatus(): String
+        +doAction(): void
+    }
+
 
 
     class Évènement {
@@ -114,4 +131,8 @@ Drone "1" -- "1" ControleurDrone : Possède
 
 LocalTestingControler --|> ControleurDrone
 ArduSubRemoteControler --|> ControleurDrone
+
+Capteur --|> Module
+Systeme --|> Module
+Drone "1" -- "0..n" Module : possède
 @enduml
