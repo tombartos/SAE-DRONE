@@ -10,6 +10,7 @@ target
 .idea/
 bin/
 out/
+data/
 *.log
 *.tmp
 *.bak

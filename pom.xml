@@ -12,6 +12,10 @@
     <junit.version>5.6.0</junit.version>
     <checkstyle-maven-plugin.version>3.6.0</checkstyle-maven-plugin.version>
     <exec.mainClass>fr.univtln.infomath.dronsim.Simulator</exec.mainClass>
+
+    <!-- JMonkeyEngine -->
+    <jme3_g>org.jmonkeyengine</jme3_g>
+    <jme3_v>3.7.0-stable</jme3_v>
   </properties>
 
   <dependencies>
@@ -47,6 +51,98 @@
       <artifactId>mavlink</artifactId>
       <version>1.1.11</version>
     </dependency>
+
+    <!-- JMonkeyEngine -->
+    <dependency>
+      <groupId>${jme3_g}</groupId>
+      <artifactId>jme3-core</artifactId>
+      <version>${jme3_v}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${jme3_g}</groupId>
+      <artifactId>jme3-desktop</artifactId>
+      <version>${jme3_v}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${jme3_g}</groupId>
+      <artifactId>jme3-effects</artifactId>
+      <version>${jme3_v}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${jme3_g}</groupId>
+      <artifactId>jme3-jbullet</artifactId>
+      <version>${jme3_v}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${jme3_g}</groupId>
+      <artifactId>jme3-jogg</artifactId>
+      <version>${jme3_v}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${jme3_g}</groupId>
+      <artifactId>jme3-lwjgl3</artifactId>
+      <version>${jme3_v}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${jme3_g}</groupId>
+      <artifactId>jme3-networking</artifactId>
+      <version>${jme3_v}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${jme3_g}</groupId>
+      <artifactId>jme3-niftygui</artifactId>
+      <version>${jme3_v}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${jme3_g}</groupId>
+      <artifactId>jme3-plugins</artifactId>
+      <version>${jme3_v}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${jme3_g}</groupId>
+      <artifactId>jme3-terrain</artifactId>
+      <version>${jme3_v}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${jme3_g}</groupId>
+      <artifactId>jme3-testdata</artifactId>
+      <version>${jme3_v}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${jme3_g}</groupId>
+      <artifactId>jme3-vr</artifactId>
+      <version>${jme3_v}</version>
+    </dependency>
+
+    <!--
+			Monkey Wrench for asset download into JMonkey
+			https://github.com/stephengold/MonkeyWrench/
+
+			Usage:
+
+			import com.github.stephengold.wrench.LwjglAssetLoader;
+
+			assetManager.registerLoader(LwjglAssetLoader.class,
+										"3ds", "3mf", "blend", "bvh", "dae", "fbx", "glb", "gltf",
+										"lwo", "meshxml", "mesh.xml", "obj", "ply", "stl");
+		-->
+    <dependency>
+      <groupId>com.github.stephengold</groupId>
+      <artifactId>MonkeyWrench</artifactId>
+      <version>0.6.2</version>
+    </dependency>
+
   </dependencies>
 
   <build>
