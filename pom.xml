@@ -16,6 +16,8 @@
     <!-- JMonkeyEngine -->
     <jme3_g>org.jmonkeyengine</jme3_g>
     <jme3_v>3.7.0-stable</jme3_v>
+
+    <junit.version>5.12.1</junit.version>
   </properties>
 
   <dependencies>
@@ -141,6 +143,20 @@
       <groupId>com.github.stephengold</groupId>
       <artifactId>MonkeyWrench</artifactId>
       <version>0.6.2</version>
+    </dependency>
+
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>${junit.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>${junit.version}</version>
+      <scope>compile</scope>
     </dependency>
 
   </dependencies>

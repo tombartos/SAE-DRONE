@@ -11,6 +11,7 @@ target
 bin/
 out/
 data/
+*.zip
 *.log
 *.tmp
 *.bak
