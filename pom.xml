@@ -101,6 +101,8 @@
             <exclude>doc/*.fls</exclude>
             <exclude>doc/*.log</exclude>
             <exclude>doc/*.out</exclude>
+            <exclude>data/**</exclude>
+            <exclude>mvnw*</exclude>
           </excludes>
         </configuration>
       </plugin>
