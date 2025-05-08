@@ -11,6 +11,8 @@ import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.light.*;
 import com.jme3.math.*;
+import com.jme3.network.Client;
+import com.jme3.network.Network;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.*;
@@ -24,6 +26,8 @@ import com.jme3.input.ChaseCamera;
 import fr.univtln.infomath.dronsim.control.LocalTestingControler;
 //import fr.univtln.infomath.dronsim.viewer.primitives.ReferentialNode;
 import fr.univtln.infomath.dronsim.Utils.GStreamerSender;
+
+import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,13 +43,17 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
     private static String ipDestVideo;
     private static int width = 1024;
     private static int height = 768;
+    private static String server_ip;
+    private static int server_port = 6143; // Default JME server port
 
     public static void main(String[] args) {
-        if (args.length != 1) {
+        if (args.length != 2) {
             ipDestVideo = "127.0.0.1";
             log.info("No destination IP address provided, using default: " + ipDestVideo);
+            log.info("Launch arguments :  <video_destination_ip> <server_ip>");
         }
         ipDestVideo = args[0];
+        server_ip = args[1];
         AppSettings settings = new AppSettings(true);
         settings.setWidth(width);
         settings.setHeight(height);
@@ -60,6 +68,17 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
     @Override
     public void simpleInitApp() {
         setPauseOnLostFocus(false);
+        Client client;
+        try {
+            client = Network.connectToServer(server_ip, server_port);
+            client.start();
+            log.info("Connected to server at " + server_ip + ":" + server_port);
+        } catch (IOException e) {
+            log.error("Failed to connect to server at " + server_ip + ":" + server_port, e);
+            System.exit(1);
+            return;
+        }
+
         // Initialisation GStreamer
         GStreamerSender gstreamerSender = new GStreamerSender(1024, 768, ipDestVideo);
 
