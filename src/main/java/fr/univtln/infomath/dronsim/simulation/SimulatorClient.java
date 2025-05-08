@@ -15,6 +15,7 @@ import com.jme3.post.FilterPostProcessor;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.*;
 import com.jme3.system.AppSettings;
+import com.jme3.system.JmeContext;
 import com.jme3.util.SkyFactory;
 import com.jme3.water.WaterFilter;
 
@@ -22,21 +23,35 @@ import com.jme3.input.ChaseCamera;
 
 import fr.univtln.infomath.dronsim.control.LocalTestingControler;
 //import fr.univtln.infomath.dronsim.viewer.primitives.ReferentialNode;
+import fr.univtln.infomath.dronsim.Utils.GStreamerSender;
 
-public class Simulateur extends SimpleApplication implements PhysicsCollisionListener {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class SimulatorClient extends SimpleApplication implements PhysicsCollisionListener {
+    private static final Logger log = LoggerFactory.getLogger(SimulatorClient.class);
 
     private BulletAppState bulletState;
     private PhysicsSpace space;
     private FilterPostProcessor fpp;
     private Node scene;
     private LocalTestingControler controlerA;
+    private static String ipDestVideo;
+    private static int width = 1024;
+    private static int height = 768;
 
     public static void main(String[] args) {
+        if (args.length != 1) {
+            ipDestVideo = "127.0.0.1";
+            log.info("No destination IP address provided, using default: " + ipDestVideo);
+        }
+        ipDestVideo = args[0];
         AppSettings settings = new AppSettings(true);
-        settings.setWidth(1024);
-        settings.setHeight(768);
+        settings.setWidth(width);
+        settings.setHeight(height);
+        settings.setFrameRate(60);
 
-        Simulateur app = new Simulateur();
+        SimulatorClient app = new SimulatorClient();
         app.setShowSettings(false);
         app.setSettings(settings);
         app.start();
@@ -44,6 +59,13 @@ public class Simulateur extends SimpleApplication implements PhysicsCollisionLis
 
     @Override
     public void simpleInitApp() {
+        setPauseOnLostFocus(false);
+        // Initialisation GStreamer
+        GStreamerSender gstreamerSender = new GStreamerSender(1024, 768, ipDestVideo);
+
+        // Initialisation du processeur de capture d'images
+        FrameCaptureProcessor frameCaptureProcessor = new FrameCaptureProcessor(width, height, gstreamerSender);
+
         // Initialisation de la physique
         bulletState = new BulletAppState();
         stateManager.attach(bulletState);
@@ -109,6 +131,7 @@ public class Simulateur extends SimpleApplication implements PhysicsCollisionLis
         chaseCam.setTrailingEnabled(true); // caméra suit le mouvement
         chaseCam.setDragToRotate(false);
 
+        viewPort.addProcessor(frameCaptureProcessor); // Ajout du processeur de capture d'images
     }
 
     private void attachTerrain(Node parent) {
