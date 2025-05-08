@@ -15,6 +15,7 @@ public class Drone {
 
     private RigidBodyControl control;
     private Node node;
+    private Node cameraNode;
 
     public Drone(AssetManager assetManager, PhysicsSpace space, String modelPath, String name, Vector3f position,
             float mass) {
@@ -25,8 +26,12 @@ public class Drone {
         node.attachChild(model);
         node.setLocalTranslation(position); // positionne le node principal
 
-        // Création de la collision à partir du node déjà positionné
-        // CollisionShape shape = CollisionShapeFactory.createDynamicMeshShape(node);
+        // Ajoute un point pour la caméra à l'avant du drone
+        cameraNode = new Node("CameraNode");
+        cameraNode.setLocalTranslation(0, 0.2f, 1f);
+        node.attachChild(cameraNode);
+
+        // Création de la collision
         CollisionShape shape = new BoxCollisionShape(new Vector3f(1f, 0.5f, 1f));
 
         control = new RigidBodyControl(shape, mass);
@@ -46,5 +51,9 @@ public class Drone {
 
     public RigidBodyControl getControl() {
         return control;
+    }
+
+    public Node getCameraNode() {
+        return cameraNode;
     }
 }

@@ -19,11 +19,16 @@ import com.jme3.util.SkyFactory;
 import com.jme3.water.WaterFilter;
 
 import com.jme3.input.ChaseCamera;
+import com.jme3.input.KeyInput;
+import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.KeyTrigger;
 
 import fr.univtln.infomath.dronsim.control.LocalTestingControler;
 //import fr.univtln.infomath.dronsim.viewer.primitives.ReferentialNode;
 
-public class Simulateur extends SimpleApplication implements PhysicsCollisionListener {
+public class Simulateur extends SimpleApplication implements PhysicsCollisionListener, ActionListener {
+    private boolean firstPersonView = true;
+    private ChaseCamera chaseCam;
 
     private BulletAppState bulletState;
     private PhysicsSpace space;
@@ -84,7 +89,7 @@ public class Simulateur extends SimpleApplication implements PhysicsCollisionLis
                 200f);
         scene.attachChild(droneB.getNode());
         // Contrôle clavier du drone
-        controlerA = new LocalTestingControler(inputManager, droneA.getControl(), cam);
+        controlerA = new LocalTestingControler(inputManager, droneA, cam);
 
         // Lumière et ciel
         initLighting();
@@ -100,14 +105,17 @@ public class Simulateur extends SimpleApplication implements PhysicsCollisionLis
         flyCam.setEnabled(false); // désactive la caméra libre
 
         // ChaseCamera
-        Spatial droneSpatial = droneA.getNode();
-        ChaseCamera chaseCam = new ChaseCamera(cam, droneSpatial, inputManager);
-        chaseCam.setDefaultDistance(10f); // distance par défaut entre la caméra et le drone
-        chaseCam.setMaxDistance(20f); // distance max (molette)
-        chaseCam.setMinDistance(3f); // distance min (molette)
-        chaseCam.setSmoothMotion(true); // mouvement fluide
-        chaseCam.setTrailingEnabled(true); // caméra suit le mouvement
+        chaseCam = new ChaseCamera(cam, droneA.getNode(), inputManager);
+        chaseCam.setDefaultDistance(10f);
+        chaseCam.setMaxDistance(20f);
+        chaseCam.setMinDistance(3f);
+        chaseCam.setSmoothMotion(true);
+        chaseCam.setTrailingEnabled(true);
         chaseCam.setDragToRotate(false);
+        chaseCam.setEnabled(false); // On commence avec vue interne
+
+        inputManager.addMapping("SWITCH_VIEW", new KeyTrigger(KeyInput.KEY_T));
+        inputManager.addListener(this, "SWITCH_VIEW");
 
     }
 
@@ -148,32 +156,27 @@ public class Simulateur extends SimpleApplication implements PhysicsCollisionLis
         if (controlerA != null) {
             controlerA.update(tpf);
         }
+
+        // Mettre à jour la position de la caméra seulement en vue FPS
+        if (firstPersonView) {
+            Node camNode = controlerA.getDrone().getCameraNode();
+            cam.setLocation(camNode.getWorldTranslation());
+            cam.setRotation(camNode.getWorldRotation());
+        }
     }
 
     @Override
     public void collision(PhysicsCollisionEvent event) {
         // Rien à faire ici, la physique gère la collision naturellement
-        /*
-         * Spatial a = event.getNodeA();
-         * Spatial b = event.getNodeB();
-         *
-         * if (a == null || b == null)
-         * return;
-         *
-         * String nameA = a.getName() != null ? a.getName() : "";
-         * String nameB = b.getName() != null ? b.getName() : "";
-         *
-         * if ((nameA.equals("VehicleA") && nameB.equals("Terrain")) ||
-         * (nameB.equals("VehicleA") && nameA.equals("Terrain"))) {
-         *
-         * // System.out.println(" Drone A a touché le terrain !");
-         * if (controlerA != null) {
-         * RigidBodyControl control = controlerA.getControl();
-         * // control.setLinearVelocity(Vector3f.ZERO);
-         * // control.setAngularVelocity(Vector3f.ZERO);
-         * }
-         * }
-         */
+
+    }
+
+    @Override
+    public void onAction(String name, boolean isPressed, float tpf) {
+        if ("SWITCH_VIEW".equals(name) && isPressed) {
+            firstPersonView = !firstPersonView;
+            chaseCam.setEnabled(!firstPersonView);
+        }
     }
 
 }

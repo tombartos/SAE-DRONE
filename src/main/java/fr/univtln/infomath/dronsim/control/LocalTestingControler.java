@@ -7,18 +7,22 @@ import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.bullet.control.RigidBodyControl;
+import fr.univtln.infomath.dronsim.simulation.Drone;
 
 public class LocalTestingControler implements ActionListener {
+
+    private static final float PLAYER_ACCEL = 1.0f;
+    private static final float PLAYER_FORCE = 1000 * PLAYER_ACCEL; // F = M(4m diameter steel ball) * A ( 1m/s²)
 
     private static final String FORWARD = "FORWARD", BACKWARD = "BACKWARD", LEFT = "LEFT", RIGHT = "RIGHT";
     private static final String ASCEND = "ASCEND", DESCEND = "DESCEND";
     private boolean forward, backward, left, right;
     private boolean ascend, descend;
-    private RigidBodyControl control;
+    private Drone drone;
     private Camera cam;
 
-    public LocalTestingControler(InputManager inputManager, RigidBodyControl droneControl, Camera cam) {
-        this.control = droneControl;
+    public LocalTestingControler(InputManager inputManager, Drone drone, Camera cam) {
+        this.drone = drone;
         this.cam = cam;
 
         inputManager.addMapping(FORWARD, new KeyTrigger(KeyInput.KEY_UP), new KeyTrigger(KeyInput.KEY_W));
@@ -46,10 +50,7 @@ public class LocalTestingControler implements ActionListener {
         leftDir.setY(0);
         leftDir.normalizeLocal();
 
-        Vector3f verticalDir = cam.getDirection().clone();
-        verticalDir.setX(0);
-        verticalDir.setZ(0);
-        verticalDir.normalizeLocal(); // pure direction verticale caméra
+        Vector3f verticalDir = Vector3f.UNIT_Y.clone();
 
         if (forward)
             force.addLocal(forwardDir);
@@ -65,8 +66,8 @@ public class LocalTestingControler implements ActionListener {
             force.subtractLocal(verticalDir);
 
         if (!force.equals(Vector3f.ZERO)) {
-            force.normalizeLocal().multLocal(500); // intensité constante
-            control.applyCentralForce(force);
+            force.normalizeLocal().multLocal(PLAYER_FORCE); // intensité constante
+            drone.getControl().applyCentralForce(force);
         }
     }
 
@@ -83,7 +84,11 @@ public class LocalTestingControler implements ActionListener {
         }
     }
 
+    public Drone getDrone() {
+        return drone;
+    }
+
     public RigidBodyControl getControl() {
-        return control;
+        return drone.getControl();
     }
 }
