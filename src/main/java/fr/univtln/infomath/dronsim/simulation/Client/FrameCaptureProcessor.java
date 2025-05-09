@@ -19,7 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A custom processor to capture frames from the render output.
+ * A custom processor to capture frames from the render output for JMonkey and
+ * send them on the network with a GStreamer library.
  */
 public class FrameCaptureProcessor implements SceneProcessor {
 
@@ -35,6 +36,14 @@ public class FrameCaptureProcessor implements SceneProcessor {
     private int width;
     private int height;
 
+    /**
+     * Constructor for the FrameCaptureProcessor.
+     *
+     * @param width           The width of the frame to capture.
+     * @param height          The height of the frame to capture.
+     * @param gstreamerSender The GStreamerSender instance to send the captured
+     *                        frames.
+     */
     public FrameCaptureProcessor(int width, int height, GStreamerSender gstreamerSender) {
         this.byteBuffer = BufferUtils.createByteBuffer(width * height * 4); // RGB = 3
         this.gstreamerSender = gstreamerSender;
@@ -43,6 +52,13 @@ public class FrameCaptureProcessor implements SceneProcessor {
 
     }
 
+    /**
+     * This method is called when the processor is added to the render manager.
+     * It initializes the processor.
+     *
+     * @param rm The render manager.
+     * @param vp The viewport.
+     */
     @Override
     public void initialize(RenderManager rm, ViewPort vp) {
         renderer = rm.getRenderer();
@@ -51,26 +67,50 @@ public class FrameCaptureProcessor implements SceneProcessor {
         System.out.println("FrameCaptureProcessor initialized");
     }
 
+    /**
+     * Not implemented, no need to reshape the viewport.
+     */
     @Override
     public void reshape(ViewPort vp, int w, int h) {
         return;
     }
 
+    /**
+     * Returns true if the processor is initialized.
+     * This is used to check if the processor is ready to capture frames.
+     */
     @Override
     public boolean isInitialized() {
         return isInitialized;
     }
 
+    /**
+     * Not implemented, no need to preFrame.
+     */
     @Override
     public void preFrame(float tpf) {
         return;
     }
 
+    /**
+     * Not implemented, no need to preQueue.
+     */
     @Override
     public void postQueue(RenderQueue rq) {
         return;
     }
 
+    /**
+     * Main method to capture the frame.
+     * It reads the framebuffer into a bytebuffer, flips it vertically, and sends
+     * it to the GStreamerSender.
+     * This method is called after the frame is rendered.
+     * Important : it reads the default framebuffer (null) instead of the "out"
+     * framebuffer
+     *
+     * @param out This is supposed to be the framebuffer we read from, but we don't
+     *            use it
+     */
     @Override
     public void postFrame(FrameBuffer out) {
 
@@ -116,6 +156,11 @@ public class FrameCaptureProcessor implements SceneProcessor {
 
     /**
      * Flips the framebuffer vertically and returns it as a bytearray.
+     *
+     * @param buffer The bytebuffer to flip.
+     * @param width  The width of the framebuffer.
+     * @param height The height of the framebuffer.
+     * @return The flipped bytearray.
      */
     private byte[] flipVertically(ByteBuffer buffer, int width, int height) {
         int bytesPerPixel = 4; // Assuming RGBA format
@@ -134,11 +179,19 @@ public class FrameCaptureProcessor implements SceneProcessor {
         return flipped;
     }
 
+    /**
+     * Not implemented, no need to cleanup.
+     */
     @Override
     public void cleanup() {
         return;
     }
 
+    /**
+     * Set the profiler.
+     *
+     * @param profiler The profiler to set.
+     */
     @Override
     public void setProfiler(AppProfiler profiler) {
         this.profiler = profiler;
