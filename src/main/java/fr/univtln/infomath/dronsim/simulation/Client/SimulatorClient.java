@@ -1,4 +1,4 @@
-package fr.univtln.infomath.dronsim.simulation;
+package fr.univtln.infomath.dronsim.simulation.Client;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.FileLocator;
@@ -17,13 +17,14 @@ import com.jme3.post.FilterPostProcessor;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.*;
 import com.jme3.system.AppSettings;
-import com.jme3.system.JmeContext;
 import com.jme3.util.SkyFactory;
 import com.jme3.water.WaterFilter;
 
 import com.jme3.input.ChaseCamera;
 
 import fr.univtln.infomath.dronsim.control.LocalTestingControler;
+import fr.univtln.infomath.dronsim.simulation.Drone;
+import fr.univtln.infomath.dronsim.simulation.jmeMessages.DroneDTOMessage;
 //import fr.univtln.infomath.dronsim.viewer.primitives.ReferentialNode;
 import fr.univtln.infomath.dronsim.Utils.GStreamerSender;
 
@@ -41,7 +42,8 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
     private Node scene;
     private LocalTestingControler controlerA;
     private static String ipDestVideo;
-    private static int width = 1024;
+    private static int portDestVideo = 5600; // Default port for QGroundControl video stream
+    private static int width = 1024; // Default window and video resolution
     private static int height = 768;
     private static String server_ip;
     private static int server_port = 6143; // Default JME server port
@@ -68,9 +70,12 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
     @Override
     public void simpleInitApp() {
         setPauseOnLostFocus(false);
+
+        // Network initialisation
         Client client;
         try {
             client = Network.connectToServer(server_ip, server_port);
+            client.addMessageListener(new ClientListener(), DroneDTOMessage.class);
             client.start();
             log.info("Connected to server at " + server_ip + ":" + server_port);
         } catch (IOException e) {
@@ -80,7 +85,7 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
         }
 
         // Initialisation GStreamer
-        GStreamerSender gstreamerSender = new GStreamerSender(1024, 768, ipDestVideo);
+        GStreamerSender gstreamerSender = new GStreamerSender(height, width, ipDestVideo, portDestVideo);
 
         // Initialisation du processeur de capture d'images
         FrameCaptureProcessor frameCaptureProcessor = new FrameCaptureProcessor(width, height, gstreamerSender);

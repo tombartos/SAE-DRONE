@@ -5,19 +5,21 @@ import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
-import com.jme3.bullet.util.CollisionShapeFactory;
-import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+
+//TODO : Raccorder au diagramme de classes
 
 public class Drone {
 
     private RigidBodyControl control;
     private Node node;
+    private Vector3f position;
 
     public Drone(AssetManager assetManager, PhysicsSpace space, String modelPath, String name, Vector3f position,
             float mass) {
+        this.position = position;
         node = new Node(name);
         Spatial model = assetManager.loadModel(modelPath);
         // model.rotate(FastMath.HALF_PI, 0f, 0f); // Applique la rotation au modèle,
@@ -46,5 +48,9 @@ public class Drone {
 
     public RigidBodyControl getControl() {
         return control;
+    }
+
+    public Vector3f getPosition() {
+        return position;
     }
 }

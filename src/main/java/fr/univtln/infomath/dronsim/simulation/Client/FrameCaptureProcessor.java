@@ -1,4 +1,4 @@
-package fr.univtln.infomath.dronsim.simulation;
+package fr.univtln.infomath.dronsim.simulation.Client;
 
 import java.nio.ByteBuffer;
 
