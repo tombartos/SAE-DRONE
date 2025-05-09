@@ -5,7 +5,6 @@ target
 .project
 .vscode/
 
-*.java
 *.iml
 .idea/
 bin/
