@@ -37,6 +37,12 @@ public class GStreamerSender {
         pipeline.play();
     }
 
+    /**
+     * Pushes a video frame to the GStreamer pipeline.
+     *
+     * @param frameData The byte array containing the video frame data. Must be RGBA
+     *                  format.
+     */
     public void pushFrame(byte[] frameData) {
         Buffer buffer = new Buffer(frameData.length);
         buffer.map(true).put(frameData);
