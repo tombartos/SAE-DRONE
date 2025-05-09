@@ -23,7 +23,7 @@ import com.jme3.water.WaterFilter;
 import com.jme3.input.ChaseCamera;
 
 import fr.univtln.infomath.dronsim.control.LocalTestingControler;
-import fr.univtln.infomath.dronsim.simulation.Drone;
+import fr.univtln.infomath.dronsim.simulation.Drones.Drone;
 import fr.univtln.infomath.dronsim.simulation.jmeMessages.DroneDTOMessage;
 //import fr.univtln.infomath.dronsim.viewer.primitives.ReferentialNode;
 import fr.univtln.infomath.dronsim.Utils.GStreamerSender;
@@ -112,7 +112,10 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
         attachTerrain(scene);
 
         // Ajout du drone
-        Drone droneA = new Drone(
+        // TODO : enlever cette init en dur et faire une requete serveur pour recuperer
+        // les drones
+        Drone droneA = Drone.createDrone(
+                0,
                 assetManager,
                 space,
                 "vehicle/bluerobotics/br2r4/br2-r4-vehicle.j3o",
@@ -121,7 +124,8 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
                 200f);
         scene.attachChild(droneA.getNode());
 
-        Drone droneB = new Drone(
+        Drone droneB = Drone.createDrone(
+                1,
                 assetManager,
                 space,
                 "vehicle/subseatech/guardian/guardian-vehicle.j3o",
@@ -130,7 +134,7 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
                 200f);
         scene.attachChild(droneB.getNode());
         // Contrôle clavier du drone
-        controlerA = new LocalTestingControler(inputManager, droneA.getControl(), cam);
+        controlerA = new LocalTestingControler(inputManager, droneA.getControl(), cam, client);
 
         // Lumière et ciel
         initLighting();

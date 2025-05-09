@@ -1,4 +1,7 @@
-package fr.univtln.infomath.dronsim.simulation;
+package fr.univtln.infomath.dronsim.simulation.Drones;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.PhysicsSpace;
@@ -12,13 +15,15 @@ import com.jme3.scene.Spatial;
 //TODO : Raccorder au diagramme de classes
 
 public class Drone {
-
+    private static final List<Drone> drones = new ArrayList<>();
+    private final int id; // Autoincrement (to be implemented) or gm choice (to be implemented)
     private RigidBodyControl control;
     private Node node;
     private Vector3f position;
 
-    public Drone(AssetManager assetManager, PhysicsSpace space, String modelPath, String name, Vector3f position,
-            float mass) {
+    private Drone(int id, AssetManager assetManager, PhysicsSpace space, String modelPath, String name,
+            Vector3f position, float mass) {
+        this.id = id;
         this.position = position;
         node = new Node(name);
         Spatial model = assetManager.loadModel(modelPath);
@@ -39,7 +44,14 @@ public class Drone {
         control.setGravity(Vector3f.ZERO);
         control.setLinearDamping(0.9f);
         control.setAngularDamping(0.9f);
+    }
 
+    public static Drone createDrone(int id, AssetManager assetManager, PhysicsSpace space, String modelPath,
+            String name,
+            Vector3f position, float mass) {
+        Drone drone = new Drone(id, assetManager, space, modelPath, name, position, mass);
+        drones.add(drone);
+        return drone;
     }
 
     public Node getNode() {

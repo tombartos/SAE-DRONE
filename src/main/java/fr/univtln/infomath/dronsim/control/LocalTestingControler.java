@@ -5,7 +5,16 @@ import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.Vector3f;
+import com.jme3.network.Client;
+import com.jme3.network.Message;
 import com.jme3.renderer.Camera;
+
+import de.lessvoid.nifty.effects.impl.Move;
+import fr.univtln.infomath.dronsim.simulation.jmeMessages.DroneMovementRequestMessage;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import com.jme3.bullet.control.RigidBodyControl;
 
 public class LocalTestingControler implements ActionListener {
@@ -16,10 +25,12 @@ public class LocalTestingControler implements ActionListener {
     private boolean ascend, descend;
     private RigidBodyControl control;
     private Camera cam;
+    private Client client;
 
-    public LocalTestingControler(InputManager inputManager, RigidBodyControl droneControl, Camera cam) {
+    public LocalTestingControler(InputManager inputManager, RigidBodyControl droneControl, Camera cam, Client client) {
         this.control = droneControl;
         this.cam = cam;
+        this.client = client;
 
         inputManager.addMapping(FORWARD, new KeyTrigger(KeyInput.KEY_UP), new KeyTrigger(KeyInput.KEY_W));
         inputManager.addMapping(
@@ -35,38 +46,65 @@ public class LocalTestingControler implements ActionListener {
     }
 
     public void update(float tpf) {
-        Vector3f force = new Vector3f();
+        // TODO : Put this server side
 
-        // Directions "plafond"
-        Vector3f forwardDir = cam.getDirection().clone();
-        forwardDir.setY(0);
-        forwardDir.normalizeLocal();
+        // Vector3f force = new Vector3f();
 
-        Vector3f leftDir = cam.getLeft().clone();
-        leftDir.setY(0);
-        leftDir.normalizeLocal();
+        // // Directions "plafond"
+        // Vector3f forwardDir = cam.getDirection().clone();
+        // forwardDir.setY(0);
+        // forwardDir.normalizeLocal();
 
-        Vector3f verticalDir = cam.getDirection().clone();
-        verticalDir.setX(0);
-        verticalDir.setZ(0);
-        verticalDir.normalizeLocal(); // pure direction verticale caméra
+        // Vector3f leftDir = cam.getLeft().clone();
+        // leftDir.setY(0);
+        // leftDir.normalizeLocal();
 
-        if (forward)
-            force.addLocal(forwardDir);
-        if (backward)
-            force.subtractLocal(forwardDir);
-        if (left)
-            force.addLocal(leftDir);
-        if (right)
-            force.subtractLocal(leftDir);
-        if (ascend)
-            force.addLocal(verticalDir);
-        if (descend)
-            force.subtractLocal(verticalDir);
+        // Vector3f verticalDir = cam.getDirection().clone();
+        // verticalDir.setX(0);
+        // verticalDir.setZ(0);
+        // verticalDir.normalizeLocal(); // pure direction verticale caméra
 
-        if (!force.equals(Vector3f.ZERO)) {
-            force.normalizeLocal().multLocal(500); // intensité constante
-            control.applyCentralForce(force);
+        // if (forward)
+        // force.addLocal(forwardDir);
+        // if (backward)
+        // force.subtractLocal(forwardDir);
+        // if (left)
+        // force.addLocal(leftDir);
+        // if (right)
+        // force.subtractLocal(leftDir);
+        // if (ascend)
+        // force.addLocal(verticalDir);
+        // if (descend)
+        // force.subtractLocal(verticalDir);
+
+        // if (!force.equals(Vector3f.ZERO)) {
+        // force.normalizeLocal().multLocal(500); // intensité constante
+        // control.applyCentralForce(force);
+        // }
+
+        List<String> directions = new ArrayList<>();
+        if (forward) {
+            directions.add("FORWARD");
+        }
+        if (backward) {
+            directions.add("BACKWARD");
+        }
+        if (left) {
+            directions.add("LEFT");
+        }
+        if (right) {
+            directions.add("RIGHT");
+        }
+        if (ascend) {
+            directions.add("ASCEND");
+        }
+        if (descend) {
+            directions.add("DESCEND");
+        }
+        if (!directions.isEmpty()) {
+            Message message = new DroneMovementRequestMessage(directions);
+            client.send(message);
+
         }
     }
 

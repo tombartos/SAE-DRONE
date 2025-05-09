@@ -6,6 +6,7 @@ import com.jme3.network.serializing.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import java.util.List;
 
 /*
  * This class is used to send drone movement requests from the client to the server.
@@ -16,5 +17,7 @@ import lombok.NoArgsConstructor;
 @Serializable
 public class DroneMovementRequestMessage extends AbstractMessage {
     // TODO : implement this class
-    private String test;
+
+    // TEST MESSAGE
+    private List<String> Directions;
 }

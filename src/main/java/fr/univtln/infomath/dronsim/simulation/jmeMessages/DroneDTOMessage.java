@@ -2,7 +2,9 @@ package fr.univtln.infomath.dronsim.simulation.jmeMessages;
 
 import com.jme3.network.AbstractMessage;
 import com.jme3.network.serializing.Serializable;
-import fr.univtln.infomath.dronsim.simulation.DroneDTO;
+
+import fr.univtln.infomath.dronsim.simulation.Drones.DroneDTO;
+
 import java.util.List;
 
 import lombok.AllArgsConstructor;
