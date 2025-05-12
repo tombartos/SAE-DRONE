@@ -17,9 +17,13 @@ import com.jme3.scene.Spatial;
 public class Drone {
     private static final List<Drone> drones = new ArrayList<>();
     private final int id; // Autoincrement (to be implemented) or gm choice (to be implemented)
+    private DroneModel model;
+    private int batteryLevel;
+    private Vector3f position;
+    private List<Module> modules = new ArrayList<>();
+
     private RigidBodyControl control;
     private Node node;
-    private Vector3f position;
 
     private Drone(int id, AssetManager assetManager, PhysicsSpace space, String modelPath, String name,
             Vector3f position, float mass) {

@@ -143,4 +143,7 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
     public void collision(PhysicsCollisionEvent event) {
         // Handle collision events here if needed
     }
+
+    // geotools WSG84
+    // Choisir zone UTM
 }
