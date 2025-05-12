@@ -17,7 +17,7 @@ import java.util.List;
 
 import com.jme3.bullet.control.RigidBodyControl;
 
-public class LocalTestingControler implements ActionListener {
+public class LocalTestingControler implements ActionListener, GeneralControlerInterface {
 
     private static final String FORWARD = "FORWARD", BACKWARD = "BACKWARD", LEFT = "LEFT", RIGHT = "RIGHT";
     private static final String ASCEND = "ASCEND", DESCEND = "DESCEND";

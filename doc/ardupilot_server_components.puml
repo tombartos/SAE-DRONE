@@ -35,11 +35,22 @@ rectangle "Machine Serveur" {
     component "Video Decoder" as JmeRenderer
     component "Jme Renderer" as JmeRenderer
     component "Jme Server" as JmeServer
+    component "Manager" as Manager
 
     SecProxy2 -left- JmeServer : MAVLink
     JmeRenderer -- JmeServer : UDP Custom
     MDJAPI -- JmeServer : Control
     AdminClient -- JmeServer : Configuration
+    Manager -- JmeServer : Démarre
+    Manager -- JmeRenderer : Démarre
+    Manager -- SecProxy2 : Démarre
+    Launcher -- Manager
+
+
+    note left of Manager
+        Permet de démarrer les différents composants du serveur et de gérer
+        l'authentification.
+    end note
 }
 
 SecProxy1 -- SecProxy2 : MAVSec

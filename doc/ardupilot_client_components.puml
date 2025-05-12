@@ -35,12 +35,20 @@ interface "Admin API" as AdminClient
 rectangle "Machine Serveur" {
     component "Jme Server" as JmeServer
     component "MAVSec proxy" as SecProxy2
+    component "Manager" as Manager
+
+    note left of Manager
+        Permet de démarrer les différents composants du serveur et de gérer
+        l'authentification.
+    end note
 
     JmeRenderer - JmeServer : UDP Custom Chiffré
     MDJAPI -- JmeServer : Control
     AdminClient -- JmeServer : Configuration
     SecProxy2 -left- JmeServer : MAVLink
     SecProxy1 -- SecProxy2 : MAVSec
+    Launcher -- Manager
+    Manager -- JmeServer : Control
 }
 
 MDJ --( MDJAPI
