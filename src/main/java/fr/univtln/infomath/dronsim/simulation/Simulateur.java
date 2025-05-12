@@ -1,5 +1,8 @@
 package fr.univtln.infomath.dronsim.simulation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.bullet.BulletAppState;
@@ -27,6 +30,13 @@ import fr.univtln.infomath.dronsim.control.LocalTestingControler;
 //import fr.univtln.infomath.dronsim.viewer.primitives.ReferentialNode;
 
 public class Simulateur extends SimpleApplication implements PhysicsCollisionListener, ActionListener {
+
+    private List<Drone> drones = new ArrayList<>();
+    private List<Evenement> evenements = new ArrayList<>();
+    private List<EntiteMarine> entitesMarines = new ArrayList<>();
+
+    private int droneIndex = 0;
+
     private boolean firstPersonView = true;
     private ChaseCamera chaseCam;
 
@@ -34,7 +44,7 @@ public class Simulateur extends SimpleApplication implements PhysicsCollisionLis
     private PhysicsSpace space;
     private FilterPostProcessor fpp;
     private Node scene;
-    private LocalTestingControler controlerA;
+    private LocalTestingControler controleDrone;
 
     public static void main(String[] args) {
         AppSettings settings = new AppSettings(true);
@@ -63,10 +73,6 @@ public class Simulateur extends SimpleApplication implements PhysicsCollisionLis
         // Enregistrement du dossier d'assets
         assetManager.registerLocator("data/asset", FileLocator.class);
 
-        // Ajout d’un repère
-        // ReferentialNode refNode = new ReferentialNode(assetManager);
-        // scene.attachChild(refNode);
-
         // Ajout du terrain
         attachTerrain(scene);
 
@@ -77,8 +83,11 @@ public class Simulateur extends SimpleApplication implements PhysicsCollisionLis
                 "vehicle/bluerobotics/br2r4/br2-r4-vehicle.j3o",
                 "VehicleA",
                 new Vector3f(0.0f, 2.0f, 0.0f),
-                200f);
+                200f, 1500f);
         scene.attachChild(droneA.getNode());
+        drones.add(droneA);
+        // Contrôle clavier du drone A par défaut
+        controleDrone = new LocalTestingControler(inputManager, droneA, cam);
 
         Drone droneB = new Drone(
                 assetManager,
@@ -86,10 +95,9 @@ public class Simulateur extends SimpleApplication implements PhysicsCollisionLis
                 "vehicle/subseatech/guardian/guardian-vehicle.j3o",
                 "VehicleB",
                 new Vector3f(3.0f, 2.0f, 0.0f),
-                200f);
+                200f, 800f);
         scene.attachChild(droneB.getNode());
-        // Contrôle clavier du drone
-        controlerA = new LocalTestingControler(inputManager, droneA, cam);
+        drones.add(droneB);
 
         // Lumière et ciel
         initLighting();
@@ -116,12 +124,29 @@ public class Simulateur extends SimpleApplication implements PhysicsCollisionLis
 
         inputManager.addMapping("SWITCH_VIEW", new KeyTrigger(KeyInput.KEY_T));
         inputManager.addListener(this, "SWITCH_VIEW");
+        inputManager.addMapping("SWITCH_DRONE", new KeyTrigger(KeyInput.KEY_R));
+        inputManager.addListener(this, "SWITCH_DRONE");
+
+        // Evenement eventZone = new Evenement(new Vector3f(0, 2, 0), new Vector3f(15,
+        // 15, 15), assetManager, scene);
+        // eventZone.definirCourant(new Vector3f(0, 0, 1), 1000);
+        // evenements.add(eventZone);
+
+        // Un poisson
+        // entitesMarines.add(new EntiteMarine(assetManager, "poisson/fish1.glb", new
+        // Vector3f(5, 1, 5),
+        // new Vector3f(10, 5, 10), 2f, true));
+
+        // Un bateau
+        // entitesMarines.add(new EntiteMarine(assetManager, "bateau/titanic.glb", new
+        // Vector3f(-5, 0, 0),
+        // new Vector3f(30, 5, 30), 1f, false));
 
     }
 
     private void attachTerrain(Node parent) {
         Node terrainNode = new Node("Terrain");
-        terrainNode.setLocalTranslation(new Vector3f(3.0f, -15.0f, 0.0f));
+        terrainNode.setLocalTranslation(new Vector3f(0.0f, -15.0f, 0.0f));
         Spatial terrain = assetManager.loadModel("Models/manta_point_version_6_superseded.glb");
         terrainNode.attachChild(terrain);
         parent.attachChild(terrainNode);
@@ -153,16 +178,24 @@ public class Simulateur extends SimpleApplication implements PhysicsCollisionLis
 
     @Override
     public void simpleUpdate(float tpf) {
-        if (controlerA != null) {
-            controlerA.update(tpf);
+        if (controleDrone != null) {
+            controleDrone.update(tpf);
         }
 
         // Mettre à jour la position de la caméra seulement en vue FPS
         if (firstPersonView) {
-            Node camNode = controlerA.getDrone().getCameraNode();
+            Node camNode = controleDrone.getDrone().getCameraNode();
             cam.setLocation(camNode.getWorldTranslation());
             cam.setRotation(camNode.getWorldRotation());
         }
+        // for (Evenement evt : evenements) {
+        // evt.apply(drones, tpf);
+        // }
+
+        // for (EntiteMarine e : entitesMarines) {
+        // e.update(tpf);
+        // }
+
     }
 
     @Override
@@ -176,6 +209,13 @@ public class Simulateur extends SimpleApplication implements PhysicsCollisionLis
         if ("SWITCH_VIEW".equals(name) && isPressed) {
             firstPersonView = !firstPersonView;
             chaseCam.setEnabled(!firstPersonView);
+        }
+        if ("SWITCH_DRONE".equals(name) && isPressed) {
+            droneIndex = (droneIndex + 1) % drones.size();
+            Drone selectedDrone = drones.get(droneIndex);
+            controleDrone = new LocalTestingControler(inputManager, selectedDrone, cam);
+            chaseCam.setSpatial(selectedDrone.getNode());
+            System.out.println("Drone sélectionné : " + selectedDrone.getNode().getName());
         }
     }
 
