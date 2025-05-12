@@ -26,6 +26,8 @@ public class LocalTestingControler implements ActionListener, GeneralControlerIn
     private RigidBodyControl control;
     private Camera cam;
     private Client client;
+    private int droneId;
+    private int clientId;
 
     public LocalTestingControler(InputManager inputManager, RigidBodyControl droneControl, Camera cam, Client client) {
         this.control = droneControl;

@@ -12,22 +12,26 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 
-//TODO : Raccorder au diagramme de classes
+import lombok.Getter;
 
+@Getter
 public class Drone {
-    private static final List<Drone> drones = new ArrayList<>();
+    private static List<Drone> drones = new ArrayList<>();
     private final int id; // Autoincrement (to be implemented) or gm choice (to be implemented)
+    private final int clientId;
     private DroneModel model;
     private int batteryLevel;
     private Vector3f position;
+    private Vector3f angular;
     private List<Module> modules = new ArrayList<>();
 
     private RigidBodyControl control;
     private Node node;
 
-    private Drone(int id, AssetManager assetManager, PhysicsSpace space, String modelPath, String name,
+    private Drone(int id, int clientId, AssetManager assetManager, PhysicsSpace space, String modelPath, String name,
             Vector3f position, float mass) {
         this.id = id;
+        this.clientId = clientId;
         this.position = position;
         node = new Node(name);
         Spatial model = assetManager.loadModel(modelPath);
@@ -50,23 +54,17 @@ public class Drone {
         control.setAngularDamping(0.9f);
     }
 
-    public static Drone createDrone(int id, AssetManager assetManager, PhysicsSpace space, String modelPath,
+    public static Drone createDrone(int id, int clientId, AssetManager assetManager, PhysicsSpace space,
+            String modelPath,
             String name,
             Vector3f position, float mass) {
-        Drone drone = new Drone(id, assetManager, space, modelPath, name, position, mass);
+        Drone drone = new Drone(id, clientId, assetManager, space, modelPath, name, position, mass);
         drones.add(drone);
         return drone;
     }
 
-    public Node getNode() {
-        return node;
+    public static List<Drone> getDrones() {
+        return drones;
     }
 
-    public RigidBodyControl getControl() {
-        return control;
-    }
-
-    public Vector3f getPosition() {
-        return position;
-    }
 }

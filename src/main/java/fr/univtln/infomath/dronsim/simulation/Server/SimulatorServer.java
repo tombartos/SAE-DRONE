@@ -24,24 +24,36 @@ import org.slf4j.LoggerFactory;
 import fr.univtln.infomath.dronsim.simulation.Client.SimulatorClient;
 import fr.univtln.infomath.dronsim.simulation.Drones.Drone;
 import fr.univtln.infomath.dronsim.simulation.Drones.DroneDTO;
+import fr.univtln.infomath.dronsim.simulation.Drones.DroneInitData;
 import fr.univtln.infomath.dronsim.simulation.jmeMessages.DroneDTOMessage;
 import fr.univtln.infomath.dronsim.simulation.jmeMessages.DroneMovementRequestMessage;
+import fr.univtln.infomath.dronsim.simulation.jmeMessages.Handshake1;
+import fr.univtln.infomath.dronsim.simulation.jmeMessages.Handshake2;
+
+import com.jme3.network.Filters;
+import com.jme3.network.HostedConnection;
 import com.jme3.network.Message;
 
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
 
+//TODO: fix execution
 public class SimulatorServer extends SimpleApplication implements PhysicsCollisionListener {
     private static final int SERVER_PORT = 6143; // Default JME server port
     private static final Logger log = LoggerFactory.getLogger(SimulatorClient.class);
     private static ServerListener serverListener;
     private static Server server;
-    private static int test = 0;
+    private static int idMap;
     private BulletAppState bulletState;
     private PhysicsSpace space;
     private Node scene;
 
     public static void main(String[] args) {
+        if (args.length != 1) {
+            idMap = 0;
+            log.info("No map ID provided, using default: " + idMap);
+            log.info("Launch arguments :  <map_id>");
+        }
         SimulatorServer app = new SimulatorServer();
         app.start(JmeContext.Type.Headless); // headless type for servers!
     }
@@ -51,6 +63,7 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
      * application.
      */
     public void initializeSerializables() {
+        Serializer.registerClass(Handshake1.class);
         Serializer.registerClass(DroneDTO.class);
         Serializer.registerClass(DroneDTOMessage.class);
         Serializer.registerClass(DroneMovementRequestMessage.class);
@@ -61,7 +74,9 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         try {
             server = Network.createServer(SERVER_PORT);
             initializeSerializables();
-            serverListener = new ServerListener();
+            serverListener = new ServerListener(this);
+            server.addMessageListener(serverListener, Handshake1.class);
+            server.addMessageListener(serverListener, Handshake2.class);
             server.addMessageListener(serverListener, DroneMovementRequestMessage.class);
             server.addMessageListener(serverListener, DroneDTOMessage.class);
             server.start();
@@ -93,6 +108,7 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         // Ajout du drone
         Drone droneA = Drone.createDrone(
                 0,
+                0,
                 assetManager,
                 space,
                 "vehicle/bluerobotics/br2r4/br2-r4-vehicle.j3o",
@@ -102,6 +118,7 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         scene.attachChild(droneA.getNode());
 
         Drone droneB = Drone.createDrone(
+                1,
                 1,
                 assetManager,
                 space,
@@ -142,6 +159,21 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
     @Override
     public void collision(PhysicsCollisionEvent event) {
         // Handle collision events here if needed
+    }
+
+    public void sendHandshake2(int clientId, HostedConnection source) {
+        int droneId = -1;
+        ArrayList<DroneInitData> dronesInitData = new ArrayList<>();
+        for (Drone drone : Drone.getDrones()) {
+            dronesInitData
+                    .add(new DroneInitData(drone.getId(), drone.getPosition(), drone.getAngular(), drone.getModel()));
+            if (drone.getClientId() == clientId) {
+                droneId = drone.getId();
+            }
+
+        }
+        Handshake2 handshake2 = new Handshake2(dronesInitData, idMap, droneId);
+        server.broadcast(Filters.in(source), handshake2);
     }
 
     // geotools WSG84

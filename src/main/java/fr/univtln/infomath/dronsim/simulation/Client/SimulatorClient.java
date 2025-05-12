@@ -25,6 +25,7 @@ import com.jme3.input.ChaseCamera;
 import fr.univtln.infomath.dronsim.control.LocalTestingControler;
 import fr.univtln.infomath.dronsim.simulation.Drones.Drone;
 import fr.univtln.infomath.dronsim.simulation.jmeMessages.DroneDTOMessage;
+import fr.univtln.infomath.dronsim.simulation.jmeMessages.Handshake1;
 //import fr.univtln.infomath.dronsim.viewer.primitives.ReferentialNode;
 import fr.univtln.infomath.dronsim.Utils.GStreamerSender;
 
@@ -36,6 +37,7 @@ import org.slf4j.LoggerFactory;
 public class SimulatorClient extends SimpleApplication implements PhysicsCollisionListener {
     private static final Logger log = LoggerFactory.getLogger(SimulatorClient.class);
 
+    private static int clientId;
     private BulletAppState bulletState;
     private PhysicsSpace space;
     private FilterPostProcessor fpp;
@@ -52,10 +54,11 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
         if (args.length != 2) {
             ipDestVideo = "127.0.0.1";
             log.info("No destination IP address provided, using default: " + ipDestVideo);
-            log.info("Launch arguments :  <video_destination_ip> <server_ip>");
+            log.info("Launch arguments :  <video_destination_ip> <server_ip> <client_id>");
         }
         ipDestVideo = args[0];
         server_ip = args[1];
+        clientId = Integer.parseInt(args[2]);
         AppSettings settings = new AppSettings(true);
         settings.setWidth(width);
         settings.setHeight(height);
@@ -111,10 +114,14 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
         // Ajout du terrain
         attachTerrain(scene);
 
+        // Handshake
+        client.send(new Handshake1(clientId));
+
         // Ajout du drone
         // TODO : enlever cette init en dur et faire une requete serveur pour recuperer
         // les drones
         Drone droneA = Drone.createDrone(
+                0,
                 0,
                 assetManager,
                 space,
@@ -124,15 +131,15 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
                 200f);
         scene.attachChild(droneA.getNode());
 
-        Drone droneB = Drone.createDrone(
-                1,
-                assetManager,
-                space,
-                "vehicle/subseatech/guardian/guardian-vehicle.j3o",
-                "VehicleB",
-                new Vector3f(3.0f, 2.0f, 0.0f),
-                200f);
-        scene.attachChild(droneB.getNode());
+        // Drone droneB = Drone.createDrone(
+        // 1,
+        // assetManager,
+        // space,
+        // "vehicle/subseatech/guardian/guardian-vehicle.j3o",
+        // "VehicleB",
+        // new Vector3f(3.0f, 2.0f, 0.0f),
+        // 200f);
+        // scene.attachChild(droneB.getNode());
         // Contrôle clavier du drone
         controlerA = new LocalTestingControler(inputManager, droneA.getControl(), cam, client);
 
