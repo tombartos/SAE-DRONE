@@ -208,7 +208,9 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
 
     public void updateDronePositions() {
         // TODO : Revoir logique de mouvement, ne marche pas acutellement (c'est normal
-        // vu qu'on se sert de la cam qui n'existe pas)
+        // vu qu'on se sert de la cam qui n'existe pas), voir si on peut appliquer
+        // plusieurs forces en plusieurs points
+        // a un corps rigide
         Vector3f force = new Vector3f();
 
         // Directions "plafond"
