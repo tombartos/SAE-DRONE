@@ -172,11 +172,12 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
             chaseCam.setDefaultDistance(10f); // distance par défaut entre la caméra et le drone
             chaseCam.setMaxDistance(20f); // distance max (molette)
             chaseCam.setMinDistance(3f); // distance min (molette)
-            chaseCam.setSmoothMotion(true); // mouvement fluide
+            // chaseCam.setSmoothMotion(true); // mouvement fluide
             chaseCam.setTrailingEnabled(true); // caméra suit le mouvement
-            chaseCam.setDragToRotate(false);
             // Contrôle clavier du drone
-            controlerA = new LocalTestingControler(inputManager, yourDrone.getControl(), cam, client);
+            // TODO: a retravailler
+            // controlerA = new LocalTestingControler(inputManager, yourDrone.getControl(),
+            // cam, client);
         }
     }
 
@@ -217,6 +218,13 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
         if (controlerA != null) {
             controlerA.update(tpf);
         }
+        for (Drone drone : Drone.getDrones()) {
+            log.info("Drone " + drone.getId() + " position: " + drone.getPosition());
+            Node node = drone.getNode();
+            if (node != null) {
+                node.setLocalTranslation(drone.getPosition());
+            }
+        }
     }
 
     @Override
@@ -224,7 +232,7 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
         // Rien à faire ici, la physique gère la collision naturellement
     }
 
-    public void updateDrones(List<DroneDTO> dronesDTOsList) {
+    public void updateDronesInfo(List<DroneDTO> dronesDTOsList) {
         for (Drone drone : Drone.getDrones()) {
             for (DroneDTO droneDTO : dronesDTOsList) {
                 if (drone.getId() == droneDTO.id) {

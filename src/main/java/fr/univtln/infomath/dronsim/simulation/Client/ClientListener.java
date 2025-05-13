@@ -21,17 +21,17 @@ public class ClientListener implements MessageListener<Client> {
         if (message instanceof Handshake2) {
             // HANDSHAKE MESSAGE
             Handshake2 handshake = (Handshake2) message;
-            log.info("Client #" + source.getId() + " received Handshake2 : "
-                    + handshake.getDronesInitData().toString());
+            // log.info("Client #" + source.getId() + " received Handshake2 : "
+            // + handshake.getDronesInitData().toString());
             simulatorClient.initEnv(handshake);
             return;
         }
 
         if (message instanceof DroneDTOMessage) {
             DroneDTOMessage DronePosMessage = (DroneDTOMessage) message;
-            log.info("Client #" + source.getId() + " received DronePosition : "
-                    + DronePosMessage.getDronesInfos().toString());
-            simulatorClient.updateDrones(DronePosMessage.getDronesInfos());
+            // log.info("Client #" + source.getId() + " received DronePosition : "
+            // + DronePosMessage.getDronesInfos().toString());
+            simulatorClient.updateDronesInfo(DronePosMessage.getDronesInfos());
             return;
         }
 

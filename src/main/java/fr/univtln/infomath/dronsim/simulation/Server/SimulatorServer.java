@@ -2,8 +2,6 @@ package fr.univtln.infomath.dronsim.simulation.Server;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.bullet.BulletAppState;
@@ -27,6 +25,7 @@ import fr.univtln.infomath.dronsim.simulation.Drones.Drone;
 import fr.univtln.infomath.dronsim.simulation.Drones.DroneDTO;
 import fr.univtln.infomath.dronsim.simulation.Drones.DroneInitData;
 import fr.univtln.infomath.dronsim.simulation.Drones.DroneModel;
+import fr.univtln.infomath.dronsim.simulation.Drones.DroneServer;
 import fr.univtln.infomath.dronsim.simulation.jmeMessages.DroneDTOMessage;
 import fr.univtln.infomath.dronsim.simulation.jmeMessages.DroneMovementRequestMessage;
 import fr.univtln.infomath.dronsim.simulation.jmeMessages.Handshake1;
@@ -114,7 +113,7 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         DroneModel ModelB = new DroneModel("BlueRov", 200, "vehicle/bluerobotics/br2r4/br2-r4-vehicle.j3o");
 
         // Ajout du drone
-        Drone droneA = Drone.createDrone(
+        DroneServer droneA = DroneServer.createDrone(
                 0,
                 0,
                 assetManager,
@@ -127,13 +126,13 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
 
         DroneDTO.createDroneDTO(droneA);
 
-        Drone droneB = Drone.createDrone(
+        DroneServer droneB = DroneServer.createDrone(
                 1,
                 1,
                 assetManager,
                 space,
                 ModelB,
-                new Vector3f(0.0f, 2.0f, 0.0f),
+                new Vector3f(3.0f, 0.0f, 0.0f),
                 new Vector3f(0.0f, 0.0f, 0.0f),
                 100);
         scene.attachChild(droneB.getNode());
@@ -156,11 +155,11 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
 
     @Override
     public void simpleUpdate(float tpf) {
-        time += tpf;
-        if (time > 0.25f) {
-            time = 0.0f;
-            sendDronePositions();
-        }
+        // time += tpf;
+        // if (time > 0.1f) {
+        // time = 0.0f;
+        sendDronePositions();
+        // }
     }
 
     @Override
