@@ -22,15 +22,12 @@ public class LocalTestingControler implements ActionListener, GeneralControlerIn
     private boolean forward, backward, left, right;
     private boolean ascend, descend;
     private RigidBodyControl control;
-    private Camera cam;
     private Client client;
     private int droneId;
-    private int clientId;
 
-    public LocalTestingControler(InputManager inputManager, RigidBodyControl droneControl, Camera cam, Client client) {
-        this.control = droneControl;
-        this.cam = cam;
+    public LocalTestingControler(InputManager inputManager, Client client, int droneId) {
         this.client = client;
+        this.droneId = droneId;
 
         inputManager.addMapping(FORWARD, new KeyTrigger(KeyInput.KEY_UP), new KeyTrigger(KeyInput.KEY_W));
         inputManager.addMapping(
@@ -46,42 +43,6 @@ public class LocalTestingControler implements ActionListener, GeneralControlerIn
     }
 
     public void update(float tpf) {
-        // TODO : Put this server side
-
-        // Vector3f force = new Vector3f();
-
-        // // Directions "plafond"
-        // Vector3f forwardDir = cam.getDirection().clone();
-        // forwardDir.setY(0);
-        // forwardDir.normalizeLocal();
-
-        // Vector3f leftDir = cam.getLeft().clone();
-        // leftDir.setY(0);
-        // leftDir.normalizeLocal();
-
-        // Vector3f verticalDir = cam.getDirection().clone();
-        // verticalDir.setX(0);
-        // verticalDir.setZ(0);
-        // verticalDir.normalizeLocal(); // pure direction verticale caméra
-
-        // if (forward)
-        // force.addLocal(forwardDir);
-        // if (backward)
-        // force.subtractLocal(forwardDir);
-        // if (left)
-        // force.addLocal(leftDir);
-        // if (right)
-        // force.subtractLocal(leftDir);
-        // if (ascend)
-        // force.addLocal(verticalDir);
-        // if (descend)
-        // force.subtractLocal(verticalDir);
-
-        // if (!force.equals(Vector3f.ZERO)) {
-        // force.normalizeLocal().multLocal(500); // intensité constante
-        // control.applyCentralForce(force);
-        // }
-
         List<String> directions = new ArrayList<>();
         if (forward) {
             directions.add("FORWARD");
@@ -102,7 +63,7 @@ public class LocalTestingControler implements ActionListener, GeneralControlerIn
             directions.add("DESCEND");
         }
         if (!directions.isEmpty()) {
-            Message message = new DroneMovementRequestMessage(directions);
+            Message message = new DroneMovementRequestMessage(droneId, directions);
             client.send(message);
 
         }

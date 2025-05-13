@@ -175,9 +175,7 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
             // chaseCam.setSmoothMotion(true); // mouvement fluide
             chaseCam.setTrailingEnabled(true); // caméra suit le mouvement
             // Contrôle clavier du drone
-            // TODO: a retravailler
-            // controlerA = new LocalTestingControler(inputManager, yourDrone.getControl(),
-            // cam, client);
+            controlerA = new LocalTestingControler(inputManager, client, yourDrone.getId());
         }
     }
 
@@ -219,7 +217,7 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
             controlerA.update(tpf);
         }
         for (Drone drone : Drone.getDrones()) {
-            log.info("Drone " + drone.getId() + " position: " + drone.getPosition());
+            // log.info("Drone " + drone.getId() + " position: " + drone.getPosition());
             Node node = drone.getNode();
             if (node != null) {
                 node.setLocalTranslation(drone.getPosition());
