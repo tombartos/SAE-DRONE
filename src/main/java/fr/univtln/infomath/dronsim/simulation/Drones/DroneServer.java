@@ -7,6 +7,9 @@ import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Vector3f;
 
+import lombok.Getter;
+
+@Getter
 public class DroneServer extends Drone {
     private RigidBodyControl control;
 

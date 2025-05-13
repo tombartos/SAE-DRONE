@@ -158,6 +158,7 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         // time += tpf;
         // if (time > 0.1f) {
         // time = 0.0f;
+        updateDronePositions();
         sendDronePositions();
         // }
     }
@@ -194,6 +195,72 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
             droneDTO.batteryLevel = drone.getBatteryLevel();
         }
         server.broadcast(new DroneDTOMessage(DroneDTO.dronesDTOs));
+    }
+
+    public void processDroneMovementRequest(DroneMovementRequestMessage message) {
+        for (Drone drone : Drone.getDrones()) {
+            if (drone.getId() == message.getDroneId()) {
+                drone.setDirections(message.getDirections());
+                return;
+            }
+        }
+    }
+
+    public void updateDronePositions() {
+        // TODO : Revoir logique de mouvement, ne marche pas acutellement (c'est normal
+        // vu qu'on se sert de la cam qui n'existe pas)
+        Vector3f force = new Vector3f();
+
+        // Directions "plafond"
+        Vector3f forwardDir = cam.getDirection().clone();
+        forwardDir.setY(0);
+        forwardDir.normalizeLocal();
+
+        Vector3f leftDir = cam.getLeft().clone();
+        leftDir.setY(0);
+        leftDir.normalizeLocal();
+
+        Vector3f verticalDir = cam.getDirection().clone();
+        verticalDir.setX(0);
+        verticalDir.setZ(0);
+        verticalDir.normalizeLocal(); // pure direction verticale caméra
+
+        boolean forward = false;
+        boolean backward = false;
+        boolean left = false;
+        boolean right = false;
+        boolean ascend = false;
+        boolean descend = false;
+        for (Drone drone : Drone.getDrones()) {
+            for (String direction : drone.getDirections()) {
+                switch (direction) {
+                    case "FORWARD" -> forward = true;
+                    case "BACKWARD" -> backward = true;
+                    case "LEFT" -> left = true;
+                    case "RIGHT" -> right = true;
+                    case "ASCEND" -> ascend = true;
+                    case "DESCEND" -> descend = true;
+                }
+            }
+            if (forward)
+                force.addLocal(forwardDir);
+            if (backward)
+                force.subtractLocal(forwardDir);
+            if (left)
+                force.addLocal(leftDir);
+            if (right)
+                force.subtractLocal(leftDir);
+            if (ascend)
+                force.addLocal(verticalDir);
+            if (descend)
+                force.subtractLocal(verticalDir);
+
+            if (!force.equals(Vector3f.ZERO)) {
+                force.normalizeLocal().multLocal(500); // intensité constante
+                ((DroneServer) (drone)).getControl().applyCentralForce(force);
+            }
+        }
+
     }
 
     // geotools WSG84

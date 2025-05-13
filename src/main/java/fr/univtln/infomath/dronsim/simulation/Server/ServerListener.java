@@ -27,7 +27,9 @@ public class ServerListener implements MessageListener<HostedConnection> {
         if (message instanceof DroneMovementRequestMessage) {
             // TEST MESSAGE
             DroneMovementRequestMessage MoveReq = (DroneMovementRequestMessage) message;
-            log.info("Server received DronePosition : " + MoveReq.getDirections().toString());
+            log.info("Server : received DroneMovementRequestMessage : " + MoveReq.getDroneId() + " "
+                    + MoveReq.getDirections().toString());
+            simulatorServer.processDroneMovementRequest(MoveReq);
             return;
         }
         log.warn("Server : received unknown message: " + message.getClass().getName());
