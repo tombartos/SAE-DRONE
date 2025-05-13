@@ -24,12 +24,16 @@ import com.jme3.input.ChaseCamera;
 
 import fr.univtln.infomath.dronsim.control.LocalTestingControler;
 import fr.univtln.infomath.dronsim.simulation.Drones.Drone;
+import fr.univtln.infomath.dronsim.simulation.Drones.DroneDTO;
+import fr.univtln.infomath.dronsim.simulation.Drones.DroneInitData;
 import fr.univtln.infomath.dronsim.simulation.jmeMessages.DroneDTOMessage;
 import fr.univtln.infomath.dronsim.simulation.jmeMessages.Handshake1;
+import fr.univtln.infomath.dronsim.simulation.jmeMessages.Handshake2;
 //import fr.univtln.infomath.dronsim.viewer.primitives.ReferentialNode;
 import fr.univtln.infomath.dronsim.Utils.GStreamerSender;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +41,7 @@ import org.slf4j.LoggerFactory;
 public class SimulatorClient extends SimpleApplication implements PhysicsCollisionListener {
     private static final Logger log = LoggerFactory.getLogger(SimulatorClient.class);
 
+    private Client client;
     private static int clientId;
     private BulletAppState bulletState;
     private PhysicsSpace space;
@@ -75,10 +80,11 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
         setPauseOnLostFocus(false);
 
         // Network initialisation
-        Client client;
         try {
             client = Network.connectToServer(server_ip, server_port);
-            client.addMessageListener(new ClientListener(), DroneDTOMessage.class);
+            ClientListener clientListener = new ClientListener(this);
+            client.addMessageListener(clientListener, DroneDTOMessage.class);
+            client.addMessageListener(clientListener, Handshake2.class);
             client.start();
             log.info("Connected to server at " + server_ip + ":" + server_port);
         } catch (IOException e) {
@@ -117,32 +123,6 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
         // Handshake
         client.send(new Handshake1(clientId));
 
-        // Ajout du drone
-        // TODO : enlever cette init en dur et faire une requete serveur pour recuperer
-        // les drones
-        Drone droneA = Drone.createDrone(
-                0,
-                0,
-                assetManager,
-                space,
-                "vehicle/bluerobotics/br2r4/br2-r4-vehicle.j3o",
-                "VehicleA",
-                new Vector3f(0.0f, 2.0f, 0.0f),
-                200f);
-        scene.attachChild(droneA.getNode());
-
-        // Drone droneB = Drone.createDrone(
-        // 1,
-        // assetManager,
-        // space,
-        // "vehicle/subseatech/guardian/guardian-vehicle.j3o",
-        // "VehicleB",
-        // new Vector3f(3.0f, 2.0f, 0.0f),
-        // 200f);
-        // scene.attachChild(droneB.getNode());
-        // Contrôle clavier du drone
-        controlerA = new LocalTestingControler(inputManager, droneA.getControl(), cam, client);
-
         // Lumière et ciel
         initLighting();
         initWater();
@@ -151,22 +131,53 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
                 "Textures/Sky/Bright/BrightSky.dds",
                 SkyFactory.EnvMapType.CubeMap));
 
-        // Caméra
-        cam.setLocation(new Vector3f(4.0f, 4.4f, 2.0f));
-        cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
-        flyCam.setEnabled(false); // désactive la caméra libre
-
-        // ChaseCamera
-        Spatial droneSpatial = droneA.getNode();
-        ChaseCamera chaseCam = new ChaseCamera(cam, droneSpatial, inputManager);
-        chaseCam.setDefaultDistance(10f); // distance par défaut entre la caméra et le drone
-        chaseCam.setMaxDistance(20f); // distance max (molette)
-        chaseCam.setMinDistance(3f); // distance min (molette)
-        chaseCam.setSmoothMotion(true); // mouvement fluide
-        chaseCam.setTrailingEnabled(true); // caméra suit le mouvement
-        chaseCam.setDragToRotate(false);
-
         viewPort.addProcessor(frameCaptureProcessor); // Ajout du processeur de capture d'images
+    }
+
+    /**
+     * This method is called when the client receives a message of type Handshake2.
+     * It initializes the simulation environment by adding drones and configuring
+     * the camera.
+     *
+     * @param handshake2
+     */
+    public void initEnv(Handshake2 handshake2) {
+        // Ajout des drones
+        Drone tmpDrone = null;
+        Drone yourDrone = null;
+        for (DroneInitData droneinit : handshake2.getDronesInitData()) {
+            tmpDrone = Drone.createDrone(
+                    droneinit.getId(),
+                    droneinit.getClientId(),
+                    assetManager,
+                    space,
+                    droneinit.getDroneModel(),
+                    droneinit.getPosition(),
+                    droneinit.getAngular(),
+                    droneinit.getBatteryLevel());
+            scene.attachChild(tmpDrone.getNode());
+            if (tmpDrone.getId() == handshake2.getYourDroneId()) {
+                yourDrone = tmpDrone;
+            }
+        }
+
+        if (yourDrone == null) {
+            log.error("Your drone is not found in the list of drones");
+            System.exit(1);
+        } else {
+            // ChaseCamera
+            // TODO : A remplacer par la first person camera
+            Spatial droneSpatial = yourDrone.getNode();
+            ChaseCamera chaseCam = new ChaseCamera(cam, droneSpatial, inputManager);
+            chaseCam.setDefaultDistance(10f); // distance par défaut entre la caméra et le drone
+            chaseCam.setMaxDistance(20f); // distance max (molette)
+            chaseCam.setMinDistance(3f); // distance min (molette)
+            chaseCam.setSmoothMotion(true); // mouvement fluide
+            chaseCam.setTrailingEnabled(true); // caméra suit le mouvement
+            chaseCam.setDragToRotate(false);
+            // Contrôle clavier du drone
+            controlerA = new LocalTestingControler(inputManager, yourDrone.getControl(), cam, client);
+        }
     }
 
     private void attachTerrain(Node parent) {
@@ -211,27 +222,18 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
     @Override
     public void collision(PhysicsCollisionEvent event) {
         // Rien à faire ici, la physique gère la collision naturellement
-        /*
-         * Spatial a = event.getNodeA();
-         * Spatial b = event.getNodeB();
-         *
-         * if (a == null || b == null)
-         * return;
-         *
-         * String nameA = a.getName() != null ? a.getName() : "";
-         * String nameB = b.getName() != null ? b.getName() : "";
-         *
-         * if ((nameA.equals("VehicleA") && nameB.equals("Terrain")) ||
-         * (nameB.equals("VehicleA") && nameA.equals("Terrain"))) {
-         *
-         * // System.out.println(" Drone A a touché le terrain !");
-         * if (controlerA != null) {
-         * RigidBodyControl control = controlerA.getControl();
-         * // control.setLinearVelocity(Vector3f.ZERO);
-         * // control.setAngularVelocity(Vector3f.ZERO);
-         * }
-         * }
-         */
     }
 
+    public void updateDrones(List<DroneDTO> dronesDTOsList) {
+        for (Drone drone : Drone.getDrones()) {
+            for (DroneDTO droneDTO : dronesDTOsList) {
+                if (drone.getId() == droneDTO.id) {
+                    drone.setPosition(droneDTO.getPosition());
+                    drone.setAngular(droneDTO.getAngular());
+                    drone.setBatteryLevel(droneDTO.getBatteryLevel());
+                }
+            }
+        }
+
+    }
 }

@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import fr.univtln.infomath.dronsim.simulation.Drones.DroneInitData;
-import com.jme3.math.Vector3f;
 
 @Getter
 @Setter

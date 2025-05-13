@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
  */
 public class DroneModel {
     private String name;
-    private int weight;
+    private int initialWeight;
     private String model3DPath;
 
 }
