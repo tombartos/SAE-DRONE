@@ -164,19 +164,19 @@ public class FrameCaptureProcessor implements SceneProcessor {
      */
     private byte[] flipVertically(ByteBuffer buffer, int width, int height) {
         int bytesPerPixel = 4; // Assuming RGBA format
-        byte[] original = new byte[buffer.capacity()];
-        buffer.get(original);
+        byte[] originalBuffer = new byte[buffer.capacity()];
+        byte[] flippedBuffer = new byte[buffer.capacity()];
+        buffer.rewind();
+        buffer.get(originalBuffer);
 
-        byte[] flipped = new byte[buffer.capacity()];
         int stride = width * bytesPerPixel;
-
         for (int y = 0; y < height; y++) {
             int srcPos = y * stride;
             int destPos = (height - y - 1) * stride;
-            System.arraycopy(original, srcPos, flipped, destPos, stride);
+            System.arraycopy(originalBuffer, srcPos, flippedBuffer, destPos, stride);
         }
 
-        return flipped;
+        return flippedBuffer;
     }
 
     /**

@@ -13,6 +13,7 @@ import com.jme3.light.*;
 import com.jme3.math.*;
 import com.jme3.network.Client;
 import com.jme3.network.Network;
+import com.jme3.network.serializing.Serializer;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.*;
@@ -26,7 +27,9 @@ import fr.univtln.infomath.dronsim.control.LocalTestingControler;
 import fr.univtln.infomath.dronsim.simulation.Drones.Drone;
 import fr.univtln.infomath.dronsim.simulation.Drones.DroneDTO;
 import fr.univtln.infomath.dronsim.simulation.Drones.DroneInitData;
+import fr.univtln.infomath.dronsim.simulation.Drones.DroneModel;
 import fr.univtln.infomath.dronsim.simulation.jmeMessages.DroneDTOMessage;
+import fr.univtln.infomath.dronsim.simulation.jmeMessages.DroneMovementRequestMessage;
 import fr.univtln.infomath.dronsim.simulation.jmeMessages.Handshake1;
 import fr.univtln.infomath.dronsim.simulation.jmeMessages.Handshake2;
 //import fr.univtln.infomath.dronsim.viewer.primitives.ReferentialNode;
@@ -38,6 +41,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+//TODO: regler memory leak + 2 clients en meme temps
 public class SimulatorClient extends SimpleApplication implements PhysicsCollisionListener {
     private static final Logger log = LoggerFactory.getLogger(SimulatorClient.class);
 
@@ -82,6 +86,7 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
         // Network initialisation
         try {
             client = Network.connectToServer(server_ip, server_port);
+            initializeSerializables();
             ClientListener clientListener = new ClientListener(this);
             client.addMessageListener(clientListener, DroneDTOMessage.class);
             client.addMessageListener(clientListener, Handshake2.class);
@@ -94,7 +99,7 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
         }
 
         // Initialisation GStreamer
-        GStreamerSender gstreamerSender = new GStreamerSender(height, width, ipDestVideo, portDestVideo);
+        GStreamerSender gstreamerSender = new GStreamerSender(width, height, ipDestVideo, portDestVideo);
 
         // Initialisation du processeur de capture d'images
         FrameCaptureProcessor frameCaptureProcessor = new FrameCaptureProcessor(width, height, gstreamerSender);
@@ -132,6 +137,20 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
                 SkyFactory.EnvMapType.CubeMap));
 
         viewPort.addProcessor(frameCaptureProcessor); // Ajout du processeur de capture d'images
+    }
+
+    /**
+     * This method is called to register the serializable classes used in the
+     * application.
+     */
+    public void initializeSerializables() {
+        Serializer.registerClass(Handshake1.class);
+        Serializer.registerClass(Handshake2.class);
+        Serializer.registerClass(DroneModel.class);
+        Serializer.registerClass(DroneInitData.class);
+        Serializer.registerClass(DroneDTO.class);
+        Serializer.registerClass(DroneDTOMessage.class);
+        Serializer.registerClass(DroneMovementRequestMessage.class);
     }
 
     /**
