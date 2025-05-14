@@ -153,7 +153,6 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
                     space,
                     droneinit.getDroneModel(),
                     droneinit.getPosition(),
-                    droneinit.getAngular(),
                     droneinit.getBatteryLevel());
             scene.attachChild(tmpDrone.getNode());
             if (tmpDrone.getId() == handshake2.getYourDroneId()) {
@@ -221,6 +220,7 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
             Node node = drone.getNode();
             if (node != null) {
                 node.setLocalTranslation(drone.getPosition());
+                node.setLocalRotation(drone.getAngular());
             }
         }
     }

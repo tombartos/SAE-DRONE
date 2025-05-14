@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 import com.jme3.math.Vector3f;
+import com.jme3.math.Quaternion;
 
 @Serializable
 @AllArgsConstructor
@@ -24,7 +25,7 @@ public class DroneInitData {
     private DroneModel droneModel;
     private int batteryLevel;
     private Vector3f position;
-    private Vector3f angular;
+    private Quaternion angular;
     private String name;
     private int weight;
     private List<Module> modules;

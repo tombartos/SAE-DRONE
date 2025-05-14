@@ -16,9 +16,8 @@ import java.util.List;
 @Getter
 @Serializable
 public class DroneMovementRequestMessage extends AbstractMessage {
-    // TODO : implement this class
-
     // TEST MESSAGE
     private int droneId;
     private List<String> Directions;
+    private List<Integer> MotorsSpeeds;
 }

@@ -6,14 +6,9 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.network.Client;
 import com.jme3.network.Message;
-import com.jme3.renderer.Camera;
-
 import fr.univtln.infomath.dronsim.simulation.jmeMessages.DroneMovementRequestMessage;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import com.jme3.bullet.control.RigidBodyControl;
 
 public class LocalTestingControler implements ActionListener, GeneralControlerInterface {
 
@@ -21,7 +16,6 @@ public class LocalTestingControler implements ActionListener, GeneralControlerIn
     private static final String ASCEND = "ASCEND", DESCEND = "DESCEND";
     private boolean forward, backward, left, right;
     private boolean ascend, descend;
-    private RigidBodyControl control;
     private Client client;
     private int droneId;
 
@@ -43,6 +37,8 @@ public class LocalTestingControler implements ActionListener, GeneralControlerIn
     }
 
     public void update(float tpf) {
+        // TODO: Test version, a changer pour la version finale respectant l'interface
+        // generale
         List<String> directions = new ArrayList<>();
         if (forward) {
             directions.add("FORWARD");
@@ -63,9 +59,10 @@ public class LocalTestingControler implements ActionListener, GeneralControlerIn
             directions.add("DESCEND");
         }
         if (!directions.isEmpty()) {
-            Message message = new DroneMovementRequestMessage(droneId, directions);
+            List<Integer> motorsSpeeds = new ArrayList<>();
+            motorsSpeeds.add(1000);
+            Message message = new DroneMovementRequestMessage(droneId, directions, motorsSpeeds);
             client.send(message);
-
         }
     }
 
@@ -80,9 +77,5 @@ public class LocalTestingControler implements ActionListener, GeneralControlerIn
             case ASCEND -> ascend = isPressed;
             case DESCEND -> descend = isPressed;
         }
-    }
-
-    public RigidBodyControl getControl() {
-        return control;
     }
 }
