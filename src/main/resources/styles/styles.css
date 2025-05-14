@@ -1,0 +1,19 @@
+.jfx-combo-box {
+    -fx-font-size: 18px;
+    -fx-prompt-text-fill: white;
+}
+
+.jfx-combo-box .list-cell {
+    -fx-text-fill: black;
+    -fx-background-color: white;
+}
+
+.jfx-combo-box .list-cell:filled:selected,
+.jfx-combo-box .list-cell:filled:hover {
+    -fx-background-color: #dddddd;
+    -fx-text-fill: black;
+}
+
+.jfx-combo-box .text-input {
+    -fx-text-fill: white;
+}

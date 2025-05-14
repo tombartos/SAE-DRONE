@@ -174,7 +174,7 @@ A3. Retour à l'étape 1
 1. L'utilisateur renseigne nom d'utilisateur/mot de passe
 2. Le lanceur présente à l'utilisateur :
     - une liste de drone qui lui appartient
-    - les parties qu'il peut observer
+    - les parties qu'il peut observer (partie simulation)
 3. L'utilisateur sélectionne un drone
 4. Le lanceur lance l'interface de pilotage
 
@@ -182,7 +182,7 @@ A3. Retour à l'étape 1
 1. L'utilisateur renseigne nom d'utilisateur/mot de passe
 2. Le lanceur présente à l'utilisateur :
     - une liste de drone qui lui appartient
-    - les parties qu'il peut observer
+    - les parties qu'il peut observer (partie simulation)
 3. L'utilisateur sélectionne une partie
 4. Le lanceur lance l'interface d'observation
 
@@ -190,7 +190,7 @@ A3. Retour à l'étape 1
 1. L'utilisateur renseigne nom d'utilisateur/mot de passe
 2. Le lanceur présente à l'utilisateur :
     - une liste de drone qui lui appartient
-    - les parties qu'il peut observer
+    - les parties qu'il peut observer (partie simulation)
     - un bouton "démarrer partie"
 3. L'utilisateur démarre une partie
 4. Le lanceur lance l'interface de gestion de partie avec une partie lancé
