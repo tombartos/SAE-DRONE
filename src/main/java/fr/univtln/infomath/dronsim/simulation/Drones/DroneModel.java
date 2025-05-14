@@ -18,5 +18,7 @@ public class DroneModel {
     private String name;
     private int initialWeight;
     private String model3DPath;
+    private int nbMotors;
+    private int motorMaxSppeed;
 
 }

@@ -9,6 +9,7 @@ import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.network.Network;
 import com.jme3.network.Server;
@@ -45,14 +46,14 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
     private BulletAppState bulletState;
     private PhysicsSpace space;
     private Node scene;
-    private static float time = 0.0f;
     private static int nbDrones;
+    private static final float WATERLEVEL = 2.0f; // TODO: to be set by the map
 
     public static void main(String[] args) {
         if (args.length != 1) {
             idMap = 0;
-            log.info("No map ID provided, using default: " + idMap);
-            log.info("Launch arguments :  <map_id>");
+            log.warn("No map ID provided, using default: " + idMap);
+            log.warn("Launch arguments :  <map_id>");
         }
         SimulatorServer app = new SimulatorServer();
         app.start(JmeContext.Type.Headless); // headless type for servers!
@@ -109,8 +110,9 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         attachTerrain(scene);
 
         // Ajout d'un modele de drone
-        DroneModel ModelA = new DroneModel("Guardian", 200, "vehicle/subseatech/guardian/guardian-vehicle.j3o");
-        DroneModel ModelB = new DroneModel("BlueRov", 200, "vehicle/bluerobotics/br2r4/br2-r4-vehicle.j3o");
+        DroneModel ModelA = new DroneModel("Guardian", 200, "vehicle/subseatech/guardian/guardian-vehicle.j3o", 1,
+                1000);
+        DroneModel ModelB = new DroneModel("BlueRov", 200, "vehicle/bluerobotics/br2r4/br2-r4-vehicle.j3o", 1, 2000);
 
         // Ajout du drone
         DroneServer droneA = DroneServer.createDrone(
@@ -120,7 +122,6 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
                 space,
                 ModelA,
                 new Vector3f(0.0f, 2.0f, 0.0f),
-                new Vector3f(0.0f, 0.0f, 0.0f),
                 100);
         scene.attachChild(droneA.getNode());
 
@@ -133,7 +134,6 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
                 space,
                 ModelB,
                 new Vector3f(3.0f, 0.0f, 0.0f),
-                new Vector3f(0.0f, 0.0f, 0.0f),
                 100);
         scene.attachChild(droneB.getNode());
         DroneDTO.createDroneDTO(droneB);
@@ -151,6 +151,7 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         CollisionShape terrainShape = CollisionShapeFactory.createMeshShape(terrainNode);
         RigidBodyControl terrainPhysics = new RigidBodyControl(terrainShape, 0); // Masse 0 = statique
         terrainNode.addControl(terrainPhysics);
+        space.add(terrainPhysics);
     }
 
     @Override
@@ -201,39 +202,31 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         for (Drone drone : Drone.getDrones()) {
             if (drone.getId() == message.getDroneId()) {
                 drone.setDirections(message.getDirections());
+                drone.setMotors_speeds(message.getMotorsSpeeds());
                 return;
             }
         }
     }
 
     public void updateDronePositions() {
-        // TODO : Revoir logique de mouvement, ne marche pas acutellement (c'est normal
-        // vu qu'on se sert de la cam qui n'existe pas), voir si on peut appliquer
-        // plusieurs forces en plusieurs points
-        // a un corps rigide
-        Vector3f force = new Vector3f();
-
-        // Directions "plafond"
-        Vector3f forwardDir = cam.getDirection().clone();
-        forwardDir.setY(0);
-        forwardDir.normalizeLocal();
-
-        Vector3f leftDir = cam.getLeft().clone();
-        leftDir.setY(0);
-        leftDir.normalizeLocal();
-
-        Vector3f verticalDir = cam.getDirection().clone();
-        verticalDir.setX(0);
-        verticalDir.setZ(0);
-        verticalDir.normalizeLocal(); // pure direction verticale caméra
-
-        boolean forward = false;
-        boolean backward = false;
-        boolean left = false;
-        boolean right = false;
-        boolean ascend = false;
-        boolean descend = false;
+        // Version test simplifiee, on applique une force a l'origine du drone avec un
+        // vecteur qui depend de la direction,
+        // a remplacer par definir un vecteur a chaque moteur avec une direction
+        // potentiellement fixe pour chaque moteur
+        // selon le modele du drone et on change juste les intensites de chauqe force
         for (Drone drone : Drone.getDrones()) {
+            Vector3f force = new Vector3f();
+
+            Vector3f forwardDir = drone.getNode().getLocalRotation().mult(Vector3f.UNIT_Z).setY(0).normalizeLocal();
+            Vector3f rightDir = drone.getNode().getLocalRotation().mult(Vector3f.UNIT_X).setY(0).normalizeLocal();
+            Vector3f upDir = drone.getNode().getLocalRotation().mult(Vector3f.UNIT_Y).normalizeLocal();
+
+            boolean forward = false;
+            boolean backward = false;
+            boolean left = false;
+            boolean right = false;
+            boolean ascend = false;
+            boolean descend = false;
             for (String direction : drone.getDirections()) {
                 switch (direction) {
                     case "FORWARD" -> forward = true;
@@ -249,18 +242,31 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
             if (backward)
                 force.subtractLocal(forwardDir);
             if (left)
-                force.addLocal(leftDir);
+                force.addLocal(rightDir);
             if (right)
-                force.subtractLocal(leftDir);
-            if (ascend)
-                force.addLocal(verticalDir);
+                force.subtractLocal(rightDir);
+            if (ascend) {
+                float currentY = drone.getNode().getWorldTranslation().y;
+                if (currentY < WATERLEVEL) {
+                    force.addLocal(upDir); // Monter uniquement si on est sous l’eau
+                }
+            }
             if (descend)
-                force.subtractLocal(verticalDir);
+                force.subtractLocal(upDir);
+
+            // log.info(drone.getDirections().toString());
 
             if (!force.equals(Vector3f.ZERO)) {
-                force.normalizeLocal().multLocal(500); // intensité constante
+                // TODO: Gerer les differents moteurs
+                force.normalizeLocal().multLocal(drone.getMotors_speeds().get(0));
+                // log.info("Force: " + force.toString());
                 ((DroneServer) (drone)).getControl().applyCentralForce(force);
+                drone.setPosition(drone.getNode().getLocalTranslation());
+                drone.setAngular(drone.getNode().getLocalRotation());
+                // log.info("Drone " + drone.getId() + " position: " +
+                // drone.getPosition().toString());
             }
+            drone.getDirections().clear();
         }
 
     }

@@ -1,6 +1,7 @@
 package fr.univtln.infomath.dronsim.simulation.Drones;
 
 import com.jme3.math.Vector3f;
+import com.jme3.math.Quaternion;
 import com.jme3.network.serializing.Serializable;
 
 import lombok.AllArgsConstructor;
@@ -27,11 +28,11 @@ public class DroneDTO {
     public static List<DroneDTO> dronesDTOs = new ArrayList<>();
     public int id;
     public Vector3f position;
-    public Vector3f angular;
+    public Quaternion angular;
     public int batteryLevel;
 
     public static DroneDTO createDroneDTO(Drone drone) {
-        DroneDTO droneDTO = new DroneDTO(drone.getId(), drone.getPosition(), drone.getAngular(),
+        DroneDTO droneDTO = new DroneDTO(drone.getId(), drone.getPosition(), drone.getNode().getLocalRotation(),
                 drone.getBatteryLevel());
         dronesDTOs.add(droneDTO);
         return droneDTO;
