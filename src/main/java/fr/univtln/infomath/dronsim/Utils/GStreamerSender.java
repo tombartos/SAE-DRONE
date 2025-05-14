@@ -45,7 +45,12 @@ public class GStreamerSender {
      */
     public void pushFrame(byte[] frameData) {
         Buffer buffer = new Buffer(frameData.length);
-        buffer.map(true).put(frameData);
-        appSrc.pushBuffer(buffer);
+        try {
+            buffer.map(true).put(frameData);
+            buffer.unmap();
+            appSrc.pushBuffer(buffer);
+        } finally {
+            buffer.dispose();
+        }
     }
 }

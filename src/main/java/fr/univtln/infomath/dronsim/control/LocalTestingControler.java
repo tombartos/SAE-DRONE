@@ -10,7 +10,9 @@ import fr.univtln.infomath.dronsim.simulation.jmeMessages.DroneMovementRequestMe
 import java.util.ArrayList;
 import java.util.List;
 
-public class LocalTestingControler implements ActionListener, GeneralControlerInterface {
+// ATTENTION : cette classe est une version de test, elle ne respecte pas l'interface Controler
+// elle ne respecte pas la phyolosophie de l'interface controler
+public class LocalTestingControler implements ActionListener, Controler {
 
     private static final String FORWARD = "FORWARD", BACKWARD = "BACKWARD", LEFT = "LEFT", RIGHT = "RIGHT";
     private static final String ASCEND = "ASCEND", DESCEND = "DESCEND";
@@ -77,5 +79,39 @@ public class LocalTestingControler implements ActionListener, GeneralControlerIn
             case ASCEND -> ascend = isPressed;
             case DESCEND -> descend = isPressed;
         }
+    }
+
+    @Override
+    // Doit etre appele par le simu a chaque tick
+    public float getMotorThrottle(int motorIndex) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getMotorThrottle'");
+    }
+
+    @Override
+    // Doit etre appele par le simu a chaque tick
+    public void setSensorValue(int captorIndex, int[] values) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setSensorValue'");
+    }
+
+    @Override
+    // Doit etre appele par le simu a chaque tick
+    public void setSensorValue(int captorIndex, float[] values) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setSensorValue'");
+    }
+
+    @Override
+    // Doit etre appele par le simu a chaque tick
+    public void setSensorValue(int captorIndex, Long[] values) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setSensorValue'");
+    }
+
+    @Override
+    public void destroy() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'destroy'");
     }
 }
