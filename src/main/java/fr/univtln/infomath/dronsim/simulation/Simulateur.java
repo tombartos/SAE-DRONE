@@ -127,10 +127,10 @@ public class Simulateur extends SimpleApplication implements PhysicsCollisionLis
         inputManager.addMapping("SWITCH_DRONE", new KeyTrigger(KeyInput.KEY_R));
         inputManager.addListener(this, "SWITCH_DRONE");
 
-        // Evenement eventZone = new Evenement(new Vector3f(0, 2, 0), new Vector3f(15,
-        // 15, 15), assetManager, scene);
-        // eventZone.definirCourant(new Vector3f(0, 0, 1), 1000);
-        // evenements.add(eventZone);
+        Evenement eventZone = new Evenement(new Vector3f(0, 2, 0), new Vector3f(15,
+                15, 15), assetManager, scene);
+        eventZone.definirCourant(new Vector3f(0, 0, 1), 1000);
+        evenements.add(eventZone);
 
         // Un poisson
         // entitesMarines.add(new EntiteMarine(assetManager, "poisson/fish1.glb", new
@@ -188,9 +188,9 @@ public class Simulateur extends SimpleApplication implements PhysicsCollisionLis
             cam.setLocation(camNode.getWorldTranslation());
             cam.setRotation(camNode.getWorldRotation());
         }
-        // for (Evenement evt : evenements) {
-        // evt.apply(drones, tpf);
-        // }
+        for (Evenement evt : evenements) {
+            evt.apply(drones, tpf);
+        }
 
         // for (EntiteMarine e : entitesMarines) {
         // e.update(tpf);
