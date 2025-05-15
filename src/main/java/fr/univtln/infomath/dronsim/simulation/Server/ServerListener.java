@@ -6,11 +6,9 @@ import com.jme3.network.HostedConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.univtln.infomath.dronsim.simulation.Drones.Drone;
 import fr.univtln.infomath.dronsim.simulation.jmeMessages.DroneMovementRequestMessage;
 import fr.univtln.infomath.dronsim.simulation.jmeMessages.Handshake1;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 public class ServerListener implements MessageListener<HostedConnection> {
@@ -21,15 +19,17 @@ public class ServerListener implements MessageListener<HostedConnection> {
         if (message instanceof Handshake1) {
             // HANDSHAKE MESSAGE
             Handshake1 handshake = (Handshake1) message;
-            log.info("Server received Handshake1 : " + handshake.getClientId());
+            log.info("Server received Handshake1 : ClientId = " + handshake.getClientId());
             // send back a Handshake2 message to the client
             simulatorServer.sendHandshake2(handshake.getClientId(), source);
-
+            return;
         }
         if (message instanceof DroneMovementRequestMessage) {
             // TEST MESSAGE
             DroneMovementRequestMessage MoveReq = (DroneMovementRequestMessage) message;
             log.info("Server received DronePosition : " + MoveReq.getDirections().toString());
+            return;
         }
+        log.warn("Server : received unknown message: " + message.getClass().getName());
     }
 }

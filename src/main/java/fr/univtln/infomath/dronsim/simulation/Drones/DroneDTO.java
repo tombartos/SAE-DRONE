@@ -4,7 +4,12 @@ import com.jme3.math.Vector3f;
 import com.jme3.network.serializing.Serializable;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /*
  * This class is used to send drone informations to the clients.
@@ -15,8 +20,20 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Serializable
+@Getter
+@Setter
 public class DroneDTO {
-    int id;
-    Vector3f position;
+    // Attributes are public for performance reasons
+    public static List<DroneDTO> dronesDTOs = new ArrayList<>();
+    public int id;
+    public Vector3f position;
+    public Vector3f angular;
+    public int batteryLevel;
 
+    public static DroneDTO createDroneDTO(Drone drone) {
+        DroneDTO droneDTO = new DroneDTO(drone.getId(), drone.getPosition(), drone.getAngular(),
+                drone.getBatteryLevel());
+        dronesDTOs.add(droneDTO);
+        return droneDTO;
+    }
 }

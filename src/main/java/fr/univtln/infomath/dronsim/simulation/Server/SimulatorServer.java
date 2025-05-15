@@ -3,6 +3,7 @@ package fr.univtln.infomath.dronsim.simulation.Server;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.bullet.BulletAppState;
@@ -25,6 +26,7 @@ import fr.univtln.infomath.dronsim.simulation.Client.SimulatorClient;
 import fr.univtln.infomath.dronsim.simulation.Drones.Drone;
 import fr.univtln.infomath.dronsim.simulation.Drones.DroneDTO;
 import fr.univtln.infomath.dronsim.simulation.Drones.DroneInitData;
+import fr.univtln.infomath.dronsim.simulation.Drones.DroneModel;
 import fr.univtln.infomath.dronsim.simulation.jmeMessages.DroneDTOMessage;
 import fr.univtln.infomath.dronsim.simulation.jmeMessages.DroneMovementRequestMessage;
 import fr.univtln.infomath.dronsim.simulation.jmeMessages.Handshake1;
@@ -32,12 +34,9 @@ import fr.univtln.infomath.dronsim.simulation.jmeMessages.Handshake2;
 
 import com.jme3.network.Filters;
 import com.jme3.network.HostedConnection;
-import com.jme3.network.Message;
-
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
 
-//TODO: fix execution
 public class SimulatorServer extends SimpleApplication implements PhysicsCollisionListener {
     private static final int SERVER_PORT = 6143; // Default JME server port
     private static final Logger log = LoggerFactory.getLogger(SimulatorClient.class);
@@ -47,6 +46,8 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
     private BulletAppState bulletState;
     private PhysicsSpace space;
     private Node scene;
+    private static float time = 0.0f;
+    private static int nbDrones;
 
     public static void main(String[] args) {
         if (args.length != 1) {
@@ -64,6 +65,9 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
      */
     public void initializeSerializables() {
         Serializer.registerClass(Handshake1.class);
+        Serializer.registerClass(Handshake2.class);
+        Serializer.registerClass(DroneModel.class);
+        Serializer.registerClass(DroneInitData.class);
         Serializer.registerClass(DroneDTO.class);
         Serializer.registerClass(DroneDTOMessage.class);
         Serializer.registerClass(DroneMovementRequestMessage.class);
@@ -80,7 +84,7 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
             server.addMessageListener(serverListener, DroneMovementRequestMessage.class);
             server.addMessageListener(serverListener, DroneDTOMessage.class);
             server.start();
-            log.info("Server started on port " + SERVER_PORT);
+            log.info("Server starting on port " + SERVER_PORT);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -105,29 +109,37 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         // Ajout du terrain
         attachTerrain(scene);
 
+        // Ajout d'un modele de drone
+        DroneModel ModelA = new DroneModel("Guardian", 200, "vehicle/subseatech/guardian/guardian-vehicle.j3o");
+        DroneModel ModelB = new DroneModel("BlueRov", 200, "vehicle/bluerobotics/br2r4/br2-r4-vehicle.j3o");
+
         // Ajout du drone
         Drone droneA = Drone.createDrone(
                 0,
                 0,
                 assetManager,
                 space,
-                "vehicle/bluerobotics/br2r4/br2-r4-vehicle.j3o",
-                "VehicleA",
+                ModelA,
                 new Vector3f(0.0f, 2.0f, 0.0f),
-                200f);
+                new Vector3f(0.0f, 0.0f, 0.0f),
+                100);
         scene.attachChild(droneA.getNode());
+
+        DroneDTO.createDroneDTO(droneA);
 
         Drone droneB = Drone.createDrone(
                 1,
                 1,
                 assetManager,
                 space,
-                "vehicle/subseatech/guardian/guardian-vehicle.j3o",
-                "VehicleB",
-                new Vector3f(3.0f, 2.0f, 0.0f),
-                200f);
+                ModelB,
+                new Vector3f(0.0f, 2.0f, 0.0f),
+                new Vector3f(0.0f, 0.0f, 0.0f),
+                100);
         scene.attachChild(droneB.getNode());
-        log.info("Initialization complete");
+        DroneDTO.createDroneDTO(droneB);
+        nbDrones = Drone.getDrones().size();
+        log.info("Initialization complete, waiting for clients...");
     }
 
     private void attachTerrain(Node parent) {
@@ -144,16 +156,11 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
 
     @Override
     public void simpleUpdate(float tpf) {
-        // TEST
-        //
-        // test++;
-        // List<DroneDTO> dronesInfos = new ArrayList<>();
-        // for (int i = 0; i < 4; i++) {
-        // DroneDTO drone = new DroneDTO(i, new Vector3f(test, test, test));
-        // dronesInfos.add(drone);
-        // }
-        // Message dronePosMessage = new DroneDTOMessage(dronesInfos);
-        // server.broadcast(dronePosMessage);
+        time += tpf;
+        if (time > 0.25f) {
+            time = 0.0f;
+            sendDronePositions();
+        }
     }
 
     @Override
@@ -162,18 +169,32 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
     }
 
     public void sendHandshake2(int clientId, HostedConnection source) {
-        int droneId = -1;
+        int droneId = -1; // The id of the drone that belongs to the client, -1 if no drone
         ArrayList<DroneInitData> dronesInitData = new ArrayList<>();
         for (Drone drone : Drone.getDrones()) {
             dronesInitData
-                    .add(new DroneInitData(drone.getId(), drone.getPosition(), drone.getAngular(), drone.getModel()));
+                    .add(new DroneInitData(drone.getId(), drone.getClientId(), drone.getDroneModel(),
+                            drone.getBatteryLevel(), drone.getPosition(), drone.getAngular(), drone.getName(),
+                            drone.getWeight(), drone.getModules()));
             if (drone.getClientId() == clientId) {
                 droneId = drone.getId();
             }
-
         }
         Handshake2 handshake2 = new Handshake2(dronesInitData, idMap, droneId);
         server.broadcast(Filters.in(source), handshake2);
+    }
+
+    public void sendDronePositions() {
+        // Direct access to attributes for performance reasons
+        for (int i = 0; i < nbDrones; i++) {
+            Drone drone = Drone.getDrones().get(i);
+            DroneDTO droneDTO = DroneDTO.dronesDTOs.get(i);
+            droneDTO.id = drone.getId();
+            droneDTO.position = drone.getPosition();
+            droneDTO.angular = drone.getAngular();
+            droneDTO.batteryLevel = drone.getBatteryLevel();
+        }
+        server.broadcast(new DroneDTOMessage(DroneDTO.dronesDTOs));
     }
 
     // geotools WSG84
