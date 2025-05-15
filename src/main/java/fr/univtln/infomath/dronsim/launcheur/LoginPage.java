@@ -60,11 +60,26 @@ public class LoginPage {
             String username = userField.getText();
             String password = passField.getText();
 
-            if (username.equals("mdj") && password.equals("1234")) {
+            if (username.equals("obs") && password.equals("1234")) {
                 // MaitreDeJeu mdj = new MaitreDeJeu(username, password);
                 Group root = new Group();
                 Scene scene = new Scene(root, width, height);
-                new Gui(null, root, width, height, stage, scene);
+                new Gui(null, root, width, height, stage, scene, 1);
+
+            } else if (username.equals("mdj") && password.equals("1234")) {
+                Group root = new Group();
+                Scene scene = new Scene(root, width, height);
+                new Gui(null, root, width, height, stage, scene, 2);
+
+            } else if (username.equals("pilot") && password.equals("1234")) {
+                Group root = new Group();
+                Scene scene = new Scene(root, width, height);
+                new Gui(null, root, width, height, stage, scene, 3);
+
+            } else if (username.equals("admin") && password.equals("1234")) {
+                Group root = new Group();
+                Scene scene = new Scene(root, width, height);
+                new Gui(null, root, width, height, stage, scene, 4);
             } else {
                 message.setText("Identifiants incorrects.");
                 message.setStyle("-fx-text-fill: red;");
