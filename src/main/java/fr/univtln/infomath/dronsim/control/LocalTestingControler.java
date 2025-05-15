@@ -63,34 +63,28 @@ public class LocalTestingControler implements ActionListener {
 
         Vector3f force = new Vector3f();
 
-        // Directions "plafond"
-        Vector3f forwardDir = cam.getDirection().clone();
-        forwardDir.setY(0);
-        forwardDir.normalizeLocal();
+        Vector3f forwardDir = drone.getNode().getLocalRotation().mult(Vector3f.UNIT_Z).setY(0).normalizeLocal();
+        Vector3f rightDir = drone.getNode().getLocalRotation().mult(Vector3f.UNIT_X).setY(0).normalizeLocal();
+        Vector3f upDir = drone.getNode().getLocalRotation().mult(Vector3f.UNIT_Y).normalizeLocal();
 
-        Vector3f leftDir = cam.getLeft().clone();
-        leftDir.setY(0);
-        leftDir.normalizeLocal();
-
-        Vector3f verticalDir = Vector3f.UNIT_Y.clone();
         Vector3f angular = drone.getAngular().clone();
 
         if (forward)
             force.addLocal(forwardDir);
         if (backward)
             force.subtractLocal(forwardDir);
-        if (left)
-            force.addLocal(leftDir);
         if (right)
-            force.subtractLocal(leftDir);
+            force.addLocal(rightDir);
+        if (left)
+            force.subtractLocal(rightDir);
 
         if (descend)
-            force.subtractLocal(verticalDir);
+            force.subtractLocal(upDir);
 
         if (ascend) {
             float currentY = drone.getNode().getWorldTranslation().y;
             if (currentY < waterLevel) {
-                force.addLocal(verticalDir); // Monter uniquement si on est sous l’eau
+                force.addLocal(upDir); // Monter uniquement si on est sous l’eau
             }
         }
 

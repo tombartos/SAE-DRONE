@@ -17,6 +17,7 @@ public class Drone {
     private Node node;
     private Node cameraNode;
     private float speed;
+    private Vector3f position;
     Vector3f angular = new Vector3f();
 
     public Drone(AssetManager assetManager, PhysicsSpace space, String modelPath, String name, Vector3f position,
@@ -24,6 +25,7 @@ public class Drone {
 
         this.node = new Node(name);
         Spatial model = assetManager.loadModel(modelPath);
+        this.position = position;
         // model.rotate(FastMath.HALF_PI, 0f, 0f); // Applique la rotation au modèle,
         // pas au noeud global
         this.node.attachChild(model);

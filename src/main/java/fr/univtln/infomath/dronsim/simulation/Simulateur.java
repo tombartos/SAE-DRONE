@@ -2,8 +2,8 @@ package fr.univtln.infomath.dronsim.simulation;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import com.jme3.app.SimpleApplication;
+import com.jme3.asset.AssetManager;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
@@ -13,6 +13,8 @@ import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.light.*;
+import com.jme3.material.Material;
+import com.jme3.material.RenderState;
 import com.jme3.math.*;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
@@ -20,14 +22,14 @@ import com.jme3.scene.*;
 import com.jme3.system.AppSettings;
 import com.jme3.util.SkyFactory;
 import com.jme3.water.WaterFilter;
-
 import com.jme3.input.ChaseCamera;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.scene.shape.Line;
 
+import fr.univtln.infomath.dronsim.ReferentialNode;
 import fr.univtln.infomath.dronsim.control.LocalTestingControler;
-//import fr.univtln.infomath.dronsim.viewer.primitives.ReferentialNode;
 
 public class Simulateur extends SimpleApplication implements PhysicsCollisionListener, ActionListener {
 
@@ -86,6 +88,11 @@ public class Simulateur extends SimpleApplication implements PhysicsCollisionLis
                 200f, 1500f);
         scene.attachChild(droneA.getNode());
         drones.add(droneA);
+
+        // Create a referential node
+        // ReferentialNode refNodeA = new ReferentialNode(assetManager);
+        // droneA.getNode().attachChild(refNodeA);
+
         // Contrôle clavier du drone A par défaut
         controleDrone = new LocalTestingControler(inputManager, droneA, cam);
 
@@ -98,6 +105,8 @@ public class Simulateur extends SimpleApplication implements PhysicsCollisionLis
                 200f, 800f);
         scene.attachChild(droneB.getNode());
         drones.add(droneB);
+        ReferentialNode refNodeB = new ReferentialNode(assetManager);
+        droneB.getNode().attachChild(refNodeB);
 
         // Lumière et ciel
         initLighting();
@@ -116,10 +125,9 @@ public class Simulateur extends SimpleApplication implements PhysicsCollisionLis
         chaseCam = new ChaseCamera(cam, droneA.getNode(), inputManager);
         chaseCam.setDefaultDistance(10f);
         chaseCam.setMaxDistance(20f);
-        chaseCam.setMinDistance(3f);
-        chaseCam.setSmoothMotion(true);
+        chaseCam.setMinDistance(0.3f);
         chaseCam.setTrailingEnabled(true);
-        chaseCam.setDragToRotate(false);
+        chaseCam.setDragToRotate(true);
         chaseCam.setEnabled(false); // On commence avec vue interne
 
         inputManager.addMapping("SWITCH_VIEW", new KeyTrigger(KeyInput.KEY_T));
@@ -141,6 +149,41 @@ public class Simulateur extends SimpleApplication implements PhysicsCollisionLis
         // entitesMarines.add(new EntiteMarine(assetManager, "bateau/titanic.glb", new
         // Vector3f(-5, 0, 0),
         // new Vector3f(30, 5, 30), 1f, false));
+
+        // Vector3f pointA = new Vector3f(0, 0, 0);
+        // Vector3f pointB = new Vector3f(3, 2, 1);
+
+        // VECTEURS POUR BLUEROV2 (trouvés à la main et à l'aide de Blender)
+        // VOIR SCHEMA https://www.ardusub.com/quick-start/vehicle-frame.html
+        Vector3f thruster1vec = new Vector3f(-0.7431f, 0.0000f, -0.6691f);
+        Vector3f thruster1Pos = new Vector3f(-0.1f, -0.07f, 0.16f);
+        drawLineBetweenPoints(thruster1Pos, thruster1Pos.add(thruster1vec), droneA.getNode(), assetManager,
+                ColorRGBA.Orange);
+
+        Vector3f thruster2vec = new Vector3f(0.7431f, 0.0000f, -0.6691f);
+        Vector3f thruster2Pos = new Vector3f(0.1f, -0.07f, 0.16f);
+        drawLineBetweenPoints(thruster2Pos, thruster2Pos.add(thruster2vec), droneA.getNode(), assetManager,
+                ColorRGBA.Magenta);
+
+        Vector3f thruster3vec = new Vector3f(-0.7431f, -0.0000f, -0.6691f);
+        Vector3f thruster3Pos = new Vector3f(0.1f, -0.07f, -0.16f);
+        drawLineBetweenPoints(thruster3Pos, thruster3Pos.add(thruster3vec), droneA.getNode(), assetManager,
+                ColorRGBA.Cyan);
+
+        Vector3f thruster4vec = new Vector3f(0.7431f, -0.0000f, -0.6691f);
+        Vector3f thruster4Pos = new Vector3f(-0.1f, -0.07f, -0.16f);
+        drawLineBetweenPoints(thruster4Pos, thruster4Pos.add(thruster4vec), droneA.getNode(), assetManager,
+                ColorRGBA.Gray);
+
+        Vector3f thruster5vec = new Vector3f(0.0000f, 1f, 0f);
+        Vector3f thruster5Pos = new Vector3f(0.1f, 0f, 0f);
+        drawLineBetweenPoints(thruster5Pos, thruster5Pos.add(thruster5vec), droneA.getNode(), assetManager,
+                ColorRGBA.Green);
+
+        Vector3f thruster6vec = new Vector3f(-0.0000f, -1f, 0f);
+        Vector3f thruster6Pos = new Vector3f(-0.1f, -0.2f, 0f);
+        drawLineBetweenPoints(thruster6Pos, thruster6Pos.add(thruster6vec), droneA.getNode(), assetManager,
+                ColorRGBA.Red);
 
     }
 
@@ -217,6 +260,24 @@ public class Simulateur extends SimpleApplication implements PhysicsCollisionLis
             chaseCam.setSpatial(selectedDrone.getNode());
             System.out.println("Drone sélectionné : " + selectedDrone.getNode().getName());
         }
+    }
+
+    public void drawLineBetweenPoints(Vector3f start, Vector3f end, Node parentNode, AssetManager assetManager,
+            ColorRGBA color) {
+        // Create the line mesh
+        Line line = new Line(start, end);
+        line.setLineWidth(2); // optional: set line thickness
+
+        // Create the geometry
+        Geometry lineGeom = new Geometry("Line", line);
+
+        // Create a material for the line
+        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        mat.setColor("Color", color);
+        lineGeom.setMaterial(mat);
+
+        // Attach the line to the parent node
+        parentNode.attachChild(lineGeom);
     }
 
 }
