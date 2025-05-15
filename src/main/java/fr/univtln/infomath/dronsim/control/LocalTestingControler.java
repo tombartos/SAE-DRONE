@@ -104,7 +104,7 @@ public class LocalTestingControler implements ActionListener, Controler {
 
     @Override
     // Doit etre appele par le simu a chaque tick
-    public void setSensorValue(int captorIndex, Long[] values) {
+    public void setSensorValue(int captorIndex, long[] values) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'setSensorValue'");
     }
