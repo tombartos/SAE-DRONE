@@ -9,6 +9,8 @@ target
 .idea/
 bin/
 out/
+data/
+*.zip
 *.log
 *.tmp
 *.bak
