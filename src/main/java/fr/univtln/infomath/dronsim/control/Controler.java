@@ -34,7 +34,7 @@ public interface Controler {
      *
      * The sensor is identified by its index.
      */
-    public void setSensorValue(int captorIndex, Long[] values);
+    public void setSensorValue(int captorIndex, long[] values);
 
     /**
      * Frees resources associated with this controller.
