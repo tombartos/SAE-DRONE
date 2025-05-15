@@ -1,6 +1,10 @@
-package fr.univtln.infomath.dronsim.simulation;
+package fr.univtln.infomath.dronsim.simulation.Drones;
 
 import com.jme3.math.Vector3f;
+import com.jme3.network.serializing.Serializable;
+
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 /*
  * This class is used to send drone informations to the clients.
@@ -8,6 +12,9 @@ import com.jme3.math.Vector3f;
  * it needs to be lightweight.
  * The client will then update its local simulation with the new positions.
  */
+@AllArgsConstructor
+@NoArgsConstructor
+@Serializable
 public class DroneDTO {
     int id;
     Vector3f position;
