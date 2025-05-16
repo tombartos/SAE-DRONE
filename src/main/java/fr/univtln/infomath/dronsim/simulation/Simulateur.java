@@ -85,7 +85,7 @@ public class Simulateur extends SimpleApplication implements PhysicsCollisionLis
                 "vehicle/bluerobotics/br2r4/br2-r4-vehicle.j3o",
                 "VehicleA",
                 new Vector3f(0.0f, 2.0f, 0.0f),
-                200f, 1500f);
+                400f, 1500f);
         scene.attachChild(droneA.getNode());
         drones.add(droneA);
 
@@ -94,7 +94,7 @@ public class Simulateur extends SimpleApplication implements PhysicsCollisionLis
         // droneA.getNode().attachChild(refNodeA);
 
         // Contrôle clavier du drone A par défaut
-        controleDrone = new LocalTestingControler(inputManager, droneA, cam);
+        controleDrone = new LocalTestingControler(inputManager, droneA, cam, rootNode);
 
         Drone droneB = new Drone(
                 assetManager,
@@ -155,35 +155,36 @@ public class Simulateur extends SimpleApplication implements PhysicsCollisionLis
 
         // VECTEURS POUR BLUEROV2 (trouvés à la main et à l'aide de Blender)
         // VOIR SCHEMA https://www.ardusub.com/quick-start/vehicle-frame.html
-        Vector3f thruster1vec = new Vector3f(-0.7431f, 0.0000f, -0.6691f);
-        Vector3f thruster1Pos = new Vector3f(-0.1f, -0.07f, 0.16f);
-        drawLineBetweenPoints(thruster1Pos, thruster1Pos.add(thruster1vec), droneA.getNode(), assetManager,
-                ColorRGBA.Orange);
 
-        Vector3f thruster2vec = new Vector3f(0.7431f, 0.0000f, -0.6691f);
-        Vector3f thruster2Pos = new Vector3f(0.1f, -0.07f, 0.16f);
-        drawLineBetweenPoints(thruster2Pos, thruster2Pos.add(thruster2vec), droneA.getNode(), assetManager,
-                ColorRGBA.Magenta);
+        // drawLineBetweenPoints(
+        // droneA.getThruster1Pos(),
+        // droneA.getThruster1Pos().add(droneA.getThruster1vec()),
+        // droneA.getNode(), assetManager, ColorRGBA.Orange);
 
-        Vector3f thruster3vec = new Vector3f(-0.7431f, -0.0000f, -0.6691f);
-        Vector3f thruster3Pos = new Vector3f(0.1f, -0.07f, -0.16f);
-        drawLineBetweenPoints(thruster3Pos, thruster3Pos.add(thruster3vec), droneA.getNode(), assetManager,
-                ColorRGBA.Cyan);
+        // drawLineBetweenPoints(
+        // droneA.getThruster2Pos(),
+        // droneA.getThruster2Pos().add(droneA.getThruster2vec()),
+        // droneA.getNode(), assetManager, ColorRGBA.Magenta);
 
-        Vector3f thruster4vec = new Vector3f(0.7431f, -0.0000f, -0.6691f);
-        Vector3f thruster4Pos = new Vector3f(-0.1f, -0.07f, -0.16f);
-        drawLineBetweenPoints(thruster4Pos, thruster4Pos.add(thruster4vec), droneA.getNode(), assetManager,
-                ColorRGBA.Gray);
+        // drawLineBetweenPoints(
+        // droneA.getThruster3Pos(),
+        // droneA.getThruster3Pos().add(droneA.getThruster3vec()),
+        // droneA.getNode(), assetManager, ColorRGBA.Cyan);
 
-        Vector3f thruster5vec = new Vector3f(0.0000f, 1f, 0f);
-        Vector3f thruster5Pos = new Vector3f(0.1f, 0f, 0f);
-        drawLineBetweenPoints(thruster5Pos, thruster5Pos.add(thruster5vec), droneA.getNode(), assetManager,
-                ColorRGBA.Green);
+        // drawLineBetweenPoints(
+        // droneA.getThruster4Pos(),
+        // droneA.getThruster4Pos().add(droneA.getThruster4vec()),
+        // droneA.getNode(), assetManager, ColorRGBA.Gray);
 
-        Vector3f thruster6vec = new Vector3f(-0.0000f, -1f, 0f);
-        Vector3f thruster6Pos = new Vector3f(-0.1f, -0.2f, 0f);
-        drawLineBetweenPoints(thruster6Pos, thruster6Pos.add(thruster6vec), droneA.getNode(), assetManager,
-                ColorRGBA.Red);
+        // drawLineBetweenPoints(
+        // droneA.getThruster5Pos(),
+        // droneA.getThruster5Pos().add(droneA.getThruster5vec()),
+        // droneA.getNode(), assetManager, ColorRGBA.Green);
+
+        // drawLineBetweenPoints(
+        // droneA.getThruster6Pos(),
+        // droneA.getThruster6Pos().add(droneA.getThruster6vec()),
+        // droneA.getNode(), assetManager, ColorRGBA.Red);
 
     }
 
@@ -256,28 +257,10 @@ public class Simulateur extends SimpleApplication implements PhysicsCollisionLis
         if ("SWITCH_DRONE".equals(name) && isPressed) {
             droneIndex = (droneIndex + 1) % drones.size();
             Drone selectedDrone = drones.get(droneIndex);
-            controleDrone = new LocalTestingControler(inputManager, selectedDrone, cam);
+            controleDrone = new LocalTestingControler(inputManager, selectedDrone, cam, rootNode);
             chaseCam.setSpatial(selectedDrone.getNode());
             System.out.println("Drone sélectionné : " + selectedDrone.getNode().getName());
         }
-    }
-
-    public void drawLineBetweenPoints(Vector3f start, Vector3f end, Node parentNode, AssetManager assetManager,
-            ColorRGBA color) {
-        // Create the line mesh
-        Line line = new Line(start, end);
-        line.setLineWidth(2); // optional: set line thickness
-
-        // Create the geometry
-        Geometry lineGeom = new Geometry("Line", line);
-
-        // Create a material for the line
-        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        mat.setColor("Color", color);
-        lineGeom.setMaterial(mat);
-
-        // Attach the line to the parent node
-        parentNode.attachChild(lineGeom);
     }
 
 }

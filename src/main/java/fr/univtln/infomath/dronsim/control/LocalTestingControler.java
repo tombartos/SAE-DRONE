@@ -1,15 +1,24 @@
 package fr.univtln.infomath.dronsim.control;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
+import com.jme3.scene.Node;
+
+import fr.univtln.infomath.dronsim.Drawer;
 import fr.univtln.infomath.dronsim.simulation.Drone;
 import lombok.Getter;
+
+//TODO : Fix avancer/reculer   idée : ajuster angles des vecteurs de poussée, lire tuto jme3 physique
 
 @Getter
 public class LocalTestingControler implements ActionListener {
@@ -33,10 +42,12 @@ public class LocalTestingControler implements ActionListener {
 
     private Drone drone;
     private Camera cam;
+    private Node rootNode;
 
-    public LocalTestingControler(InputManager inputManager, Drone drone, Camera cam) {
+    public LocalTestingControler(InputManager inputManager, Drone drone, Camera cam, Node rootNode) {
         this.drone = drone;
         this.cam = cam;
+        this.rootNode = rootNode;
 
         inputManager.addMapping(FORWARD, new KeyTrigger(KeyInput.KEY_UP), new KeyTrigger(KeyInput.KEY_W));
         inputManager.addMapping(
@@ -61,48 +72,143 @@ public class LocalTestingControler implements ActionListener {
 
     public void update(float tpf) {
 
-        Vector3f force = new Vector3f();
+        // Vector3f force = new Vector3f();
 
-        Vector3f forwardDir = drone.getNode().getLocalRotation().mult(Vector3f.UNIT_Z).setY(0).normalizeLocal();
-        Vector3f rightDir = drone.getNode().getLocalRotation().mult(Vector3f.UNIT_X).setY(0).normalizeLocal();
-        Vector3f upDir = drone.getNode().getLocalRotation().mult(Vector3f.UNIT_Y).normalizeLocal();
+        // Vector3f forwardDir =
+        // drone.getNode().getLocalRotation().mult(Vector3f.UNIT_Z).setY(0).normalizeLocal();
+        // Vector3f rightDir =
+        // drone.getNode().getLocalRotation().mult(Vector3f.UNIT_X).setY(0).normalizeLocal();
+        // Vector3f upDir =
+        // drone.getNode().getLocalRotation().mult(Vector3f.UNIT_Y).normalizeLocal();
 
-        Vector3f angular = drone.getAngular().clone();
+        // Vector3f angular = drone.getAngular().clone();
 
-        if (forward)
-            force.addLocal(forwardDir);
-        if (backward)
-            force.subtractLocal(forwardDir);
-        if (right)
-            force.addLocal(rightDir);
-        if (left)
-            force.subtractLocal(rightDir);
+        // Update the thruster vectors and positions
+        // Rotate each initial thruster vector by the drone's local rotation
+        Drawer.deleteAllLines(rootNode);
+        List<Vector3f> rotatedThrusterVecs = new ArrayList<>();
+        Quaternion rotation = drone.getNode().getLocalRotation();
+        for (Vector3f vec : drone.getInitialThrusterVecs()) {
+            rotatedThrusterVecs.add(rotation.mult(vec));
+        }
+        drone.setThrusterVecs(rotatedThrusterVecs);
+        // Update the thruster global positions based on the drone's position and
+        // rotation
+        List<Vector3f> updatedThrusterPositions = new ArrayList<>();
+        Quaternion droneRotation = drone.getNode().getLocalRotation();
+        Vector3f droneTranslation = drone.getNode().getLocalTranslation();
+        for (Vector3f initialPos : drone.getInitialThrusterGlobalPositions()) {
+            Vector3f rotatedPos = droneRotation.mult(initialPos);
+            updatedThrusterPositions.add(rotatedPos.add(droneTranslation));
+        }
+        drone.setThrusterGlobalPositions(updatedThrusterPositions);
 
-        if (descend)
-            force.subtractLocal(upDir);
+        if (forward) {
+            System.out.println("FORWARD");
+            int speed = 10;
+            // Use thruster lists instead of individual fields
+            Vector3f force1 = drone.getThrusterVecs().get(0).mult(-speed);
+            Vector3f force2 = drone.getThrusterVecs().get(1).mult(-speed);
+            Vector3f force3 = drone.getThrusterVecs().get(2).mult(speed);
+            Vector3f force4 = drone.getThrusterVecs().get(3).mult(speed);
+
+            Vector3f position1 = drone.getThrusterGlobalPositions().get(0);
+            Vector3f position2 = drone.getThrusterGlobalPositions().get(1);
+            Vector3f position3 = drone.getThrusterGlobalPositions().get(2);
+            Vector3f position4 = drone.getThrusterGlobalPositions().get(3);
+
+            drone.getControl().applyForce(force1, position1);
+            drone.getControl().applyForce(force2, position2);
+            drone.getControl().applyForce(force3, position3);
+            drone.getControl().applyForce(force4, position4);
+
+            Drawer.drawLineBetweenPoints(
+                    position1,
+                    position1.add(force1),
+                    rootNode, drone.getAssetManager(), ColorRGBA.Black);
+            Drawer.drawLineBetweenPoints(
+                    position2,
+                    position2.add(force2),
+                    rootNode, drone.getAssetManager(), ColorRGBA.White);
+            Drawer.drawLineBetweenPoints(
+                    position3,
+                    position3.add(force3),
+                    rootNode, drone.getAssetManager(), ColorRGBA.Red);
+            Drawer.drawLineBetweenPoints(
+                    position4,
+                    position4.add(force4),
+                    rootNode, drone.getAssetManager(), ColorRGBA.Blue);
+        }
+        // if (backward)
+        // force.subtractLocal(forwardDir);
+        // if (right)
+        // force.addLocal(rightDir);
+        // if (left)
+        // force.subtractLocal(rightDir);
+
+        if (descend) {
+            // force.subtractLocal(upDir);
+            int speed = 1000;
+            Vector3f position5 = drone.getThrusterGlobalPositions().get(4);
+            Vector3f position6 = drone.getThrusterGlobalPositions().get(5);
+            drone.getControl().applyForce(
+                    drone.getThrusterVecs().get(4).mult(-speed),
+                    position5);
+            drone.getControl().applyForce(
+                    drone.getThrusterVecs().get(5).mult(speed),
+                    position6);
+
+            Drawer.drawLineBetweenPoints(
+                    position5,
+                    position5.add(drone.getThrusterVecs().get(4).mult(-speed)),
+                    rootNode, drone.getAssetManager(), ColorRGBA.Green);
+            Drawer.drawLineBetweenPoints(
+                    position6,
+                    position6.add(drone.getThrusterVecs().get(5).mult(speed)),
+                    rootNode, drone.getAssetManager(), ColorRGBA.Yellow);
+        }
 
         if (ascend) {
             float currentY = drone.getNode().getWorldTranslation().y;
             if (currentY < waterLevel) {
-                force.addLocal(upDir); // Monter uniquement si on est sous l’eau
+                int speed = 1000;
+                Vector3f position5 = drone.getThrusterGlobalPositions().get(4);
+                Vector3f position6 = drone.getThrusterGlobalPositions().get(5);
+                drone.getControl().applyForce(
+                        drone.getThrusterVecs().get(4).mult(speed),
+                        position5);
+                drone.getControl().applyForce(
+                        drone.getThrusterVecs().get(5).mult(-speed),
+                        position6);
+
+                Drawer.drawLineBetweenPoints(
+                        drone.getThrusterGlobalPositions().get(4),
+                        drone.getThrusterGlobalPositions().get(4).add(drone.getThrusterVecs().get(4).mult(speed)),
+                        rootNode, drone.getAssetManager(), ColorRGBA.Green);
+                Drawer.drawLineBetweenPoints(
+                        drone.getThrusterGlobalPositions().get(5),
+                        drone.getThrusterGlobalPositions().get(5).add(drone.getThrusterVecs().get(5).mult(-speed)),
+                        rootNode, drone.getAssetManager(), ColorRGBA.Yellow);
             }
+
         }
 
-        if (!force.equals(Vector3f.ZERO)) {
-            float PLAYER_FORCE = drone.getSpeed() * PLAYER_ACCEL; // F = M(4m diameter steel ball) * A ( 1m/s²)
-            force.normalizeLocal().multLocal(PLAYER_FORCE); // intensité constante
-            drone.getControl().applyCentralForce(force);
-        }
-        if (rotateLeft)
-            angular.addLocal(0, 1f, 0); // Yaw +
-        if (rotateRight)
-            angular.addLocal(0, -1f, 0); // Yaw -
-        if (pitchUp)
-            angular.addLocal(1f, 0, 0); // Pitch +
-        if (pitchDown)
-            angular.addLocal(-1f, 0, 0); // Pitch -
+        // if (!force.equals(Vector3f.ZERO)) {
+        // float PLAYER_FORCE = drone.getSpeed() * PLAYER_ACCEL; // F = M(4m diameter
+        // steel ball) * A ( 1m/s²)
+        // force.normalizeLocal().multLocal(PLAYER_FORCE); // intensité constante
+        // drone.getControl().applyCentralForce(force);
+        // }
+        // if (rotateLeft)
+        // angular.addLocal(0, 1f, 0); // Yaw +
+        // if (rotateRight)
+        // angular.addLocal(0, -1f, 0); // Yaw -
+        // if (pitchUp)
+        // angular.addLocal(1f, 0, 0); // Pitch +
+        // if (pitchDown)
+        // angular.addLocal(-1f, 0, 0); // Pitch -
 
-        drone.getControl().setAngularVelocity(angular);
+        // drone.getControl().setAngularVelocity(angular);
 
         float rotationSpeed = 1.5f * tpf;
         if (camLeft) {
