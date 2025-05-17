@@ -72,8 +72,8 @@ public class Drone {
 
         // configure la physique
         this.control.setGravity(Vector3f.ZERO);
-        this.control.setLinearDamping(0.9999f);
-        this.control.setAngularDamping(0.9999f);
+        this.control.setLinearDamping(0.2f);
+        this.control.setAngularDamping(0.99999999999999999999999999999999f);
 
         initialThrusterVecs = new ArrayList<>();
         initialThrusterGlobalPositions = new ArrayList<>();

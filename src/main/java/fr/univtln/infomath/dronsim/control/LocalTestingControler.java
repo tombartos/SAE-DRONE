@@ -18,8 +18,6 @@ import fr.univtln.infomath.dronsim.Drawer;
 import fr.univtln.infomath.dronsim.simulation.Drone;
 import lombok.Getter;
 
-//TODO : Fix avancer/reculer   idée : ajuster angles des vecteurs de poussée, lire tuto jme3 physique
-
 @Getter
 public class LocalTestingControler implements ActionListener {
 
@@ -105,12 +103,13 @@ public class LocalTestingControler implements ActionListener {
 
         if (forward) {
             System.out.println("FORWARD");
-            int speed = 10;
+            int speed1 = -200;
+            int speed2 = 200;
             // Use thruster lists instead of individual fields
-            Vector3f force1 = drone.getThrusterVecs().get(0).mult(-speed);
-            Vector3f force2 = drone.getThrusterVecs().get(1).mult(-speed);
-            Vector3f force3 = drone.getThrusterVecs().get(2).mult(speed);
-            Vector3f force4 = drone.getThrusterVecs().get(3).mult(speed);
+            Vector3f force1 = drone.getThrusterVecs().get(0).mult(speed1);
+            Vector3f force2 = drone.getThrusterVecs().get(1).mult(speed1);
+            Vector3f force3 = drone.getThrusterVecs().get(2).mult(speed2);
+            Vector3f force4 = drone.getThrusterVecs().get(3).mult(speed2);
 
             Vector3f position1 = drone.getThrusterGlobalPositions().get(0);
             Vector3f position2 = drone.getThrusterGlobalPositions().get(1);
