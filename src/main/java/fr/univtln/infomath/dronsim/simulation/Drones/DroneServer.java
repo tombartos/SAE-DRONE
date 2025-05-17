@@ -1,5 +1,7 @@
 package fr.univtln.infomath.dronsim.simulation.Drones;
 
+import java.util.List;
+
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
@@ -9,10 +11,15 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 public class DroneServer extends Drone {
-    private RigidBodyControl control;
+    private RigidBodyControl body;
+    @Setter
+    private List<Vector3f> thrusterVecs;
+    @Setter
+    private List<Vector3f> thrusterGlobalPositions;
 
     public DroneServer(int id, int clientId, AssetManager assetManager, PhysicsSpace space, DroneModel droneModel,
             Vector3f position, int batteryLevel) {
@@ -22,14 +29,15 @@ public class DroneServer extends Drone {
         // TODO : Créer une collision shape adaptee au modele du drone
         CollisionShape shape = new BoxCollisionShape(new Vector3f(0.2f, 0.2f, 0.2f));
 
-        control = new RigidBodyControl(shape, weight);
-        this.node.addControl(control);
-        space.add(control);
+        body = new RigidBodyControl(shape, weight);
+        this.node.addControl(body);
+        space.add(body);
 
         // configure la physique
-        this.control.setGravity(Vector3f.ZERO);
-        this.control.setLinearDamping(0.9f);
-        this.control.setAngularDamping(0.9f);
+        this.body.setGravity(Vector3f.ZERO);
+        this.body.setLinearDamping(0.2f);
+        this.body.setAngularDamping(0.99999999999999999999999999999999f);
+        // TODO : Faire des tests et adapter les valeurs avec le controler ardusub
     }
 
     public static DroneServer createDrone(int id, int clientId, AssetManager assetManager, PhysicsSpace space,

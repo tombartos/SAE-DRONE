@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 // ATTENTION : cette classe est une version de test, elle ne respecte pas l'interface Controler
-// elle ne respecte pas la phyolosophie de l'interface controler
-public class LocalTestingControler implements ActionListener, Controler {
+// elle ne respecte pas la phylosophie de l'interface controler
+public class LocalTestingControler implements ActionListener {
 
     private static final String FORWARD = "FORWARD", BACKWARD = "BACKWARD", LEFT = "LEFT", RIGHT = "RIGHT";
     private static final String ASCEND = "ASCEND", DESCEND = "DESCEND";
@@ -39,7 +39,7 @@ public class LocalTestingControler implements ActionListener, Controler {
     }
 
     public void update(float tpf) {
-        // TODO: Test version, a changer pour la version finale respectant l'interface
+        // Test version, a changer pour la version finale respectant l'interface
         // generale
         List<String> directions = new ArrayList<>();
         if (forward) {
@@ -81,37 +81,4 @@ public class LocalTestingControler implements ActionListener, Controler {
         }
     }
 
-    @Override
-    // Doit etre appele par le simu a chaque tick
-    public float getMotorThrottle(int motorIndex) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getMotorThrottle'");
-    }
-
-    @Override
-    // Doit etre appele par le simu a chaque tick
-    public void setSensorValue(int captorIndex, int[] values) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setSensorValue'");
-    }
-
-    @Override
-    // Doit etre appele par le simu a chaque tick
-    public void setSensorValue(int captorIndex, float[] values) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setSensorValue'");
-    }
-
-    @Override
-    // Doit etre appele par le simu a chaque tick
-    public void setSensorValue(int captorIndex, long[] values) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setSensorValue'");
-    }
-
-    @Override
-    public void destroy() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'destroy'");
-    }
 }

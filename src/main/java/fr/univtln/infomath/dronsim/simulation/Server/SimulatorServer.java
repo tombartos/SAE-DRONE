@@ -2,6 +2,8 @@ package fr.univtln.infomath.dronsim.simulation.Server;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.bullet.BulletAppState;
@@ -109,10 +111,40 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         // Ajout du terrain
         attachTerrain(scene);
 
-        // Ajout d'un modele de drone
-        DroneModel ModelA = new DroneModel("Guardian", 200, "vehicle/subseatech/guardian/guardian-vehicle.j3o", 1,
-                1000);
-        DroneModel ModelB = new DroneModel("BlueRov", 200, "vehicle/bluerobotics/br2r4/br2-r4-vehicle.j3o", 1, 2000);
+        // Ajout des modeles de drone
+
+        // DroneModel ModelA = new DroneModel("Guardian", 200,
+        // "vehicle/subseatech/guardian/guardian-vehicle.j3o", 1,
+        // 1000);
+
+        // Initial thruster positions and vectors initialization for BlueROV2
+        List<Vector3f> initialThrusterVecs = new ArrayList<>();
+        List<Vector3f> initialThrusterLocalPosition = new ArrayList<>();
+
+        // Initial thruster position based on the node referencial (local position)
+        // WARNING : Can be broken if the node is rotated at creation, need to fix this
+        initialThrusterLocalPosition = new ArrayList<>();
+
+        initialThrusterVecs.add(new Vector3f(-0.7431f, 0.0000f, -0.6691f).normalize());
+        initialThrusterLocalPosition.add(new Vector3f(-0.1f, 0f, 0.16f));
+
+        initialThrusterVecs.add(new Vector3f(0.7431f, 0.0000f, -0.6691f).normalize());
+        initialThrusterLocalPosition.add(new Vector3f(0.1f, 0f, 0.16f));
+
+        initialThrusterVecs.add(new Vector3f(0.7431f, 0.0000f, 0.6691f).normalize());
+        initialThrusterLocalPosition.add(new Vector3f(0.1f, 0f, -0.16f));
+
+        initialThrusterVecs.add(new Vector3f(-0.7431f, 0.0000f, 0.6691f).normalize());
+        initialThrusterLocalPosition.add(new Vector3f(-0.1f, 0f, -0.16f));
+
+        initialThrusterVecs.add(new Vector3f(0.0000f, 1f, 0f).normalize());
+        initialThrusterLocalPosition.add(new Vector3f(0.1f, 0f, 0f));
+
+        initialThrusterVecs.add(new Vector3f(-0.0000f, -1f, 0f).normalize());
+        initialThrusterLocalPosition.add(new Vector3f(-0.1f, 0f, 0f));
+
+        DroneModel ModelB = new DroneModel("BlueROV2", 200, "vehicle/bluerobotics/br2r4/br2-r4-vehicle.j3o", 6, 2000,
+                initialThrusterVecs, initialThrusterLocalPosition);
 
         // Ajout du drone
         DroneServer droneA = DroneServer.createDrone(
@@ -120,7 +152,7 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
                 0,
                 assetManager,
                 space,
-                ModelA,
+                ModelB,
                 new Vector3f(0.0f, 2.0f, 0.0f),
                 100);
         scene.attachChild(droneA.getNode());
@@ -198,15 +230,17 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         server.broadcast(new DroneDTOMessage(DroneDTO.dronesDTOs));
     }
 
-    public void processDroneMovementRequest(DroneMovementRequestMessage message) {
-        for (Drone drone : Drone.getDrones()) {
-            if (drone.getId() == message.getDroneId()) {
-                drone.setDirections(message.getDirections());
-                drone.setMotors_speeds(message.getMotorsSpeeds());
-                return;
-            }
-        }
-    }
+    // Test method, outdated
+    // public void processDroneMovementRequest(DroneMovementRequestMessage message)
+    // {
+    // for (Drone drone : Drone.getDrones()) {
+    // if (drone.getId() == message.getDroneId()) {
+    // drone.setDirections(message.getDirections());
+    // drone.setMotors_speeds(message.getMotorsSpeeds());
+    // return;
+    // }
+    // }
+    // }
 
     public void updateDronePositions() {
         // Version test simplifiee, on applique une force a l'origine du drone avec un
@@ -214,59 +248,91 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         // a remplacer par definir un vecteur a chaque moteur avec une direction
         // potentiellement fixe pour chaque moteur
         // selon le modele du drone et on change juste les intensites de chauqe force
-        for (Drone drone : Drone.getDrones()) {
-            Vector3f force = new Vector3f();
+        // for (Drone drone : Drone.getDrones()) {
+        // Vector3f force = new Vector3f();
 
-            Vector3f forwardDir = drone.getNode().getLocalRotation().mult(Vector3f.UNIT_Z).setY(0).normalizeLocal();
-            Vector3f rightDir = drone.getNode().getLocalRotation().mult(Vector3f.UNIT_X).setY(0).normalizeLocal();
-            Vector3f upDir = drone.getNode().getLocalRotation().mult(Vector3f.UNIT_Y).normalizeLocal();
+        // Vector3f forwardDir =
+        // drone.getNode().getLocalRotation().mult(Vector3f.UNIT_Z).setY(0).normalizeLocal();
+        // Vector3f rightDir =
+        // drone.getNode().getLocalRotation().mult(Vector3f.UNIT_X).setY(0).normalizeLocal();
+        // Vector3f upDir =
+        // drone.getNode().getLocalRotation().mult(Vector3f.UNIT_Y).normalizeLocal();
 
-            boolean forward = false;
-            boolean backward = false;
-            boolean left = false;
-            boolean right = false;
-            boolean ascend = false;
-            boolean descend = false;
-            for (String direction : drone.getDirections()) {
-                switch (direction) {
-                    case "FORWARD" -> forward = true;
-                    case "BACKWARD" -> backward = true;
-                    case "LEFT" -> left = true;
-                    case "RIGHT" -> right = true;
-                    case "ASCEND" -> ascend = true;
-                    case "DESCEND" -> descend = true;
+        // boolean forward = false;
+        // boolean backward = false;
+        // boolean left = false;
+        // boolean right = false;
+        // boolean ascend = false;
+        // boolean descend = false;
+        // for (String direction : drone.getDirections()) {
+        // switch (direction) {
+        // case "FORWARD" -> forward = true;
+        // case "BACKWARD" -> backward = true;
+        // case "LEFT" -> left = true;
+        // case "RIGHT" -> right = true;
+        // case "ASCEND" -> ascend = true;
+        // case "DESCEND" -> descend = true;
+        // }
+        // }
+        // if (forward)
+        // force.addLocal(forwardDir);
+        // if (backward)
+        // force.subtractLocal(forwardDir);
+        // if (left)
+        // force.addLocal(rightDir);
+        // if (right)
+        // force.subtractLocal(rightDir);
+        // if (ascend) {
+        // float currentY = drone.getNode().getWorldTranslation().y;
+        // if (currentY < WATERLEVEL) {
+        // force.addLocal(upDir); // Monter uniquement si on est sous l’eau
+        // }
+        // }
+        // if (descend)
+        // force.subtractLocal(upDir);
+
+        // // log.info(drone.getDirections().toString());
+
+        // if (!force.equals(Vector3f.ZERO)) {
+        // force.normalizeLocal().multLocal(drone.getMotors_speeds().get(0));
+        // // log.info("Force: " + force.toString());
+        // ((DroneServer) (drone)).getControl().applyCentralForce(force);
+        // drone.setPosition(drone.getNode().getLocalTranslation());
+        // drone.setAngular(drone.getNode().getLocalRotation());
+        // // log.info("Drone " + drone.getId() + " position: " +
+        // // drone.getPosition().toString());
+        // }
+        // drone.getDirections().clear();
+        // }
+
+        // TODO : TOM LUNDI MATIN : Update get thruster values and apply forces and dont
+        // forget to update position and rotation like above
+
+        for (Drone drone : DroneServer.getDrones()) {
+            // Update the thruster vectors
+            // Rotate each initial thruster vector by the drone's local rotation
+            DroneModel droneModel = drone.getDroneModel();
+            if (drone instanceof DroneServer) {
+                DroneServer droneServer = (DroneServer) drone;
+                List<Vector3f> rotatedThrusterVecs = new ArrayList<>();
+                Quaternion rotation = droneServer.getNode().getLocalRotation();
+                for (Vector3f vec : droneModel.getInitialThrusterVecs()) {
+                    rotatedThrusterVecs.add(rotation.mult(vec));
                 }
-            }
-            if (forward)
-                force.addLocal(forwardDir);
-            if (backward)
-                force.subtractLocal(forwardDir);
-            if (left)
-                force.addLocal(rightDir);
-            if (right)
-                force.subtractLocal(rightDir);
-            if (ascend) {
-                float currentY = drone.getNode().getWorldTranslation().y;
-                if (currentY < WATERLEVEL) {
-                    force.addLocal(upDir); // Monter uniquement si on est sous l’eau
+                droneServer.setThrusterVecs(rotatedThrusterVecs);
+
+                // Update the thruster global positions based on the drone's position and
+                // rotation
+                List<Vector3f> updatedThrusterPositions = new ArrayList<>();
+                Quaternion droneRotation = droneServer.getNode().getLocalRotation();
+                Vector3f droneTranslation = droneServer.getNode().getLocalTranslation();
+                for (Vector3f initialPos : droneModel.getInitialThrusterLocalPosition()) {
+                    Vector3f rotatedPos = droneRotation.mult(initialPos);
+                    updatedThrusterPositions.add(rotatedPos.add(droneTranslation));
                 }
+                droneServer.setThrusterGlobalPositions(updatedThrusterPositions);
             }
-            if (descend)
-                force.subtractLocal(upDir);
 
-            // log.info(drone.getDirections().toString());
-
-            if (!force.equals(Vector3f.ZERO)) {
-                // TODO: Gerer les differents moteurs
-                force.normalizeLocal().multLocal(drone.getMotors_speeds().get(0));
-                // log.info("Force: " + force.toString());
-                ((DroneServer) (drone)).getControl().applyCentralForce(force);
-                drone.setPosition(drone.getNode().getLocalTranslation());
-                drone.setAngular(drone.getNode().getLocalRotation());
-                // log.info("Drone " + drone.getId() + " position: " +
-                // drone.getPosition().toString());
-            }
-            drone.getDirections().clear();
         }
 
     }
