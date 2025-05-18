@@ -133,14 +133,30 @@ public class Simulateur extends SimpleApplication implements PhysicsCollisionLis
         evenements.add(eventZone);
 
         // Un poisson
-        // entitesMarines.add(new EntiteMarine(assetManager, "poisson/fish1.glb", new
-        // Vector3f(5, 1, 5),
-        // new Vector3f(10, 5, 10), 2f, true));
+        entitesMarines.add(new EntiteMarine(assetManager, space, "poisson/fish.glb", new Vector3f(0, -8, 20),
+                new Vector3f(1, 0, 20), 2f, false));
+        entitesMarines.add(new EntiteMarine(assetManager, space, "poisson/gold_fish.glb", new Vector3f(5, -6, 15),
+                new Vector3f(1, 0, 20), 2f, false));
+        entitesMarines.add(new EntiteMarine(assetManager, space, "poisson/koi_fish.glb", new Vector3f(-5, -10, 25),
+                new Vector3f(1, 0, 20), 2f, false));
+        entitesMarines.add(new EntiteMarine(assetManager, space, "poisson/model_50a_-_hawksbill_sea_turtle.glb",
+                new Vector3f(10, -4, 20),
+                new Vector3f(1, 0, 20), 2f, false));
+        entitesMarines.add(new EntiteMarine(assetManager, space, "poisson/octopus.glb", new Vector3f(-10, -10, 20),
+                new Vector3f(1, 0, 20), 2f, false));
+        entitesMarines.add(new EntiteMarine(assetManager, space, "poisson/school_of_fish.glb", new Vector3f(15, -7, 20),
+                new Vector3f(1, 0, 20), 2f, false));
+        entitesMarines
+                .add(new EntiteMarine(assetManager, space, "poisson/the_fish_particle.glb", new Vector3f(-8, -6, 25),
+                        new Vector3f(1, 0, 20), 2f, false));
+        entitesMarines.add(new EntiteMarine(assetManager, space, "bateau/boat_4c.glb", new Vector3f(15, 5, 40),
+                new Vector3f(1, 0, 20), 2f, false));
+        entitesMarines.add(new EntiteMarine(assetManager, space, "bateau/speedboat_n2.glb", new Vector3f(8, 3.5f, 30),
+                new Vector3f(1, 0, 20), 1f, false));
 
-        // Un bateau
-        // entitesMarines.add(new EntiteMarine(assetManager, "bateau/titanic.glb", new
-        // Vector3f(-5, 0, 0),
-        // new Vector3f(30, 5, 30), 1f, false));
+        for (EntiteMarine e : entitesMarines) {
+            scene.attachChild(e.getModelNode());
+        }
 
     }
 
@@ -192,9 +208,9 @@ public class Simulateur extends SimpleApplication implements PhysicsCollisionLis
             evt.apply(drones, tpf);
         }
 
-        // for (EntiteMarine e : entitesMarines) {
-        // e.update(tpf);
-        // }
+        for (EntiteMarine e : entitesMarines) {
+            e.update(tpf);
+        }
 
     }
 
