@@ -1,6 +1,7 @@
 package fr.univtln.infomath.dronsim.simulation;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.bullet.PhysicsSpace;
 import com.jme3.scene.Node;
 import com.jme3.math.Vector3f;
 import com.jme3.effect.ParticleEmitter;
@@ -19,12 +20,15 @@ public class Evenement {
 
     private Node scene; // pour attacher l'effet visuel
     private AssetManager assetManager;
+    private PhysicsSpace physicsSpace;
 
-    public Evenement(Vector3f zoneCenter, Vector3f zoneSize, AssetManager assetManager, Node scene) {
+    public Evenement(Vector3f zoneCenter, Vector3f zoneSize, AssetManager assetManager, Node scene,
+            PhysicsSpace physicsSpace) {
         this.zoneCenter = zoneCenter;
         this.zoneSize = zoneSize;
         this.assetManager = assetManager;
         this.scene = scene;
+        this.physicsSpace = physicsSpace;
     }
 
     public void definirCourant(Vector3f direction, float intensite) {
@@ -54,6 +58,15 @@ public class Evenement {
         courant.setLocalTranslation(zoneCenter);
 
         scene.attachChild(courant);
+    }
+
+    public EntiteMarine ajouterEntiteMarine(String modelPath, float speed) {
+        Vector3f position = zoneCenter.clone(); // position = centre de la zone
+        EntiteMarine entite = new EntiteMarine(this.assetManager, this.physicsSpace, modelPath, position,
+                speed);
+
+        scene.attachChild(entite.getModelNode());
+        return entite;
     }
 
     public boolean isInZone(Vector3f position) {
