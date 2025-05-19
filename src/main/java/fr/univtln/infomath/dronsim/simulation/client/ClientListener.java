@@ -1,10 +1,10 @@
-package fr.univtln.infomath.dronsim.simulation.Client;
+package fr.univtln.infomath.dronsim.simulation.client;
 
 import com.jme3.network.Message;
 import com.jme3.network.MessageListener;
 
-import fr.univtln.infomath.dronsim.simulation.jmeMessages.DroneDTOMessage;
-import fr.univtln.infomath.dronsim.simulation.jmeMessages.Handshake2;
+import fr.univtln.infomath.dronsim.simulation.jme_messages.DroneDTOMessage;
+import fr.univtln.infomath.dronsim.simulation.jme_messages.Handshake2;
 import lombok.AllArgsConstructor;
 
 import com.jme3.network.Client;

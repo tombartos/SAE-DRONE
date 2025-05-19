@@ -6,7 +6,7 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.network.Client;
 import com.jme3.network.Message;
-import fr.univtln.infomath.dronsim.simulation.jmeMessages.DroneMovementRequestMessage;
+import fr.univtln.infomath.dronsim.simulation.jme_messages.DroneMovementRequestMessage;
 import java.util.ArrayList;
 import java.util.List;
 

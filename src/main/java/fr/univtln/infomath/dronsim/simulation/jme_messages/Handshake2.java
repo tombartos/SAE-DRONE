@@ -1,4 +1,4 @@
-package fr.univtln.infomath.dronsim.simulation.jmeMessages;
+package fr.univtln.infomath.dronsim.simulation.jme_messages;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import fr.univtln.infomath.dronsim.simulation.Drones.DroneInitData;
+import fr.univtln.infomath.dronsim.simulation.drones.DroneInitData;
 
 @Getter
 @Setter

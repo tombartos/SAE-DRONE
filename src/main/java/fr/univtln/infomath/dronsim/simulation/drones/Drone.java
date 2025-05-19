@@ -1,4 +1,4 @@
-package fr.univtln.infomath.dronsim.simulation.Drones;
+package fr.univtln.infomath.dronsim.simulation.drones;
 
 import java.util.ArrayList;
 import java.util.List;

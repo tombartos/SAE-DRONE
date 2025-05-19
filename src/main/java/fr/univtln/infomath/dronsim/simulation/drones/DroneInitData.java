@@ -1,4 +1,4 @@
-package fr.univtln.infomath.dronsim.simulation.Drones;
+package fr.univtln.infomath.dronsim.simulation.drones;
 
 import com.jme3.network.serializing.Serializable;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package fr.univtln.infomath.dronsim.simulation.Drones;
+package fr.univtln.infomath.dronsim.simulation.drones;
 
 import lombok.Getter;
 
