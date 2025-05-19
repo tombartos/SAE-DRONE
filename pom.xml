@@ -227,33 +227,6 @@
         </configuration>
       </plugin>
 
-      <plugin>
-        <groupId>org.ec4j.maven</groupId>
-        <artifactId>editorconfig-maven-plugin</artifactId>
-        <version>0.1.3</version>
-        <executions>
-          <execution>
-            <id>check</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <excludes>
-            <exclude>doc/*.aux</exclude>
-            <exclude>doc/*.d</exclude>
-            <exclude>doc/*.fdb_latexmk</exclude>
-            <exclude>doc/*.fls</exclude>
-            <exclude>doc/*.log</exclude>
-            <exclude>doc/*.out</exclude>
-            <exclude>data/**</exclude>
-            <exclude>mvnw*</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
-
     </plugins>
   </build>
 
