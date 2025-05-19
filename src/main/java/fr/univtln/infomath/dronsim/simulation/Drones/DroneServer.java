@@ -35,9 +35,9 @@ public class DroneServer extends Drone {
         space.add(body);
 
         // configure la physique
-        this.body.setGravity(new Vector3f(0, -1.5f, 0));
+        this.body.setGravity(new Vector3f(0f, 0f, 0f));
         this.body.setLinearDamping(0.4f);
-        this.body.setAngularDamping(0.99999997f);
+        this.body.setAngularDamping(0.99f);
         // TODO : Faire des tests et adapter les valeurs avec le controler ardusub
 
         this.controler = controler;
