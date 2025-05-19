@@ -27,7 +27,6 @@ public class DroneServer extends Drone {
         super(id, clientId, assetManager, space, droneModel, position, batteryLevel);
 
         // Création de la collision
-        // TODO : Créer une collision shape adaptee au modele du drone
         CollisionShape shape = new BoxCollisionShape(new Vector3f(0.2f, 0.14f, 0.2f));
 
         body = new RigidBodyControl(shape, weight);
