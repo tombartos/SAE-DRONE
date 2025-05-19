@@ -8,7 +8,6 @@ import com.jme3.effect.ParticleMesh;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.texture.Texture;
-
 import java.util.List;
 import java.util.function.BiConsumer;
 
@@ -35,22 +34,23 @@ public class Evenement {
         };
 
         // Effet visuel de courant
-        ParticleEmitter courant = new ParticleEmitter("CourantVisuel", ParticleMesh.Type.Triangle, 100);
+        ParticleEmitter courant = new ParticleEmitter("CourantVisuel", ParticleMesh.Type.Triangle, 300);
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Particle.j3md");
-        Texture tex = assetManager.loadTexture("Effects/Smoke/Smoke.png"); // ou ta propre texture
+        Texture tex = assetManager.loadTexture("Effects/courant.png");
         mat.setTexture("Texture", tex);
         courant.setMaterial(mat);
         courant.setImagesX(1);
         courant.setImagesY(1);
         courant.setStartColor(new ColorRGBA(0.4f, 0.7f, 1f, 0.4f));
         courant.setEndColor(new ColorRGBA(0.4f, 0.7f, 1f, 0.0f));
-        courant.setStartSize(0.5f);
-        courant.setEndSize(1f);
-        courant.setGravity(0, 0, 0);
-        courant.setLowLife(1f);
-        courant.setHighLife(2f);
-        courant.getParticleInfluencer().setInitialVelocity(direction.normalize().mult(2f));
-        courant.getParticleInfluencer().setVelocityVariation(0.3f);
+        courant.setStartSize(2f);
+        courant.setEndSize(3f);
+        courant.setLowLife(2f);
+        courant.setHighLife(4f);
+        courant.setFacingVelocity(true);
+        courant.getParticleInfluencer().setInitialVelocity(direction.normalize().mult(4f));
+        courant.getParticleInfluencer().setVelocityVariation(0.2f);
+
         courant.setLocalTranslation(zoneCenter);
 
         scene.attachChild(courant);
