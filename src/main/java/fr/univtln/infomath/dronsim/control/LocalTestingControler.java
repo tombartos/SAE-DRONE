@@ -13,7 +13,6 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
-
 import fr.univtln.infomath.dronsim.Drawer;
 import fr.univtln.infomath.dronsim.simulation.Drone;
 import lombok.Getter;
@@ -150,7 +149,7 @@ public class LocalTestingControler implements ActionListener {
 
         if (descend) {
             // force.subtractLocal(upDir);
-            int speed = 1000;
+            int speed = 100;
             Vector3f position5 = drone.getThrusterGlobalPositions().get(4);
             Vector3f position6 = drone.getThrusterGlobalPositions().get(5);
             drone.getControl().applyForce(
@@ -210,7 +209,10 @@ public class LocalTestingControler implements ActionListener {
         // if (pitchDown)
         // angular.addLocal(-1f, 0, 0); // Pitch -
 
-        // drone.getControl().setAngularVelocity(angular);
+        // Stabilisation
+        // TODO : Fix physique, essayer avec ça
+        Vector3f angular = Vector3f.ZERO;
+        drone.getControl().setAngularVelocity(angular);
 
         float rotationSpeed = 1.5f * tpf;
         if (camLeft) {
