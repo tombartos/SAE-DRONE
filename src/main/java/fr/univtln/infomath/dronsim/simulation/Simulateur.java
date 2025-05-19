@@ -84,7 +84,7 @@ public class Simulateur extends SimpleApplication implements PhysicsCollisionLis
                 space,
                 "vehicle/bluerobotics/br2r4/br2-r4-vehicle.j3o",
                 "VehicleA",
-                new Vector3f(0.0f, 2.0f, 0.0f),
+                new Vector3f(0.0f, -3.0f, 0.0f),
                 400f, 1500f);
         scene.attachChild(droneA.getNode());
         drones.add(droneA);

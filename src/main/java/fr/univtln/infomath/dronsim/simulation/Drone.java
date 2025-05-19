@@ -30,7 +30,7 @@ public class Drone {
     private AssetManager assetManager;
     Vector3f angular = new Vector3f();
     private List<Vector3f> initialThrusterVecs;
-    private List<Vector3f> initialThrusterGlobalPositions;
+    private List<Vector3f> initialThrusterLocalPosition;
     @Setter
     private List<Vector3f> thrusterVecs;
     @Setter
@@ -75,26 +75,29 @@ public class Drone {
         this.control.setLinearDamping(0.2f);
         this.control.setAngularDamping(0.99999999999999999999999999999999f);
 
+        // Initial thruster vector
         initialThrusterVecs = new ArrayList<>();
-        initialThrusterGlobalPositions = new ArrayList<>();
+        // Initial thruster position based on the node referencial (local position)
+        // WARNING : Can be broken if the node is rotated at creation, need to fix this
+        initialThrusterLocalPosition = new ArrayList<>();
 
         initialThrusterVecs.add(new Vector3f(-0.7431f, 0.0000f, -0.6691f).normalize());
-        initialThrusterGlobalPositions.add(new Vector3f(-0.1f, 0f, 0.16f));
+        initialThrusterLocalPosition.add(new Vector3f(-0.1f, 0f, 0.16f));
 
         initialThrusterVecs.add(new Vector3f(0.7431f, 0.0000f, -0.6691f).normalize());
-        initialThrusterGlobalPositions.add(new Vector3f(0.1f, 0f, 0.16f));
+        initialThrusterLocalPosition.add(new Vector3f(0.1f, 0f, 0.16f));
 
         initialThrusterVecs.add(new Vector3f(0.7431f, 0.0000f, 0.6691f).normalize());
-        initialThrusterGlobalPositions.add(new Vector3f(0.1f, 0f, -0.16f));
+        initialThrusterLocalPosition.add(new Vector3f(0.1f, 0f, -0.16f));
 
         initialThrusterVecs.add(new Vector3f(-0.7431f, 0.0000f, 0.6691f).normalize());
-        initialThrusterGlobalPositions.add(new Vector3f(-0.1f, 0f, -0.16f));
+        initialThrusterLocalPosition.add(new Vector3f(-0.1f, 0f, -0.16f));
 
         initialThrusterVecs.add(new Vector3f(0.0000f, 1f, 0f).normalize());
-        initialThrusterGlobalPositions.add(new Vector3f(0.1f, 0f, 0f));
+        initialThrusterLocalPosition.add(new Vector3f(0.1f, 0f, 0f));
 
         initialThrusterVecs.add(new Vector3f(-0.0000f, -1f, 0f).normalize());
-        initialThrusterGlobalPositions.add(new Vector3f(-0.1f, 0f, 0f));
+        initialThrusterLocalPosition.add(new Vector3f(-0.1f, 0f, 0f));
 
         thrusterVecs = new ArrayList<>();
         for (Vector3f v : initialThrusterVecs) {
@@ -102,7 +105,7 @@ public class Drone {
         }
 
         thrusterGlobalPositions = new ArrayList<>();
-        for (Vector3f v : initialThrusterGlobalPositions) {
+        for (Vector3f v : initialThrusterLocalPosition) {
             thrusterGlobalPositions.add(v.clone());
         }
     }

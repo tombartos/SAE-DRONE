@@ -81,28 +81,29 @@ public class LocalTestingControler implements ActionListener {
 
         // Vector3f angular = drone.getAngular().clone();
 
-        // Update the thruster vectors and positions
-        // Rotate each initial thruster vector by the drone's local rotation
         Drawer.deleteAllLines(rootNode);
+        // Update the thruster vectors
+        // Rotate each initial thruster vector by the drone's local rotation
         List<Vector3f> rotatedThrusterVecs = new ArrayList<>();
         Quaternion rotation = drone.getNode().getLocalRotation();
         for (Vector3f vec : drone.getInitialThrusterVecs()) {
             rotatedThrusterVecs.add(rotation.mult(vec));
         }
         drone.setThrusterVecs(rotatedThrusterVecs);
+
         // Update the thruster global positions based on the drone's position and
         // rotation
         List<Vector3f> updatedThrusterPositions = new ArrayList<>();
         Quaternion droneRotation = drone.getNode().getLocalRotation();
         Vector3f droneTranslation = drone.getNode().getLocalTranslation();
-        for (Vector3f initialPos : drone.getInitialThrusterGlobalPositions()) {
+        for (Vector3f initialPos : drone.getInitialThrusterLocalPosition()) {
             Vector3f rotatedPos = droneRotation.mult(initialPos);
             updatedThrusterPositions.add(rotatedPos.add(droneTranslation));
         }
         drone.setThrusterGlobalPositions(updatedThrusterPositions);
 
         if (forward) {
-            System.out.println("FORWARD");
+            // System.out.println("FORWARD");
             int speed1 = -200;
             int speed2 = 200;
             // Use thruster lists instead of individual fields
@@ -112,6 +113,8 @@ public class LocalTestingControler implements ActionListener {
             Vector3f force4 = drone.getThrusterVecs().get(3).mult(speed2);
 
             Vector3f position1 = drone.getThrusterGlobalPositions().get(0);
+            System.out.println("position1: " + position1);
+            System.out.println("Drone pos: " + drone.getNode().getLocalTranslation());
             Vector3f position2 = drone.getThrusterGlobalPositions().get(1);
             Vector3f position3 = drone.getThrusterGlobalPositions().get(2);
             Vector3f position4 = drone.getThrusterGlobalPositions().get(3);
