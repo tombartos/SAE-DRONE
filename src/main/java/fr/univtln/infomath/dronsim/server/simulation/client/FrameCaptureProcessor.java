@@ -1,4 +1,4 @@
-package fr.univtln.infomath.dronsim.simulation.client;
+package fr.univtln.infomath.dronsim.server.simulation.client;
 
 import java.nio.ByteBuffer;
 
@@ -11,7 +11,7 @@ import com.jme3.renderer.ViewPort;
 import com.jme3.texture.FrameBuffer;
 import com.jme3.util.BufferUtils;
 
-import fr.univtln.infomath.dronsim.utils.GStreamerSender;
+import fr.univtln.infomath.dronsim.server.utils.GStreamerSender;
 
 import com.jme3.renderer.queue.RenderQueue;
 

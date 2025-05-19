@@ -1,4 +1,4 @@
-package fr.univtln.infomath.dronsim.simulation.jme_messages;
+package fr.univtln.infomath.dronsim.server.simulation.jme_messages;
 
 import com.jme3.network.AbstractMessage;
 import com.jme3.network.serializing.Serializable;

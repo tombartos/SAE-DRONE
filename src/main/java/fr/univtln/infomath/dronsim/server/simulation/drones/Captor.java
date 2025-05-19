@@ -1,4 +1,4 @@
-package fr.univtln.infomath.dronsim.simulation.drones;
+package fr.univtln.infomath.dronsim.server.simulation.drones;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

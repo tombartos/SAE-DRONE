@@ -1,4 +1,4 @@
-package fr.univtln.infomath.dronsim.simulation.server;
+package fr.univtln.infomath.dronsim.server.simulation.server;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,22 +23,22 @@ import com.jme3.scene.Spatial;
 import com.jme3.system.JmeContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import fr.univtln.infomath.dronsim.simulation.client.SimulatorClient;
-import fr.univtln.infomath.dronsim.simulation.drones.Drone;
-import fr.univtln.infomath.dronsim.simulation.drones.DroneDTO;
-import fr.univtln.infomath.dronsim.simulation.drones.DroneInitData;
-import fr.univtln.infomath.dronsim.simulation.drones.DroneModel;
-import fr.univtln.infomath.dronsim.simulation.drones.DroneServer;
-import fr.univtln.infomath.dronsim.simulation.jme_messages.DroneDTOMessage;
-import fr.univtln.infomath.dronsim.simulation.jme_messages.DroneMovementRequestMessage;
-import fr.univtln.infomath.dronsim.simulation.jme_messages.Handshake1;
-import fr.univtln.infomath.dronsim.simulation.jme_messages.Handshake2;
+import fr.univtln.infomath.dronsim.server.simulation.client.SimulatorClient;
+import fr.univtln.infomath.dronsim.server.simulation.drones.Drone;
+import fr.univtln.infomath.dronsim.server.simulation.drones.DroneDTO;
+import fr.univtln.infomath.dronsim.server.simulation.drones.DroneInitData;
+import fr.univtln.infomath.dronsim.server.simulation.drones.DroneModel;
+import fr.univtln.infomath.dronsim.server.simulation.drones.DroneServer;
+import fr.univtln.infomath.dronsim.server.simulation.jme_messages.DroneDTOMessage;
+import fr.univtln.infomath.dronsim.server.simulation.jme_messages.DroneMovementRequestMessage;
+import fr.univtln.infomath.dronsim.server.simulation.jme_messages.Handshake1;
+import fr.univtln.infomath.dronsim.server.simulation.jme_messages.Handshake2;
 import com.jme3.network.Filters;
 import com.jme3.network.HostedConnection;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
-import fr.univtln.infomath.dronsim.control.Controler;
-import fr.univtln.infomath.dronsim.control.ArduSubControler;
+import fr.univtln.infomath.dronsim.server.control.Controler;
+import fr.univtln.infomath.dronsim.server.control.ArduSubControler;
 
 public class SimulatorServer extends SimpleApplication implements PhysicsCollisionListener {
     private static final int SERVER_PORT = 6143; // Default JME server port

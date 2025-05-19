@@ -1,4 +1,4 @@
-package fr.univtln.infomath.dronsim.simulation.drones;
+package fr.univtln.infomath.dronsim.server.simulation.drones;
 
 import com.jme3.math.Vector3f;
 import com.jme3.math.Quaternion;
