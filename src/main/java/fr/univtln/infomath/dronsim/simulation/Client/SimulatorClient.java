@@ -41,7 +41,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//TODO: regler memory leak + 2 clients en meme temps
 public class SimulatorClient extends SimpleApplication implements PhysicsCollisionListener {
     private static final Logger log = LoggerFactory.getLogger(SimulatorClient.class);
 

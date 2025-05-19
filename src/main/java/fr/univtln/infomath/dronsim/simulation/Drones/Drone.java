@@ -51,8 +51,7 @@ public class Drone {
 
         node = new Node(name);
         Spatial model = assetManager.loadModel(droneModel.getModel3DPath());
-        // model.rotate(FastMath.HALF_PI, 0f, 0f); // Applique la rotation au modèle,
-        // pas au noeud global
+        model.setLocalTranslation(0, 0.05f, 0); // positionne le model par rapport à la collision shape
         node.attachChild(model);
         node.setLocalTranslation(position); // positionne le node principal
         this.angular = node.getLocalRotation(); // positionne le node principal

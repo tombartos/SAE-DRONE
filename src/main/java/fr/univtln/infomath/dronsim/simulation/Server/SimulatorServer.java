@@ -305,33 +305,41 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         // drone.getDirections().clear();
         // }
 
-        // TODO : TOM LUNDI MATIN : Update get thruster values and apply forces and dont
-        // forget to update position and rotation like above
-
         for (Drone drone : DroneServer.getDrones()) {
             // Update the thruster vectors
             // Rotate each initial thruster vector by the drone's local rotation
             DroneModel droneModel = drone.getDroneModel();
-            if (drone instanceof DroneServer) {
-                DroneServer droneServer = (DroneServer) drone;
-                List<Vector3f> rotatedThrusterVecs = new ArrayList<>();
-                Quaternion rotation = droneServer.getNode().getLocalRotation();
-                for (Vector3f vec : droneModel.getInitialThrusterVecs()) {
-                    rotatedThrusterVecs.add(rotation.mult(vec));
-                }
-                droneServer.setThrusterVecs(rotatedThrusterVecs);
-
-                // Update the thruster global positions based on the drone's position and
-                // rotation
-                List<Vector3f> updatedThrusterPositions = new ArrayList<>();
-                Quaternion droneRotation = droneServer.getNode().getLocalRotation();
-                Vector3f droneTranslation = droneServer.getNode().getLocalTranslation();
-                for (Vector3f initialPos : droneModel.getInitialThrusterLocalPosition()) {
-                    Vector3f rotatedPos = droneRotation.mult(initialPos);
-                    updatedThrusterPositions.add(rotatedPos.add(droneTranslation));
-                }
-                droneServer.setThrusterGlobalPositions(updatedThrusterPositions);
+            DroneServer droneServer = (DroneServer) drone;
+            List<Vector3f> rotatedThrusterVecs = new ArrayList<>();
+            Quaternion rotation = droneServer.getNode().getLocalRotation();
+            for (Vector3f vec : droneModel.getInitialThrusterVecs()) {
+                rotatedThrusterVecs.add(rotation.mult(vec));
             }
+            droneServer.setThrusterVecs(rotatedThrusterVecs);
+
+            // Update the thruster global positions based on the drone's position and
+            // rotation
+            List<Vector3f> updatedThrusterPositions = new ArrayList<>();
+            Quaternion droneRotation = droneServer.getNode().getLocalRotation();
+            Vector3f droneTranslation = droneServer.getNode().getLocalTranslation();
+            for (Vector3f initialPos : droneModel.getInitialThrusterLocalPosition()) {
+                Vector3f rotatedPos = droneRotation.mult(initialPos);
+                updatedThrusterPositions.add(rotatedPos.add(droneTranslation));
+            }
+            droneServer.setThrusterGlobalPositions(updatedThrusterPositions);
+
+            // Update the motors speeds list
+
+            // Apply forces to the drone based on the thruster vectors and speeds
+            for (int i = 0; i < droneModel.getNbMotors(); i++) {
+                Vector3f force = droneServer.getThrusterVecs().get(i).mult(drone.getMotors_speeds().get(i));
+                Vector3f thrusterPos = droneServer.getThrusterGlobalPositions().get(i);
+                droneServer.getBody().applyForce(force, thrusterPos);
+            }
+
+            // Update the drone's position and rotation attributes
+            drone.setPosition(drone.getNode().getLocalTranslation());
+            drone.setAngular(drone.getNode().getLocalRotation());
 
         }
 

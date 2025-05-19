@@ -24,14 +24,16 @@ public class ServerListener implements MessageListener<HostedConnection> {
             simulatorServer.sendHandshake2(handshake.getClientId(), source);
             return;
         }
-        if (message instanceof DroneMovementRequestMessage) {
-            // TODO: TEST MESSAGE, a changer pour la version finale
-            DroneMovementRequestMessage MoveReq = (DroneMovementRequestMessage) message;
-            log.info("Server : received DroneMovementRequestMessage : " + MoveReq.getDroneId() + " "
-                    + MoveReq.getDirections().toString() + " " + MoveReq.getMotorsSpeeds().toString());
-            simulatorServer.processDroneMovementRequest(MoveReq);
-            return;
-        }
+        // if (message instanceof DroneMovementRequestMessage) {
+        // // TODO: TEST MESSAGE, a changer pour la version finale
+        // DroneMovementRequestMessage MoveReq = (DroneMovementRequestMessage) message;
+        // log.info("Server : received DroneMovementRequestMessage : " +
+        // MoveReq.getDroneId() + " "
+        // + MoveReq.getDirections().toString() + " " +
+        // MoveReq.getMotorsSpeeds().toString());
+        // simulatorServer.processDroneMovementRequest(MoveReq);
+        // return;
+        // }
         log.warn("Server : received unknown message: " + message.getClass().getName());
     }
 }
