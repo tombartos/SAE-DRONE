@@ -137,27 +137,27 @@ public class Simulateur extends SimpleApplication implements PhysicsCollisionLis
 
         // Un poisson
         entitesMarines
-                .add(new EntiteMarine(assetManager, space, "poisson/fish.glb", new Vector3f(0, -8, -20), 0.2f));
-        entitesMarines.add(new EntiteMarine(assetManager, space, "poisson/gold_fish.glb", new Vector3f(5, -6, -15),
+                .add(new EntiteMarine(assetManager, space, "poisson/fish.j3o", new Vector3f(0, -8, -20), 0.2f));
+        entitesMarines.add(new EntiteMarine(assetManager, space, "poisson/gold_fish.j3o", new Vector3f(5, -6, -15),
                 0.3f));
         entitesMarines
-                .add(new EntiteMarine(assetManager, space, "poisson/koi_fish.glb", new Vector3f(-5, -10, -25),
+                .add(new EntiteMarine(assetManager, space, "poisson/koi_fish.j3o", new Vector3f(-5, -10, -25),
                         0.4f));
-        entitesMarines.add(new EntiteMarine(assetManager, space, "poisson/model_50a_-_hawksbill_sea_turtle.glb",
+        entitesMarines.add(new EntiteMarine(assetManager, space, "poisson/model_50a_-_hawksbill_sea_turtle.j3o",
                 new Vector3f(10, -4, -20),
                 0.1f));
         entitesMarines
-                .add(new EntiteMarine(assetManager, space, "poisson/octopus.glb", new Vector3f(-10, -10, -20),
+                .add(new EntiteMarine(assetManager, space, "poisson/octopus.j3o", new Vector3f(-10, -10, -20),
                         0.3f));
         entitesMarines
-                .add(new EntiteMarine(assetManager, space, "poisson/school_of_fish.glb", new Vector3f(15, -7, -20),
+                .add(new EntiteMarine(assetManager, space, "poisson/school_of_fish.j3o", new Vector3f(15, -7, -20),
                         0.5f));
-        entitesMarines.add(new EntiteMarine(assetManager, space, "poisson/the_fish_particle.glb",
+        entitesMarines.add(new EntiteMarine(assetManager, space, "poisson/the_fish_particle.j3o",
                 new Vector3f(-8, -6, -25), 0.5f));
-        entitesMarines.add(new EntiteMarine(assetManager, space, "bateau/boat_4c.glb", new Vector3f(15, 3f, -40),
+        entitesMarines.add(new EntiteMarine(assetManager, space, "bateau/boat_4c.j3o", new Vector3f(15, 3f, -40),
                 1f));
         entitesMarines
-                .add(new EntiteMarine(assetManager, space, "bateau/speedboat_n2.glb", new Vector3f(8, 3.5f, -30),
+                .add(new EntiteMarine(assetManager, space, "bateau/speedboat_n2.j3o", new Vector3f(8, 3.5f, -30),
                         1f));
 
         for (EntiteMarine e : entitesMarines) {
@@ -169,7 +169,7 @@ public class Simulateur extends SimpleApplication implements PhysicsCollisionLis
     private void attachTerrain(Node parent) {
         Node terrainNode = new Node("Terrain");
         terrainNode.setLocalTranslation(new Vector3f(0.0f, -15.0f, 0.0f));
-        Spatial terrain = assetManager.loadModel("Models/manta_point_version_6_superseded.glb");
+        Spatial terrain = assetManager.loadModel("Models/manta_point_version_6_superseded.j3o");
         terrainNode.attachChild(terrain);
         parent.attachChild(terrainNode);
 
