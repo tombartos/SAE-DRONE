@@ -3,6 +3,7 @@ package fr.univtln.infomath.dronsim.simulation.Server;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle.Control;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.FileLocator;
@@ -22,7 +23,6 @@ import com.jme3.scene.Spatial;
 import com.jme3.system.JmeContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import fr.univtln.infomath.dronsim.simulation.Client.SimulatorClient;
 import fr.univtln.infomath.dronsim.simulation.Drones.Drone;
 import fr.univtln.infomath.dronsim.simulation.Drones.DroneDTO;
@@ -33,11 +33,12 @@ import fr.univtln.infomath.dronsim.simulation.jmeMessages.DroneDTOMessage;
 import fr.univtln.infomath.dronsim.simulation.jmeMessages.DroneMovementRequestMessage;
 import fr.univtln.infomath.dronsim.simulation.jmeMessages.Handshake1;
 import fr.univtln.infomath.dronsim.simulation.jmeMessages.Handshake2;
-
 import com.jme3.network.Filters;
 import com.jme3.network.HostedConnection;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
+import fr.univtln.infomath.dronsim.control.Controler;
+import fr.univtln.infomath.dronsim.control.ArduSubControler;
 
 public class SimulatorServer extends SimpleApplication implements PhysicsCollisionListener {
     private static final int SERVER_PORT = 6143; // Default JME server port
@@ -50,13 +51,17 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
     private Node scene;
     private static int nbDrones;
     private static final float WATERLEVEL = 2.0f; // TODO: to be set by the map
+    private static List<String> Controler_IP_LIST = new ArrayList<>();
 
     public static void main(String[] args) {
-        if (args.length != 1) {
-            idMap = 0;
-            log.warn("No map ID provided, using default: " + idMap);
-            log.warn("Launch arguments :  <map_id>");
+        // TODO: gerer ip dynamiquement quand on fera le launcher
+        if (args.length != 2) {
+            log.error("Launch arguments :  <map_id> <controler0_ip>");
+            System.exit(1);
         }
+        idMap = Integer.parseInt(args[0]);
+        Controler_IP_LIST.add(args[1]);
+
         SimulatorServer app = new SimulatorServer();
         app.start(JmeContext.Type.Headless); // headless type for servers!
     }
@@ -137,40 +142,50 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         initialThrusterVecs.add(new Vector3f(-0.7431f, 0.0000f, 0.6691f).normalize());
         initialThrusterLocalPosition.add(new Vector3f(-0.1f, 0f, -0.16f));
 
-        initialThrusterVecs.add(new Vector3f(0.0000f, 1f, 0f).normalize());
+        initialThrusterVecs.add(new Vector3f(0.0000f, -1f, 0f).normalize());
         initialThrusterLocalPosition.add(new Vector3f(0.1f, 0f, 0f));
 
         initialThrusterVecs.add(new Vector3f(-0.0000f, -1f, 0f).normalize());
         initialThrusterLocalPosition.add(new Vector3f(-0.1f, 0f, 0f));
 
-        DroneModel ModelB = new DroneModel("BlueROV2", 200, "vehicle/bluerobotics/br2r4/br2-r4-vehicle.j3o", 6, 2000,
+        DroneModel ModelB = new DroneModel("BlueROV2", 200, "vehicle/bluerobotics/br2r4/br2-r4-vehicle.j3o", 6, 1000,
                 initialThrusterVecs, initialThrusterLocalPosition);
 
-        // Ajout du drone
-        DroneServer droneA = DroneServer.createDrone(
-                0,
-                0,
-                assetManager,
-                space,
-                ModelB,
-                new Vector3f(0.0f, 2.0f, 0.0f),
-                100);
-        scene.attachChild(droneA.getNode());
+        // Init Ardusub controler
+        Controler controler;
+        try {
+            controler = new ArduSubControler(Controler_IP_LIST.get(0));
+            // Ajout du drone
+            DroneServer droneA = DroneServer.createDrone(
+                    0,
+                    0,
+                    assetManager,
+                    space,
+                    ModelB,
+                    new Vector3f(0.0f, 2.0f, 0.0f),
+                    100,
+                    controler);
+            scene.attachChild(droneA.getNode());
 
-        DroneDTO.createDroneDTO(droneA);
+            DroneDTO.createDroneDTO(droneA);
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.error("Error while connecting to the controler, skipping drone creation");
 
-        DroneServer droneB = DroneServer.createDrone(
-                1,
-                1,
-                assetManager,
-                space,
-                ModelB,
-                new Vector3f(3.0f, 0.0f, 0.0f),
-                100);
-        scene.attachChild(droneB.getNode());
-        DroneDTO.createDroneDTO(droneB);
+        }
+
+        // DroneServer droneB = DroneServer.createDrone(
+        // 1,
+        // 1,
+        // assetManager,
+        // space,
+        // ModelB,
+        // new Vector3f(3.0f, 0.0f, 0.0f),
+        // 100);
+        // scene.attachChild(droneB.getNode());
+        // DroneDTO.createDroneDTO(droneB);
         nbDrones = Drone.getDrones().size();
-        log.info("Initialization complete, waiting for clients...");
+        log.info("Initialization complete, waiting for jME clients...");
     }
 
     private void attachTerrain(Node parent) {
@@ -329,6 +344,16 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
             droneServer.setThrusterGlobalPositions(updatedThrusterPositions);
 
             // Update the motors speeds list
+            List<Float> motorsSpeeds = new ArrayList<>();
+            for (int i = 0; i < droneModel.getNbMotors(); i++) {
+                float motorspeed = droneServer.getControler().getMotorThrottle(i);
+                // log.info("Motor " + i + " speed: " + motorspeed);
+                motorsSpeeds.add(motorspeed * droneModel.getMotorsMaxSpeed());
+            }
+            // We update the motors speeds list in the drone object for evnetual use in the
+            // future
+            drone.setMotors_speeds(motorsSpeeds);
+            // log.info("Motors speeds: " + motorsSpeeds.toString());
 
             // Apply forces to the drone based on the thruster vectors and speeds
             for (int i = 0; i < droneModel.getNbMotors(); i++) {

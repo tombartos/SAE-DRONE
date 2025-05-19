@@ -22,7 +22,7 @@ public class DroneModel {
     private int initialWeight;
     private String model3DPath;
     private int nbMotors;
-    private int motorMaxSpeed;
+    private int motorsMaxSpeed;
     private List<Vector3f> initialThrusterVecs;
     private List<Vector3f> initialThrusterLocalPosition;
 

@@ -120,7 +120,12 @@ public class ArduSubControler implements Controler {
     }
 
     public static void main(String[] args) throws IOException {
-        var ctrl = new ArduSubControler("127.0.0.1");
+        String ip = "127.0.0.1"; // Default IP
+        if (args.length > 0) {
+            ip = args[0];
+        }
+        log.info("Connecting to " + ip);
+        var ctrl = new ArduSubControler(ip);
         var gps = new int[] { 47, 85, -10 };
         try {
             for (;;) {
@@ -138,7 +143,7 @@ public class ArduSubControler implements Controler {
 
     @Override
     public float getMotorThrottle(int motorIndex) {
-        return motorThrottle[motorIndex];
+        return ((float) motorThrottle[motorIndex] - 1500f) / 400f;
     }
 
     @Override

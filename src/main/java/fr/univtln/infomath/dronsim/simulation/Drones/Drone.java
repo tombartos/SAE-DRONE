@@ -29,7 +29,7 @@ public class Drone {
     @Setter
     protected List<String> directions = new ArrayList<>();
     @Setter
-    protected List<Integer> motors_speeds;
+    protected List<Float> motors_speeds;
     protected Node node;
 
     protected Drone(int id, int clientId, AssetManager assetManager, PhysicsSpace space, DroneModel droneModel,
@@ -43,7 +43,7 @@ public class Drone {
         this.weight = droneModel.getInitialWeight();
         this.motors_speeds = new ArrayList<>();
         for (int i = 0; i < droneModel.getNbMotors(); i++) {
-            motors_speeds.add(0);
+            motors_speeds.add(0f);
         }
 
         // TODO : Calculer le poids total du drone en fonction de ses modules
