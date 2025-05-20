@@ -11,6 +11,7 @@ bin/
 out/
 data/
 *.zip
+*.tar
 *.log
 *.tmp
 *.bak
