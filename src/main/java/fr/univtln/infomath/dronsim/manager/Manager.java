@@ -13,7 +13,7 @@ import java.net.URI;
  */
 public class Manager {
     // Base URI the Grizzly HTTP server will listen on
-    public static final String BASE_URI = "http://localhost:8080/";
+    public static final String BASE_URI = "http://localhost:8080/api/v1/";
 
     /**
      * Starts Grizzly HTTP server exposing JAX-RS resources defined in this
@@ -24,7 +24,7 @@ public class Manager {
     public static HttpServer startServer() {
         // create a resource config that scans for JAX-RS resources and providers
         // in com.example package
-        final ResourceConfig rc = new ResourceConfig().packages("com.example");
+        final ResourceConfig rc = new ResourceConfig().packages("fr.univtln.infomath.dronsim.manager");
 
         // create and start a new instance of grizzly http server
         // exposing the Jersey application at BASE_URI

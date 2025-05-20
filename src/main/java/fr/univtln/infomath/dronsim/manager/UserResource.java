@@ -3,6 +3,7 @@ package fr.univtln.infomath.dronsim.manager;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
@@ -12,6 +13,8 @@ import jakarta.ws.rs.core.MediaType;
 @Path("users")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+
+// TEST CLASS, TO BE REMOVED
 public class UserResource {
 
     /**
@@ -21,7 +24,8 @@ public class UserResource {
      * @return String that will be returned as a text/plain response.
      */
     @GET
-    public String getIt() {
-        return "Got it!";
+    @Path("/plus/{nb}")
+    public String plus(@PathParam("nb") int nb) {
+        return String.valueOf(nb + 1);
     }
 }

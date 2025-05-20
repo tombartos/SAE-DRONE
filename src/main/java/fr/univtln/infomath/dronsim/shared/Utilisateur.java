@@ -8,6 +8,8 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
+
+// TEST CLASS, TO BE REMOVED
 public class Utilisateur {
     private Long id;
     private String nom;

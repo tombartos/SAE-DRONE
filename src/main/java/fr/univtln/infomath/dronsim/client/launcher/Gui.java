@@ -1,10 +1,15 @@
 package fr.univtln.infomath.dronsim.client.launcher;
 
+import fr.univtln.infomath.dronsim.server.simulation.client.SimulatorClient;
 import fr.univtln.infomath.dronsim.server.simulation.server.SimulatorServer;
 import fr.univtln.infomath.dronsim.shared.Utilisateur;
+import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -21,8 +26,12 @@ import javafx.scene.control.ScrollPane;
 
 import java.util.List;
 import org.glassfish.jersey.jackson.JacksonFeature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Gui {
+    private static final Logger log = LoggerFactory.getLogger(SimulatorClient.class);
+
     private final Group root;
     private final int width;
     private final int height;
@@ -326,13 +335,25 @@ public class Gui {
         // }).start();
 
         // Test de la connexion au serveur REST
-        String baseUrl = "http://localhost:8080/users";
+        String baseUrl = "http://localhost:8080/api/v1";
 
         try (Client client = ClientBuilder.newBuilder()
                 .register(JacksonFeature.class)
                 .build()) {
 
             WebTarget baseTarget = client.target(baseUrl);
+
+            try {
+                Response response = baseTarget.path("users/plus/5")
+                        .request(MediaType.APPLICATION_JSON)
+                        .get();
+                String stringResponse = response.readEntity(String.class);
+                response.close();
+                log.info("Response received: " + stringResponse);
+            } catch (WebApplicationException e) {
+                log.error("Failed to initialize library: " + e.getMessage());
+            }
         }
+
     }
 }
