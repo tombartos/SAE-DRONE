@@ -2,6 +2,9 @@ package fr.univtln.infomath.dronsim.client.launcher;
 
 import fr.univtln.infomath.dronsim.server.simulation.server.SimulatorServer;
 import fr.univtln.infomath.dronsim.shared.Utilisateur;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.WebTarget;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -17,6 +20,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 
 import java.util.List;
+import org.glassfish.jersey.jackson.JacksonFeature;
 
 public class Gui {
     private final Group root;
@@ -320,5 +324,15 @@ public class Gui {
         // new Thread(() -> {
         // Simulateur.main(new String[] {});
         // }).start();
+
+        // Test de la connexion au serveur REST
+        String baseUrl = "http://localhost:8080/users";
+
+        try (Client client = ClientBuilder.newBuilder()
+                .register(JacksonFeature.class)
+                .build()) {
+
+            WebTarget baseTarget = client.target(baseUrl);
+        }
     }
 }
