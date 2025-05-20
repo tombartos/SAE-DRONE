@@ -1,4 +1,4 @@
-package fr.univtln.infomath.dronsim.launcher;
+package fr.univtln.infomath.dronsim.client.launcher;
 
 import javafx.application.Application;
 import javafx.stage.Stage;

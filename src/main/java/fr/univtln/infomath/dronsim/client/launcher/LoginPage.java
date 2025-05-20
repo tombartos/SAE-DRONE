@@ -1,4 +1,4 @@
-package fr.univtln.infomath.dronsim.launcher;
+package fr.univtln.infomath.dronsim.client.launcher;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

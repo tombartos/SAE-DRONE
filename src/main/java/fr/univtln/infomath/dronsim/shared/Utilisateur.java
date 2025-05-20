@@ -1,4 +1,4 @@
-package fr.univtln.infomath.dronsim.launcher;
+package fr.univtln.infomath.dronsim.shared;
 
 import lombok.*;
 
