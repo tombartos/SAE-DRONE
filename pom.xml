@@ -5,6 +5,7 @@
   <version>0.0.1-SNAPSHOT</version>
 
   <properties>
+    <jersey.version>3.1.10</jersey.version>
     <maven.compiler.release>21</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <junit.version>5.6.0</junit.version>
@@ -19,6 +20,19 @@
 
     <junit.version>5.12.1</junit.version>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>org.glassfish.jersey</groupId>
+            <artifactId>jersey-bom</artifactId>
+            <version>${jersey.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+
 
   <dependencies>
 
@@ -176,6 +190,22 @@
       <artifactId>logback-classic</artifactId>
       <version>1.5.18</version>
       <scope>compile</scope>
+    </dependency>
+
+    <!-- Jersey dependencies-->
+
+    <dependency>
+        <groupId>org.glassfish.jersey.containers</groupId>
+        <artifactId>jersey-container-grizzly2-http</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.glassfish.jersey.inject</groupId>
+        <artifactId>jersey-hk2</artifactId>
+    </dependency>
+
+    <dependency>
+        <groupId>org.glassfish.jersey.media</groupId>
+        <artifactId>jersey-media-json-binding</artifactId>
     </dependency>
 
 
