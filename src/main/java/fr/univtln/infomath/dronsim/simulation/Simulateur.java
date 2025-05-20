@@ -128,35 +128,52 @@ public class Simulateur extends SimpleApplication implements PhysicsCollisionLis
         inputManager.addListener(this, "SWITCH_DRONE");
 
         Evenement eventZone = new Evenement(new Vector3f(0, 2, 0), new Vector3f(15,
-                15, 15), assetManager, scene);
+                15, 15), assetManager, scene, space);
         eventZone.definirCourant(new Vector3f(0, 0, 1), 1000);
         evenements.add(eventZone);
+        // EntiteMarine poisson = eventZone.ajouterEntiteMarine("poisson/koi_fish.glb",
+        // 2f);
+        // entitesMarines.add(poisson);
 
         // Un poisson
-        entitesMarines.add(new EntiteMarine(assetManager, space, "poisson/fish.glb", new Vector3f(0, -8, 20),
-                new Vector3f(1, 0, 20), 2f, false));
-        entitesMarines.add(new EntiteMarine(assetManager, space, "poisson/gold_fish.glb", new Vector3f(5, -6, 15),
-                new Vector3f(1, 0, 20), 2f, false));
-        entitesMarines.add(new EntiteMarine(assetManager, space, "poisson/koi_fish.glb", new Vector3f(-5, -10, 25),
-                new Vector3f(1, 0, 20), 2f, false));
-        entitesMarines.add(new EntiteMarine(assetManager, space, "poisson/model_50a_-_hawksbill_sea_turtle.glb",
-                new Vector3f(10, -4, 20),
-                new Vector3f(1, 0, 20), 2f, false));
-        entitesMarines.add(new EntiteMarine(assetManager, space, "poisson/octopus.glb", new Vector3f(-10, -10, 20),
-                new Vector3f(1, 0, 20), 2f, false));
-        entitesMarines.add(new EntiteMarine(assetManager, space, "poisson/school_of_fish.glb", new Vector3f(15, -7, 20),
-                new Vector3f(1, 0, 20), 2f, false));
-        entitesMarines
-                .add(new EntiteMarine(assetManager, space, "poisson/the_fish_particle.glb", new Vector3f(-8, -6, 25),
-                        new Vector3f(1, 0, 20), 2f, false));
-        entitesMarines.add(new EntiteMarine(assetManager, space, "bateau/boat_4c.glb", new Vector3f(15, 5, 40),
-                new Vector3f(1, 0, 20), 2f, false));
-        entitesMarines.add(new EntiteMarine(assetManager, space, "bateau/speedboat_n2.glb", new Vector3f(8, 3.5f, 30),
-                new Vector3f(1, 0, 20), 1f, false));
-
-        for (EntiteMarine e : entitesMarines) {
-            scene.attachChild(e.getModelNode());
-        }
+        /*
+         * entitesMarines
+         * .add(new EntiteMarine(assetManager, space, "poisson/fish.j3o", new
+         * Vector3f(0, -8, -20), 0.2f));
+         * entitesMarines.add(new EntiteMarine(assetManager, space,
+         * "poisson/gold_fish.j3o", new Vector3f(5, -6, -15),
+         * 0.3f));
+         * entitesMarines
+         * .add(new EntiteMarine(assetManager, space, "poisson/koi_fish.j3o", new
+         * Vector3f(-5, -10, -25),
+         * 0.4f));
+         * entitesMarines.add(new EntiteMarine(assetManager, space,
+         * "poisson/model_50a_-_hawksbill_sea_turtle.j3o",
+         * new Vector3f(10, -4, -20),
+         * 0.1f));
+         * entitesMarines
+         * .add(new EntiteMarine(assetManager, space, "poisson/octopus.j3o", new
+         * Vector3f(-10, -10, -20),
+         * 0.3f));
+         * entitesMarines
+         * .add(new EntiteMarine(assetManager, space, "poisson/school_of_fish.j3o", new
+         * Vector3f(15, -7, -20),
+         * 0.5f));
+         * entitesMarines.add(new EntiteMarine(assetManager, space,
+         * "poisson/the_fish_particle.j3o",
+         * new Vector3f(-8, -6, -25), 0.5f));
+         * entitesMarines.add(new EntiteMarine(assetManager, space,
+         * "bateau/boat_4c.j3o", new Vector3f(15, 3f, -40),
+         * 1f));
+         * entitesMarines
+         * .add(new EntiteMarine(assetManager, space, "bateau/speedboat_n2.j3o", new
+         * Vector3f(8, 3.5f, -30),
+         * 1f));
+         *
+         * for (EntiteMarine e : entitesMarines) {
+         * scene.attachChild(e.getModelNode());
+         * }
+         */
 
     }
 

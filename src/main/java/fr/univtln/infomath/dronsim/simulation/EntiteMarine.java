@@ -25,8 +25,7 @@ public class EntiteMarine {
     private boolean aleatoire;
 
     public EntiteMarine(AssetManager assetManager, PhysicsSpace space, String modelPath, Vector3f position,
-            Vector3f zoneSize,
-            float speed, boolean aleatoire) {
+            float speed) {
         this.modelNode = new Node("EntiteMarine");
         this.model = assetManager.loadModel(modelPath);
         this.modelNode.attachChild(this.model); // important pour que worldBound soit à jour
@@ -40,10 +39,13 @@ public class EntiteMarine {
         this.modelNode.setLocalTranslation(position);
 
         this.positionInitiale = position.clone();
-        this.zoneMin = position.subtract(zoneSize.mult(5));
-        this.zoneMax = position.add(zoneSize.mult(5f));
         this.speed = speed;
-        this.aleatoire = aleatoire;
+        this.direction = Vector3f.UNIT_Z.clone(); // ou une direction définie
+
+        Vector3f zoneCenter = Vector3f.ZERO;
+        Vector3f halfSize = new Vector3f(200f, 30f, 200f);
+        this.zoneMin = zoneCenter.subtract(halfSize);
+        this.zoneMax = zoneCenter.add(halfSize);
 
         this.control = new RigidBodyControl(this.shape, mass);
         this.modelNode.addControl(this.control);
@@ -54,14 +56,6 @@ public class EntiteMarine {
         this.control.setLinearDamping(0.9f);
         this.control.setAngularDamping(0.9f);
 
-        if (aleatoire) {
-            this.direction = new Vector3f(
-                    (float) (Math.random() - 0.5),
-                    0,
-                    (float) (Math.random() - 0.5)).normalizeLocal();
-        } else {
-            this.direction = Vector3f.UNIT_Z.clone(); // ou une direction définie
-        }
     }
 
     public void update(float tpf) {
@@ -69,20 +63,13 @@ public class EntiteMarine {
 
         // Vérifier si hors zone
         if (isOutOfZone(currentPos)) {
-            this.control.setPhysicsLocation(positionInitiale.clone());
-            this.control.setLinearVelocity(Vector3f.ZERO);
-
-            if (aleatoire) {
-                this.direction = new Vector3f(
-                        (float) (Math.random() - 0.5),
-                        0,
-                        (float) (Math.random() - 0.5)).normalizeLocal();
-            }
+            this.control.setPhysicsLocation(this.positionInitiale.clone());
+            this.control.setLinearVelocity(Vector3f.ZERO); // stop momentané
+        } else {
+            Vector3f velocity = this.direction.mult(this.speed);
+            this.control.setLinearVelocity(velocity);
         }
 
-        // Appliquer la direction comme vitesse
-        Vector3f velocity = this.direction.mult(this.speed);
-        this.control.setLinearVelocity(velocity);
     }
 
     private boolean isOutOfZone(Vector3f pos) {
