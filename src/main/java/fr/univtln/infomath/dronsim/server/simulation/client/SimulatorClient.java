@@ -1,4 +1,4 @@
-package fr.univtln.infomath.dronsim.simulation.Client;
+package fr.univtln.infomath.dronsim.server.simulation.client;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.FileLocator;
@@ -23,17 +23,17 @@ import com.jme3.water.WaterFilter;
 
 import com.jme3.input.ChaseCamera;
 
-import fr.univtln.infomath.dronsim.control.LocalTestingControler;
-import fr.univtln.infomath.dronsim.simulation.Drones.Drone;
-import fr.univtln.infomath.dronsim.simulation.Drones.DroneDTO;
-import fr.univtln.infomath.dronsim.simulation.Drones.DroneInitData;
-import fr.univtln.infomath.dronsim.simulation.Drones.DroneModel;
-import fr.univtln.infomath.dronsim.simulation.jmeMessages.DroneDTOMessage;
-import fr.univtln.infomath.dronsim.simulation.jmeMessages.DroneMovementRequestMessage;
-import fr.univtln.infomath.dronsim.simulation.jmeMessages.Handshake1;
-import fr.univtln.infomath.dronsim.simulation.jmeMessages.Handshake2;
-//import fr.univtln.infomath.dronsim.viewer.primitives.ReferentialNode;
-import fr.univtln.infomath.dronsim.Utils.GStreamerSender;
+import fr.univtln.infomath.dronsim.server.control.LocalTestingControler;
+import fr.univtln.infomath.dronsim.server.simulation.drones.Drone;
+import fr.univtln.infomath.dronsim.server.simulation.drones.DroneDTO;
+import fr.univtln.infomath.dronsim.server.simulation.drones.DroneInitData;
+import fr.univtln.infomath.dronsim.server.simulation.drones.DroneModel;
+import fr.univtln.infomath.dronsim.server.simulation.jme_messages.DroneDTOMessage;
+import fr.univtln.infomath.dronsim.server.simulation.jme_messages.DroneMovementRequestMessage;
+import fr.univtln.infomath.dronsim.server.simulation.jme_messages.Handshake1;
+import fr.univtln.infomath.dronsim.server.simulation.jme_messages.Handshake2;
+//import fr.univtln.infomath.dronsim.server.viewer.primitives.ReferentialNode;
+import fr.univtln.infomath.dronsim.server.utils.GStreamerSender;
 
 import java.io.IOException;
 import java.util.List;

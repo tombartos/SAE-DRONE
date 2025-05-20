@@ -1,4 +1,4 @@
-package fr.univtln.infomath.dronsim.simulation.Drones;
+package fr.univtln.infomath.dronsim.server.simulation.drones;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Vector3f;
-import fr.univtln.infomath.dronsim.control.Controler;
+import fr.univtln.infomath.dronsim.server.control.Controler;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,4 +1,4 @@
-package fr.univtln.infomath.dronsim.simulation.Server;
+package fr.univtln.infomath.dronsim.server.simulation.server;
 
 import com.jme3.network.Message;
 import com.jme3.network.MessageListener;
@@ -6,8 +6,8 @@ import com.jme3.network.HostedConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.univtln.infomath.dronsim.simulation.jmeMessages.DroneMovementRequestMessage;
-import fr.univtln.infomath.dronsim.simulation.jmeMessages.Handshake1;
+import fr.univtln.infomath.dronsim.server.simulation.jme_messages.DroneMovementRequestMessage;
+import fr.univtln.infomath.dronsim.server.simulation.jme_messages.Handshake1;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

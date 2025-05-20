@@ -1,4 +1,4 @@
-package fr.univtln.infomath.dronsim.control;
+package fr.univtln.infomath.dronsim.server.control;
 
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
@@ -6,7 +6,7 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.network.Client;
 import com.jme3.network.Message;
-import fr.univtln.infomath.dronsim.simulation.jmeMessages.DroneMovementRequestMessage;
+import fr.univtln.infomath.dronsim.server.simulation.jme_messages.DroneMovementRequestMessage;
 import java.util.ArrayList;
 import java.util.List;
 

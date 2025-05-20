@@ -1,4 +1,4 @@
-package fr.univtln.infomath.dronsim.Utils;
+package fr.univtln.infomath.dronsim.server.utils;
 
 import org.freedesktop.gstreamer.*;
 import org.freedesktop.gstreamer.elements.AppSrc;
