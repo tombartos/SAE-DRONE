@@ -29,8 +29,11 @@ import fr.univtln.infomath.dronsim.server.simulation.drones.DroneDTO;
 import fr.univtln.infomath.dronsim.server.simulation.drones.DroneInitData;
 import fr.univtln.infomath.dronsim.server.simulation.drones.DroneModel;
 import fr.univtln.infomath.dronsim.server.simulation.drones.DroneServer;
+import fr.univtln.infomath.dronsim.server.simulation.evenements.Evenement;
+import fr.univtln.infomath.dronsim.server.simulation.evenements.EvenementDTO;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.DroneDTOMessage;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.DroneMovementRequestMessage;
+import fr.univtln.infomath.dronsim.server.simulation.jme_messages.EvenementDTOMessage;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.Handshake1;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.Handshake2;
 import com.jme3.network.Filters;
@@ -52,6 +55,8 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
     private static int nbDrones;
     private static final float WATERLEVEL = 2.0f; // TODO: to be set by the map
     private static List<String> Controler_IP_LIST = new ArrayList<>();
+
+    private List<Evenement> evenements = new ArrayList<>();
 
     public static void main(String[] args) {
         // TODO: gerer ip dynamiquement quand on fera le launcher
@@ -78,6 +83,8 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         Serializer.registerClass(DroneDTO.class);
         Serializer.registerClass(DroneDTOMessage.class);
         Serializer.registerClass(DroneMovementRequestMessage.class);
+        Serializer.registerClass(EvenementDTO.class);
+        Serializer.registerClass(EvenementDTOMessage.class);
     }
 
     @Override
@@ -90,6 +97,7 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
             server.addMessageListener(serverListener, Handshake2.class);
             server.addMessageListener(serverListener, DroneMovementRequestMessage.class);
             server.addMessageListener(serverListener, DroneDTOMessage.class);
+
             server.start();
             log.info("Server starting on port " + SERVER_PORT);
         } catch (IOException e) {
@@ -174,6 +182,14 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
 
         }
 
+        Evenement courant = new Evenement(
+                0, // ID unique
+                new Vector3f(0, 0, 0), // Centre de la zone
+                new Vector3f(20, 20, 20), // Taille de la zone
+                space);
+        courant.definirCourant(new Vector3f(0, 0, 1), 1000f); // Force vers l'axe Z
+        evenements.add(courant);
+
         // DroneServer droneB = DroneServer.createDrone(
         // 1,
         // 1,
@@ -191,7 +207,7 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
     private void attachTerrain(Node parent) {
         Node terrainNode = new Node("Terrain");
         terrainNode.setLocalTranslation(new Vector3f(3.0f, -15.0f, 0.0f));
-        Spatial terrain = assetManager.loadModel("Models/manta_point_version_6_superseded.glb");
+        Spatial terrain = assetManager.loadModel("Models/manta_point_version_6_superseded.j3o");
         terrainNode.attachChild(terrain);
         parent.attachChild(terrainNode);
 
@@ -207,7 +223,19 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         // if (time > 0.1f) {
         // time = 0.0f;
         updateDronePositions();
+        // Appliquer les forces de courant AVANT d’envoyer les positions
+        for (Evenement event : evenements) {
+            event.apply(Drone.getDrones(), tpf);
+        }
+
+        // Mettre à jour les positions après la physique
+        for (Drone drone : Drone.getDrones()) {
+            drone.setPosition(drone.getNode().getLocalTranslation());
+            drone.setAngular(drone.getNode().getLocalRotation());
+        }
         sendDronePositions();
+        buildEvenementDTOs();
+
         // }
     }
 
@@ -368,6 +396,20 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
 
         }
 
+    }
+
+    private void buildEvenementDTOs() {
+        List<EvenementDTO> eventDTOs = new ArrayList<>();
+        for (Evenement event : evenements) {
+            eventDTOs.add(new EvenementDTO(
+                    event.getId(),
+                    event.getZoneCenter(),
+                    event.getZoneSize(),
+                    event.getType(),
+                    event.getDirection(),
+                    event.getIntensite()));
+        }
+        server.broadcast(new EvenementDTOMessage(eventDTOs));
     }
 
     // geotools WSG84
