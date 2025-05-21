@@ -12,6 +12,7 @@ import fr.univtln.infomath.dronsim.server.simulation.client.SimulatorClient;
 import fr.univtln.infomath.dronsim.server.simulation.drones.Drone;
 import fr.univtln.infomath.dronsim.server.simulation.drones.DroneModel;
 import fr.univtln.infomath.dronsim.shared.User;
+import lombok.Getter;
 
 import java.io.IOException;
 import java.net.URI;
