@@ -106,6 +106,9 @@ public class ArduSubControler implements Controler {
         motorThrottle[5] = servoOutputRaw.servo6Raw();
         motorThrottle[6] = servoOutputRaw.servo7Raw();
         motorThrottle[7] = servoOutputRaw.servo8Raw();
+        // log.info("Got motor throttle: " + motorThrottle[0] + " " + motorThrottle[1] + " " + motorThrottle[2] + " "
+        //         + motorThrottle[3] + " " + motorThrottle[4] + " " + motorThrottle[5] + " " + motorThrottle[6] + " "
+        //         + motorThrottle[7]);
     }
 
     private void sendPosition() throws IOException, InterruptedException {
@@ -197,7 +200,7 @@ public class ArduSubControler implements Controler {
                 break;
         }
 
-        log.info("Got sensor value: " + gpsPos[0] + " " + gpsPos[1] + " " + gpsPos[2]);
+        // log.info("Got sensor value: " + gpsPos[0] + " " + gpsPos[1] + " " + gpsPos[2]);
     }
 
     @Override
@@ -219,14 +222,11 @@ public class ArduSubControler implements Controler {
                 transform.transform(source, target);
                 gpsPos[0] = (int) (target.getCoordinate()[0] * 1e7);
                 gpsPos[1] = (int) (target.getCoordinate()[1] * 1e7);
-                gpsPos[2] = (int) values[2];
+                gpsPos[2] = (int) (values[2] * 1e3);
 
             } catch (MismatchedDimensionException | TransformException e) {
                 e.printStackTrace();
             }
-                for (int i = 0; i < 3 && i < values.length; i++) {
-                    gpsPos[i] = (int) (values[i] * 1e7);
-                }
                 for (int i = 3; i < 6 && i < values.length; i++) {
                     gpsPos[i] = (int) (values[i]);
                 }
@@ -236,7 +236,7 @@ public class ArduSubControler implements Controler {
                 log.warn("Invalid sensor index ", captorIndex);
                 break;
         }
-        throw new UnsupportedOperationException("Unimplemented method 'setSensorValue'");
+        // throw new UnsupportedOperationException("Unimplemented method 'setSensorValue'");
     }
 
     @Override
