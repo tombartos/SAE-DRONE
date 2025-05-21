@@ -17,6 +17,11 @@ public final class App extends Application {
      * @param args Command-line arguments.
      */
     public static void main(String[] args) {
+        if (args.length != 1) {
+            log.error("Please provide the base URL of the server as an argument.");
+            System.exit(1);
+        }
+        new RestClient(args[0]);
         launch(args);
     }
 

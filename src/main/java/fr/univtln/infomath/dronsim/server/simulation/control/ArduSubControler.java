@@ -1,4 +1,4 @@
-package fr.univtln.infomath.dronsim.server.control;
+package fr.univtln.infomath.dronsim.server.simulation.control;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,6 +1,7 @@
-package fr.univtln.infomath.dronsim.auth;
+package fr.univtln.infomath.dronsim.server.auth;
 
-/** Interface for interaction with authentication service.
+/**
+ * Interface for interaction with authentication service.
  */
 public interface AuthenticationService {
     public AuthenticatedUser authenticate(String token) throws AuthenticationException;
@@ -14,7 +15,8 @@ public interface AuthenticationService {
         final boolean isObserver;
     }
 
-    //public static abstract class AuthorizationException extends Exception {}
-    public static abstract class AuthenticationException extends Exception {}
-    //public static abstract class NoSuchUser extends Exception {}
+    // public static abstract class AuthorizationException extends Exception {}
+    public static abstract class AuthenticationException extends Exception {
+    }
+    // public static abstract class NoSuchUser extends Exception {}
 }

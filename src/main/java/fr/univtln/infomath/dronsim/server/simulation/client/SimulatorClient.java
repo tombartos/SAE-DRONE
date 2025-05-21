@@ -23,7 +23,7 @@ import com.jme3.water.WaterFilter;
 
 import com.jme3.input.ChaseCamera;
 
-import fr.univtln.infomath.dronsim.server.control.LocalTestingControler;
+import fr.univtln.infomath.dronsim.server.simulation.control.LocalTestingControler;
 import fr.univtln.infomath.dronsim.server.simulation.drones.Drone;
 import fr.univtln.infomath.dronsim.server.simulation.drones.DroneDTO;
 import fr.univtln.infomath.dronsim.server.simulation.drones.DroneInitData;

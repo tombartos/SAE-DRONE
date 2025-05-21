@@ -1,4 +1,4 @@
-package fr.univtln.infomath.dronsim.server.control;
+package fr.univtln.infomath.dronsim.server.simulation.control;
 
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;

@@ -335,25 +335,6 @@ public class Gui {
         // }).start();
 
         // Test de la connexion au serveur REST
-        String baseUrl = "http://localhost:8080/api/v1";
-
-        try (Client client = ClientBuilder.newBuilder()
-                .register(JacksonFeature.class)
-                .build()) {
-
-            WebTarget baseTarget = client.target(baseUrl);
-
-            try {
-                Response response = baseTarget.path("users/plus/5")
-                        .request(MediaType.APPLICATION_JSON)
-                        .get();
-                String stringResponse = response.readEntity(String.class);
-                response.close();
-                log.info("Response received: " + stringResponse);
-            } catch (WebApplicationException e) {
-                log.error("Failed to initialize library: " + e.getMessage());
-            }
-        }
 
     }
 }

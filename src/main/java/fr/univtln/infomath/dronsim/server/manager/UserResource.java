@@ -1,4 +1,4 @@
-package fr.univtln.infomath.dronsim.manager;
+package fr.univtln.infomath.dronsim.server.manager;
 
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;

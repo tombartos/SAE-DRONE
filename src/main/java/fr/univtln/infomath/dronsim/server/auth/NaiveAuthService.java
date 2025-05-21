@@ -1,6 +1,7 @@
-package fr.univtln.infomath.dronsim.auth;
+package fr.univtln.infomath.dronsim.server.auth;
 
-/** Authentication service that grants all permissions to any credential
+/**
+ * Authentication service that grants all permissions to any credential
  */
 public class NaiveAuthService implements AuthenticationService {
     private AuthenticatedUser root = new AuthenticatedUser("root", true, true, true);
@@ -10,7 +11,8 @@ public class NaiveAuthService implements AuthenticationService {
         if (token != "invalid") {
             return root;
         } else {
-            throw new AuthenticationException() {};
+            throw new AuthenticationException() {
+            };
         }
     }
 }

@@ -1,4 +1,4 @@
-package fr.univtln.infomath.dronsim.manager;
+package fr.univtln.infomath.dronsim.server.manager;
 
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;

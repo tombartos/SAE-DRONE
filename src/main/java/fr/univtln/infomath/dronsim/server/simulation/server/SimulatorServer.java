@@ -24,6 +24,8 @@ import com.jme3.system.JmeContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import fr.univtln.infomath.dronsim.server.simulation.client.SimulatorClient;
+import fr.univtln.infomath.dronsim.server.simulation.control.ArduSubControler;
+import fr.univtln.infomath.dronsim.server.simulation.control.Controler;
 import fr.univtln.infomath.dronsim.server.simulation.drones.Drone;
 import fr.univtln.infomath.dronsim.server.simulation.drones.DroneDTO;
 import fr.univtln.infomath.dronsim.server.simulation.drones.DroneInitData;
@@ -37,12 +39,10 @@ import com.jme3.network.Filters;
 import com.jme3.network.HostedConnection;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
-import fr.univtln.infomath.dronsim.server.control.Controler;
-import fr.univtln.infomath.dronsim.server.control.ArduSubControler;
 
 public class SimulatorServer extends SimpleApplication implements PhysicsCollisionListener {
     private static final int SERVER_PORT = 6143; // Default JME server port
-    private static final Logger log = LoggerFactory.getLogger(SimulatorClient.class);
+    private static final Logger log = LoggerFactory.getLogger(SimulatorServer.class);
     private static ServerListener serverListener;
     private static Server server;
     private static int idMap;
