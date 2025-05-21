@@ -21,6 +21,9 @@ import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.system.JmeContext;
+
+import org.geotools.api.referencing.FactoryException;
+import org.geotools.api.referencing.NoSuchAuthorityCodeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import fr.univtln.infomath.dronsim.server.simulation.client.SimulatorClient;
@@ -168,11 +171,24 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
             scene.attachChild(droneA.getNode());
 
             DroneDTO.createDroneDTO(droneA);
-        } catch (IOException e) {
+
+            // droneA.getControler().setSensorValue(0, new float[] {704825.8186724937f, 5319252.78095437f, -1000f});
+            int a= 5319252;
+            float b = 0;
+            while(true)
+            {
+                droneA.getControler().setSensorValue(0, new int[] {704825, a++,(int) (b+=1)});
+                Thread.sleep(1000);
+            }
+
+        } catch (IOException | FactoryException e) {
             e.printStackTrace();
             log.error("Error while connecting to the controler, skipping drone creation");
 
-        }
+        } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
 
         // DroneServer droneB = DroneServer.createDrone(
         // 1,

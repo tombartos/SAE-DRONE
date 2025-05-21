@@ -9,6 +9,14 @@ import java.net.UnknownHostException;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.geotools.api.geometry.MismatchedDimensionException;
+import org.geotools.api.referencing.FactoryException;
+import org.geotools.api.referencing.NoSuchAuthorityCodeException;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.api.referencing.operation.MathTransform;
+import org.geotools.api.referencing.operation.TransformException;
+import org.geotools.geometry.Position2D;
+import org.geotools.referencing.CRS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +28,7 @@ import io.dronefleet.mavlink.common.GpsInput;
 import io.dronefleet.mavlink.common.GpsInputIgnoreFlags;
 import io.dronefleet.mavlink.common.ServoOutputRaw;
 import io.dronefleet.mavlink.util.EnumValue;
+import it.geosolutions.jaiext.piecewise.Position;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -33,7 +42,11 @@ public class ArduSubControler implements Controler {
     int[] gpsPos;
     MavlinkConnection connection;
 
-    public ArduSubControler(String ip) throws UnknownHostException, IOException {
+    CoordinateReferenceSystem sourceCRS;
+    CoordinateReferenceSystem targetCRS;
+    MathTransform transform;
+
+    public ArduSubControler(String ip) throws UnknownHostException, IOException, NoSuchAuthorityCodeException, FactoryException {
         this.socket = new Socket(ip, 5762);
         this.motorThrottle = new int[8];
         this.gpsPos = new int[] { 47, 85, -10 };
@@ -41,6 +54,10 @@ public class ArduSubControler implements Controler {
         InputStream in = socket.getInputStream();
         OutputStream out = socket.getOutputStream();
         this.connection = MavlinkConnection.create(in, out);
+
+        this.sourceCRS = CRS.decode("EPSG:3857");
+        this.targetCRS = CRS.decode("EPSG:4326");
+        this.transform = CRS.findMathTransform(sourceCRS, targetCRS, false);
 
         Thread.ofVirtual().start(this::recvLoop);
         Thread.ofVirtual().start(this::sendLoop);
@@ -91,7 +108,7 @@ public class ArduSubControler implements Controler {
         motorThrottle[7] = servoOutputRaw.servo8Raw();
     }
 
-    private void sendPosition() throws IOException {
+    private void sendPosition() throws IOException, InterruptedException {
         log.debug("Sending position");
         GpsInput gpsInput = GpsInput.builder()
                 .timeUsec(BigInteger.valueOf(System.currentTimeMillis() * 1000))
@@ -103,9 +120,9 @@ public class ArduSubControler implements Controler {
                 .timeWeekMs(0) // Temps GPS (millisecondes depuis le début de la semaine GPS)
                 .timeWeek(0) // Numéro de la semaine GPS
                 .fixType(3) // 0-1: pas de fix, 2: fix 2D, 3: fix 3D. 4: 3D avec DGPS. 5: 3D avec RTK
-                .lat((int) (gpsPos[0] * 1E7)) // Latitude en degrés * 10^7
-                .lon((int) (gpsPos[1] * 1E7)) // Longitude en degrés * 10^7
-                .alt((int) (gpsPos[2])) // Altitude en mm
+                .lat((int) (gpsPos[0])) // Latitude en degrés * 10^7
+                .lon((int) (gpsPos[1])) // Longitude en degrés * 10^7
+                .alt(gpsPos[2] / 1e3f) // Altitude en mm
                 .hdop(1) // scaled by 100
                 .vdop(1)
                 .vn(0) // Vitesse en m/s dans la direction NORD
@@ -117,9 +134,10 @@ public class ArduSubControler implements Controler {
                 .satellitesVisible(7) // Nombre de satellites visibles
                 .build();
         connection.send2(255, 0, gpsInput);
+        Thread.sleep(200);
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, NoSuchAuthorityCodeException, FactoryException {
         String ip = "127.0.0.1"; // Default IP
         if (args.length > 0) {
             ip = args[0];
@@ -150,15 +168,36 @@ public class ArduSubControler implements Controler {
     public void setSensorValue(int captorIndex, int[] values) {
         switch (captorIndex) {
             case 0:
-                for (int i = 0; i < gpsPos.length && i < values.length; i++) {
-                    gpsPos[i] = values[i];
+                try {
+                    Position2D source = new Position2D();
+                    if (CRS.getAxisOrder(sourceCRS).equals(org.geotools.referencing.CRS.AxisOrder.EAST_NORTH)) {
+                        source = new Position2D(sourceCRS, values[0], values[1]);
+                    } else {
+                        source = new Position2D(sourceCRS, values[1], values[0]);
+                    }
+
+                    Position2D target = new Position2D(targetCRS);
+
+
+                    transform.transform(source, target);
+                    gpsPos[0] = (int) (target.getCoordinate()[0] * 1e7);
+                    gpsPos[1] = (int) (target.getCoordinate()[1] * 1e7);
+                    gpsPos[2] = (int) (values[2] * 1e3);
+
+                } catch (MismatchedDimensionException | TransformException e) {
+                    e.printStackTrace();
                 }
+                // for (int i = 0; i < gpsPos.length && i < values.length; i++) {
+                //     gpsPos[i] = values[i];
+                // }
                 break;
 
             default:
                 log.warn("Invalid sensor index ", captorIndex);
                 break;
         }
+
+        log.info("Got sensor value: " + gpsPos[0] + " " + gpsPos[1] + " " + gpsPos[2]);
     }
 
     @Override
@@ -166,6 +205,25 @@ public class ArduSubControler implements Controler {
         // TODO convertir coordonnées euclidiennes en coordonnées polaires
         switch (captorIndex) {
             case 0:
+            try {
+                Position2D source = new Position2D();
+                if (CRS.getAxisOrder(sourceCRS).equals(org.geotools.referencing.CRS.AxisOrder.EAST_NORTH)) {
+                    source = new Position2D(sourceCRS, values[0], values[1]);
+                } else {
+                    source = new Position2D(sourceCRS, values[1], values[0]);
+                }
+
+                Position2D target = new Position2D(targetCRS);
+
+
+                transform.transform(source, target);
+                gpsPos[0] = (int) (target.getCoordinate()[0] * 1e7);
+                gpsPos[1] = (int) (target.getCoordinate()[1] * 1e7);
+                gpsPos[2] = (int) values[2];
+
+            } catch (MismatchedDimensionException | TransformException e) {
+                e.printStackTrace();
+            }
                 for (int i = 0; i < 3 && i < values.length; i++) {
                     gpsPos[i] = (int) (values[i] * 1e7);
                 }
