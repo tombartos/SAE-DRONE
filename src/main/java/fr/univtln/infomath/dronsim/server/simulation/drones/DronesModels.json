@@ -1,0 +1,70 @@
+[ {
+  "id" : 0,
+  "name" : "BlueROV2",
+  "initialWeight" : 200,
+  "model3DPath" : "vehicle/bluerobotics/br2r4/br2-r4-vehicle.j3o",
+  "nbMotors" : 6,
+  "motorsMaxSpeed" : 50,
+  "initialThrusterVecs" : [ {
+    "x" : -0.74314004,
+    "y" : 0.0,
+    "z" : -0.66913605,
+    "unitVector" : true
+  }, {
+    "x" : 0.74314004,
+    "y" : 0.0,
+    "z" : -0.66913605,
+    "unitVector" : true
+  }, {
+    "x" : 0.74314004,
+    "y" : 0.0,
+    "z" : 0.66913605,
+    "unitVector" : true
+  }, {
+    "x" : -0.74314004,
+    "y" : 0.0,
+    "z" : 0.66913605,
+    "unitVector" : true
+  }, {
+    "x" : 0.0,
+    "y" : -1.0,
+    "z" : 0.0,
+    "unitVector" : true
+  }, {
+    "x" : -0.0,
+    "y" : -1.0,
+    "z" : 0.0,
+    "unitVector" : true
+  } ],
+  "initialThrusterLocalPosition" : [ {
+    "x" : -0.1,
+    "y" : 0.0,
+    "z" : 0.16,
+    "unitVector" : false
+  }, {
+    "x" : 0.1,
+    "y" : 0.0,
+    "z" : 0.16,
+    "unitVector" : false
+  }, {
+    "x" : 0.1,
+    "y" : 0.0,
+    "z" : -0.16,
+    "unitVector" : false
+  }, {
+    "x" : -0.1,
+    "y" : 0.0,
+    "z" : -0.16,
+    "unitVector" : false
+  }, {
+    "x" : 0.1,
+    "y" : 0.0,
+    "z" : 0.0,
+    "unitVector" : false
+  }, {
+    "x" : -0.1,
+    "y" : 0.0,
+    "z" : 0.0,
+    "unitVector" : false
+  } ]
+} ]

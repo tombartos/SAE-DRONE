@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle.Control;
-
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.bullet.BulletAppState;
@@ -21,6 +20,9 @@ import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.system.JmeContext;
+
+import ch.qos.logback.core.model.Model;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import fr.univtln.infomath.dronsim.server.simulation.client.SimulatorClient;
@@ -39,6 +41,10 @@ import com.jme3.network.Filters;
 import com.jme3.network.HostedConnection;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
+import java.io.File;
+import java.util.List;
 
 public class SimulatorServer extends SimpleApplication implements PhysicsCollisionListener {
     private static final int SERVER_PORT = 6143; // Default JME server port
@@ -118,38 +124,9 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
 
         // Ajout des modeles de drone
 
-        // DroneModel ModelA = new DroneModel("Guardian", 200,
-        // "vehicle/subseatech/guardian/guardian-vehicle.j3o", 1,
-        // 1000);
-
-        // Initial thruster positions and vectors initialization for BlueROV2
-        List<Vector3f> initialThrusterVecs = new ArrayList<>();
-        List<Vector3f> initialThrusterLocalPosition = new ArrayList<>();
-
-        // Initial thruster position based on the node referencial (local position)
-        // WARNING : Can be broken if the node is rotated at creation, need to fix this
-        initialThrusterLocalPosition = new ArrayList<>();
-
-        initialThrusterVecs.add(new Vector3f(-0.7431f, 0.0000f, -0.6691f).normalize());
-        initialThrusterLocalPosition.add(new Vector3f(-0.1f, 0f, 0.16f));
-
-        initialThrusterVecs.add(new Vector3f(0.7431f, 0.0000f, -0.6691f).normalize());
-        initialThrusterLocalPosition.add(new Vector3f(0.1f, 0f, 0.16f));
-
-        initialThrusterVecs.add(new Vector3f(0.7431f, 0.0000f, 0.6691f).normalize());
-        initialThrusterLocalPosition.add(new Vector3f(0.1f, 0f, -0.16f));
-
-        initialThrusterVecs.add(new Vector3f(-0.7431f, 0.0000f, 0.6691f).normalize());
-        initialThrusterLocalPosition.add(new Vector3f(-0.1f, 0f, -0.16f));
-
-        initialThrusterVecs.add(new Vector3f(0.0000f, -1f, 0f).normalize());
-        initialThrusterLocalPosition.add(new Vector3f(0.1f, 0f, 0f));
-
-        initialThrusterVecs.add(new Vector3f(-0.0000f, -1f, 0f).normalize());
-        initialThrusterLocalPosition.add(new Vector3f(-0.1f, 0f, 0f));
-
-        DroneModel ModelB = new DroneModel("BlueROV2", 200, "vehicle/bluerobotics/br2r4/br2-r4-vehicle.j3o", 6, 50,
-                initialThrusterVecs, initialThrusterLocalPosition);
+        List<DroneModel> models = loadDroneModelsFromJson(
+                "src/main/java/fr/univtln/infomath/dronsim/server/simulation/drones/DronesModels.json");
+        DroneModel ModelB = models.get(0);
 
         // Init Ardusub controler
         Controler controler;
@@ -322,6 +299,20 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
 
         }
 
+    }
+
+    public static List<DroneModel> loadDroneModelsFromJson(String filePath) {
+        ObjectMapper mapper = new ObjectMapper();
+        // We set this to avoid errors about the unitVector property when we serialize a
+        // Vector3f
+        mapper.configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        try {
+            return mapper.readValue(new File(filePath), new TypeReference<List<DroneModel>>() {
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            return List.of();
+        }
     }
 
     // geotools WSG84

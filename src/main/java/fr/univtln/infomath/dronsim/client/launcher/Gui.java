@@ -1,15 +1,7 @@
 package fr.univtln.infomath.dronsim.client.launcher;
 
 import fr.univtln.infomath.dronsim.server.simulation.client.SimulatorClient;
-import fr.univtln.infomath.dronsim.server.simulation.server.SimulatorServer;
 import fr.univtln.infomath.dronsim.shared.Utilisateur;
-import jakarta.ws.rs.WebApplicationException;
-import jakarta.ws.rs.client.Client;
-import jakarta.ws.rs.client.ClientBuilder;
-import jakarta.ws.rs.client.Entity;
-import jakarta.ws.rs.client.WebTarget;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -25,7 +17,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 
 import java.util.List;
-import org.glassfish.jersey.jackson.JacksonFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
