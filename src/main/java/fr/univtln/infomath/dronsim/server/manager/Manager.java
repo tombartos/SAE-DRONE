@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.univtln.infomath.dronsim.server.simulation.client.SimulatorClient;
 import fr.univtln.infomath.dronsim.server.simulation.drones.Drone;
+import fr.univtln.infomath.dronsim.server.simulation.drones.DroneModel;
 import fr.univtln.infomath.dronsim.shared.User;
 
 import java.io.IOException;
@@ -24,6 +25,8 @@ import java.util.List;
 public class Manager {
     // Base URI the Grizzly HTTP server will listen on
     public static final String BASE_URI = "http://localhost:8080/api/v1/";
+    public static List<User> users;
+    public static List<DroneModel> droneModels;
 
     /**
      * Starts Grizzly HTTP server exposing JAX-RS resources defined in this
@@ -34,8 +37,7 @@ public class Manager {
     public static HttpServer startServer() {
         // create a resource config that scans for JAX-RS resources and providers
         // in com.example package
-        final ResourceConfig rc = new ResourceConfig().packages("fr.univtln.infomath.dronsim.manager");
-
+        final ResourceConfig rc = new ResourceConfig().packages("fr.univtln.infomath.dronsim.server.manager");
         // create and start a new instance of grizzly http server
         // exposing the Jersey application at BASE_URI
         return GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
@@ -56,12 +58,17 @@ public class Manager {
         // Initialize users list
         // Initialize users list
         ObjectMapper mapper = new ObjectMapper();
-        List<User> users = mapper.readValue(
+        users = mapper.readValue(
                 Paths.get("JsonData/users.json").toFile(),
                 new com.fasterxml.jackson.core.type.TypeReference<List<User>>() {
                 });
         User.setUsers(users);
         log.info("Users loaded from file: " + users.size() + " users loaded");
+
+        droneModels = mapper.readValue(
+                Paths.get("JsonData/droneModels.json").toFile(),
+                new com.fasterxml.jackson.core.type.TypeReference<List<DroneModel>>() {
+                });
 
         final HttpServer server = startServer();
         System.out.println(String.format("Jersey app started with endpoints available at "

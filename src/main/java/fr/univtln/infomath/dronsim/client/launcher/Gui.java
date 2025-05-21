@@ -69,7 +69,7 @@ public class Gui {
         this.centerBox.setAlignment(Pos.CENTER);
         this.centerBox.setPadding(new Insets(40));
 
-        this.dronesConnectBtn = new JFXButton("Drones connectés");
+        this.dronesConnectBtn = new JFXButton("Voir pilotes ajoutés");
         this.dronesConnectBtn.setButtonType(JFXButton.ButtonType.RAISED);
         this.dronesConnectBtn.setStyle("-fx-background-color: #00bcd4;  -fx-font-size: 18px;");
 
@@ -122,7 +122,6 @@ public class Gui {
 
         this.piloteCombo = new JFXComboBox<>();
         this.piloteCombo.getStyleClass().add("jfx-combo-box");
-        this.piloteCombo.getItems().addAll("Alice", "Bob", "Charlie");
         this.piloteCombo.setPromptText("Choisir un pilote");
 
         this.modeCombo = new JFXComboBox<>();
@@ -210,11 +209,23 @@ public class Gui {
         });
         // Comportement du bouton principal
         this.ajouterDroneBtn.setOnAction(e -> {
+            this.piloteCombo.getItems().clear();
+            List<User> pilotes = RestClient.getPilotList();
+            if (pilotes != null) {
+                for (User pilote : pilotes) {
+                    this.piloteCombo.getItems().add(pilote.getLogin());
+                }
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Erreur lors de la récupération des pilotes.");
+                alert.showAndWait();
+            }
+
             if (this.centerBox.getChildren().contains(this.formulaireBox)) {
                 this.centerBox.getChildren().remove(this.formulaireBox);
             } else {
                 int index = this.centerBox.getChildren().indexOf(this.ajouterDroneBtn);
                 this.centerBox.getChildren().add(index + 1, this.formulaireBox);
+
             }
         });
 

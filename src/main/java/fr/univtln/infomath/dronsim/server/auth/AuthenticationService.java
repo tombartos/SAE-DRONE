@@ -13,6 +13,7 @@ public interface AuthenticationService {
         final boolean isPilot;
         final boolean isGameMaster;
         final boolean isObserver;
+        final boolean isAdmin;
     }
 
     // public static abstract class AuthorizationException extends Exception {}
