@@ -172,23 +172,12 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
 
             DroneDTO.createDroneDTO(droneA);
 
-            // droneA.getControler().setSensorValue(0, new float[] {704825.8186724937f, 5319252.78095437f, -1000f});
-            int a= 5319252;
-            float b = 0;
-            while(true)
-            {
-                droneA.getControler().setSensorValue(0, new int[] {704825, a++,(int) (b+=1)});
-                Thread.sleep(1000);
-            }
 
         } catch (IOException | FactoryException e) {
             e.printStackTrace();
             log.error("Error while connecting to the controler, skipping drone creation");
 
-        } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+        }
 
         // DroneServer droneB = DroneServer.createDrone(
         // 1,
