@@ -1,5 +1,8 @@
 package fr.univtln.infomath.dronsim.server.manager;
 
+import java.util.List;
+
+import fr.univtln.infomath.dronsim.shared.User;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -23,9 +26,10 @@ public class UserResource {
      *
      * @return String that will be returned as a text/plain response.
      */
-    @GET
-    @Path("/plus/{nb}")
-    public String plus(@PathParam("nb") int nb) {
-        return String.valueOf(nb + 1);
-    }
+    // TODO: getpilotList() should return a list of users that are pilots
+    // @GET
+    // @Path("/pilots")
+    // public List<User> getPilotList() {
+    // return;
+    // }
 }

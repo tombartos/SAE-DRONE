@@ -1,7 +1,7 @@
 package fr.univtln.infomath.dronsim.client.launcher;
 
 import fr.univtln.infomath.dronsim.server.simulation.client.SimulatorClient;
-import fr.univtln.infomath.dronsim.shared.Utilisateur;
+import fr.univtln.infomath.dronsim.shared.User;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -27,7 +27,7 @@ public class Gui {
     private final int width;
     private final int height;
     private final Stage stage;
-    private Utilisateur utilisateur;
+    private User utilisateur;
 
     private VBox centerBox;
     private VBox listeDronesBox;
@@ -45,7 +45,7 @@ public class Gui {
     private JFXComboBox<String> droneCombo;
     private List<String> droneConnectes;
 
-    public Gui(Utilisateur utilisateur, Group root, int width, int height, Stage stage, Scene scene,
+    public Gui(User utilisateur, Group root, int width, int height, Stage stage, Scene scene,
             int test_username) {
         this.utilisateur = utilisateur;
         this.root = root;
@@ -255,20 +255,20 @@ public class Gui {
         listeBox.getChildren().clear();
 
         // Liste réelle : chaque objet est une instance de sous-classe
-        List<Utilisateur> utilisateurs = List.of(
-                Utilisateur.builder().nom("Alice").prenom("Dupont").login("alice123").build(),
-                Utilisateur.builder().nom("Charlie").prenom("Lefevre").login("charlie321").build(),
-                Utilisateur.builder().nom("David").prenom("Martin").login("david456").build(),
-                Utilisateur.builder().nom("Bob").prenom("Martin").login("bob456").build(),
-                Utilisateur.builder().nom("Claire").prenom("Durand").login("claire789").build(),
-                Utilisateur.builder().nom("Admin").prenom("Root").login("admin").build());
-
-        for (Utilisateur u : utilisateurs) {
+        List<User> utilisateurs = List.of(
+                User.builder().id(0).login("test").role(1).build()
+        // User.builder().nom("Charlie").prenom("Lefevre").login("charlie321").build(),
+        // User.builder().nom("David").prenom("Martin").login("david456").build(),
+        // User.builder().nom("Bob").prenom("Martin").login("bob456").build(),
+        // User.builder().nom("Claire").prenom("Durand").login("claire789").build(),
+        // User.builder().nom("Admin").prenom("Root").login("admin").build());
+        );
+        for (User u : utilisateurs) {
             HBox ligne = new HBox(15);
             ligne.setAlignment(Pos.CENTER);
 
             // Nom complet
-            Label nomLabel = new Label(u.getNom() + " " + u.getPrenom());
+            Label nomLabel = new Label(u.getLogin());
             nomLabel.setStyle("-fx-text-fill: white; -fx-font-size: 16px;");
             nomLabel.setPrefWidth(200);
 

@@ -62,6 +62,6 @@ public class DroneModelCreator {
         models.add(BlueROV2);
 
         creator.saveDroneModels(models,
-                "src/main/java/fr/univtln/infomath/dronsim/server/simulation/drones/DronesModels.json");
+                "JsonData/DronesModels.json");
     }
 }

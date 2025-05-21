@@ -125,7 +125,7 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         // Ajout des modeles de drone
 
         List<DroneModel> models = loadDroneModelsFromJson(
-                "src/main/java/fr/univtln/infomath/dronsim/server/simulation/drones/DronesModels.json");
+                "JsonData/DronesModels.json");
         DroneModel ModelB = models.get(0);
 
         // Init Ardusub controler

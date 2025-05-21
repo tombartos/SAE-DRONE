@@ -3,9 +3,19 @@ package fr.univtln.infomath.dronsim.server.manager;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import fr.univtln.infomath.dronsim.server.simulation.client.SimulatorClient;
+import fr.univtln.infomath.dronsim.server.simulation.drones.Drone;
+import fr.univtln.infomath.dronsim.shared.User;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Paths;
+import java.util.List;
 
 /**
  * Main class.
@@ -37,7 +47,22 @@ public class Manager {
      * @param args
      * @throws IOException
      */
+    private static final Logger log = LoggerFactory.getLogger(Manager.class);
+
     public static void main(String[] args) throws IOException {
+
+        // Initialize the drone associations
+        DronesAssociations.init();
+        // Initialize users list
+        // Initialize users list
+        ObjectMapper mapper = new ObjectMapper();
+        List<User> users = mapper.readValue(
+                Paths.get("JsonData/users.json").toFile(),
+                new com.fasterxml.jackson.core.type.TypeReference<List<User>>() {
+                });
+        User.setUsers(users);
+        log.info("Users loaded from file: " + users.size() + " users loaded");
+
         final HttpServer server = startServer();
         System.out.println(String.format("Jersey app started with endpoints available at "
                 + "%s%nHit Ctrl-C to stop it...", BASE_URI));

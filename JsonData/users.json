@@ -1,0 +1,21 @@
+[ {
+  "id" : 0,
+  "login" : "Bob35",
+  "role" : 0
+}, {
+  "id" : 1,
+  "login" : "Alice42",
+  "role" : 0
+}, {
+  "id" : 2,
+  "login" : "Charlie21",
+  "role" : 1
+}, {
+  "id" : 3,
+  "login" : "Diana99",
+  "role" : 2
+}, {
+  "id" : 4,
+  "login" : "Eve88",
+  "role" : 3
+} ]
