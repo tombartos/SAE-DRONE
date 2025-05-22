@@ -21,7 +21,7 @@ import jakarta.ws.rs.core.MediaType;
 public class DroneAssoResource {
 
     @POST
-    public static boolean createDroneAsso(@HeaderParam("Authorization") String authHeader,
+    public boolean createDroneAsso(@HeaderParam("Authorization") String authHeader,
             DroneAssociation droneAssociation) {
         // Check if the user is authenticated
         AuthenticatedUser authUser = AuthChecker.checkAuth(authHeader);
@@ -72,7 +72,7 @@ public class DroneAssoResource {
     }
 
     @GET
-    public static List<DroneAssociation> getDroneAsso(@HeaderParam("Authorization") String authHeader) {
+    public List<DroneAssociation> getDroneAsso(@HeaderParam("Authorization") String authHeader) {
         // Check if the user is authenticated
         AuthenticatedUser authUser = AuthChecker.checkAuth(authHeader);
 

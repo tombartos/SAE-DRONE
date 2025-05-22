@@ -62,6 +62,10 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
                                              // like in initPilot which is called by another class
 
     public static void main(String[] args) {
+        if (instance != null) {
+            log.error("SimulatorServer already running, aborting");
+            throw new IllegalStateException("SimulatorServer already running, aborting");
+        }
         SimulatorServer app = new SimulatorServer();
         app.start(JmeContext.Type.Headless); // headless type for servers!
     }
@@ -173,7 +177,7 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
      *                      supported is 0 (Ardusub), if you are making your own
      *                      controler you need to add it in the code of this method
      */
-    public static void pilotInit(int clientId, String modelName, String pilotIP, int controlerType) {
+    public static void initPilot(int clientId, String modelName, String pilotIP, int controlerType) {
         if (!ready) {
             log.error("Server not ready, please wait and retry, aborting drone creation");
             throw new IllegalStateException("Server not ready, please wait and retry, aborting drone creation");

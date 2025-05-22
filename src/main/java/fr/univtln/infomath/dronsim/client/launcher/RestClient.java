@@ -127,6 +127,28 @@ public class RestClient {
         }
     }
 
+    public static String startSimulation() {
+        try {
+            Response response = baseTarget.path("SimulatorServer/start")
+                    .request(MediaType.APPLICATION_JSON)
+                    .header("Authorization", authHeader)
+                    .post(null);
+            if (response.getStatus() >= 400) {
+                String errorMsg = response.readEntity(String.class);
+                log.error("HTTP {}: {}", response.getStatus(), errorMsg);
+                response.close();
+                return null;
+            }
+            String result = response.readEntity(String.class);
+            response.close();
+            log.info("Response received: " + result);
+            return result;
+        } catch (WebApplicationException e) {
+            log.error("WebApplicationException: {}", e.getMessage());
+            return null;
+        }
+    }
+
     // public String RestClientTest() {
     // try {
     // Response response = baseTarget.path("users/plus/5")

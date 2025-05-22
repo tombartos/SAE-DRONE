@@ -1,6 +1,7 @@
 package fr.univtln.infomath.dronsim.client.launcher;
 
 import fr.univtln.infomath.dronsim.server.simulation.client.SimulatorClient;
+import fr.univtln.infomath.dronsim.server.simulation.server.SimulatorServer;
 import fr.univtln.infomath.dronsim.shared.DroneAssociation;
 import fr.univtln.infomath.dronsim.shared.User;
 import javafx.geometry.Insets;
@@ -46,6 +47,7 @@ public class Gui {
     private JFXComboBox<String> modeCombo;
     private JFXComboBox<String> droneCombo;
     private List<String> droneConnectes;
+    private int test_username;
 
     public Gui(User utilisateur, Group root, int width, int height, Stage stage, Scene scene,
             int test_username) {
@@ -54,6 +56,7 @@ public class Gui {
         this.width = width;
         this.height = height;
         this.stage = stage;
+        this.test_username = test_username;
         scene.getStylesheets().add(getClass().getResource("/styles/styles.css").toExternalForm());
 
         // Image de fond
@@ -352,6 +355,16 @@ public class Gui {
      */
 
     private void lancerSimulateur() {
+        if (test_username == 2) {
+            String serverStarted = RestClient.startSimulation();
+            if (serverStarted != null) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION, serverStarted);
+                alert.showAndWait();
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Erreur lors du démarrage du simulateur.");
+                alert.showAndWait();
+            }
+        }
         // new Thread(() -> {
         // Simulateur.main(new String[] {});
         // }).start();
