@@ -74,6 +74,8 @@ public class Drone {
         this.control.setGravity(Vector3f.ZERO);
         this.control.setLinearDamping(0.2f);
         this.control.setAngularDamping(0.9f);
+        //this.control.setAngularFactor(0.0f);
+        // System.out.println("Drone created with mass: " + this.control.getAngularFactor());
 
         // Initial thruster vector
         initialThrusterVecs = new ArrayList<>();
@@ -90,7 +92,7 @@ public class Drone {
         initialThrusterVecs.add(new Vector3f(0.7431f, 0.0000f, 0.6691f).normalize());
         initialThrusterLocalPosition.add(new Vector3f(0.1f, 0f, -0.16f));
 
-        initialThrusterVecs.add(new Vector3f(-0.7431f, 0.0000f, 0.6691f).normalize());
+        initialThrusterVecs.add(new Vector3f(-0.7431f, -0.0000f, 0.6691f).normalize());
         initialThrusterLocalPosition.add(new Vector3f(-0.1f, 0f, -0.16f));
 
         initialThrusterVecs.add(new Vector3f(0.0000f, 1f, 0f).normalize());

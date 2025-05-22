@@ -101,7 +101,7 @@ public class Simulateur extends SimpleApplication implements PhysicsCollisionLis
                 space,
                 "vehicle/subseatech/guardian/guardian-vehicle.j3o",
                 "VehicleB",
-                new Vector3f(3.0f, 2.0f, 0.0f),
+                new Vector3f(5.0f, 2.0f, 0.0f),
                 200f, 800f);
         scene.attachChild(droneB.getNode());
         drones.add(droneB);
