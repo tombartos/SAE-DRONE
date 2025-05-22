@@ -18,7 +18,6 @@ import com.jme3.math.Vector3f;
  * about the drone model. It is used to create a drone in the simulation.
  */
 public class DroneModel {
-    private int id;
     private String name;
     private int initialWeight;
     private String model3DPath;

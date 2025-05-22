@@ -126,12 +126,10 @@ public class Gui {
 
         this.modeCombo = new JFXComboBox<>();
         this.modeCombo.getStyleClass().add("jfx-combo-box");
-        this.modeCombo.getItems().addAll("local", "réseau");
         this.modeCombo.setPromptText("Choisir le mode de connexion");
 
         this.droneCombo = new JFXComboBox<>();
         this.droneCombo.getStyleClass().add("jfx-combo-box");
-        this.droneCombo.getItems().addAll("Drone Alpha", "Drone Beta");
         this.droneCombo.setPromptText("Choisir un drone");
 
         this.validerBtn = new JFXButton("Valider");
@@ -209,6 +207,9 @@ public class Gui {
         });
         // Comportement du bouton principal
         this.ajouterDroneBtn.setOnAction(e -> {
+            this.modeCombo.getItems().clear();
+            this.modeCombo.getItems().addAll("cloud");
+
             this.piloteCombo.getItems().clear();
             List<User> pilotes = RestClient.getPilotList();
             if (pilotes != null) {
@@ -217,6 +218,17 @@ public class Gui {
                 }
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR, "Erreur lors de la récupération des pilotes.");
+                alert.showAndWait();
+            }
+
+            this.droneCombo.getItems().clear();
+            List<String> droneModels = RestClient.getDroneModels();
+            if (droneModels != null) {
+                for (String drone : droneModels) {
+                    this.droneCombo.getItems().add(drone);
+                }
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Erreur lors de la récupération des modèles de drones.");
                 alert.showAndWait();
             }
 

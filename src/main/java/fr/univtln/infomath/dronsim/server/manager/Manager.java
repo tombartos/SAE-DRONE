@@ -8,12 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import fr.univtln.infomath.dronsim.server.simulation.client.SimulatorClient;
-import fr.univtln.infomath.dronsim.server.simulation.drones.Drone;
 import fr.univtln.infomath.dronsim.server.simulation.drones.DroneModel;
 import fr.univtln.infomath.dronsim.shared.User;
-import lombok.Getter;
-
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Paths;
@@ -59,6 +55,9 @@ public class Manager {
         // Initialize users list
         // Initialize users list
         ObjectMapper mapper = new ObjectMapper();
+        // We set this to avoid errors about the unitVector property when we serialize a
+        // Vector3f
+        mapper.configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         users = mapper.readValue(
                 Paths.get("JsonData/users.json").toFile(),
                 new com.fasterxml.jackson.core.type.TypeReference<List<User>>() {
@@ -67,7 +66,7 @@ public class Manager {
         log.info("Users loaded from file: " + users.size() + " users loaded");
 
         droneModels = mapper.readValue(
-                Paths.get("JsonData/droneModels.json").toFile(),
+                Paths.get("JsonData/DronesModels.json").toFile(),
                 new com.fasterxml.jackson.core.type.TypeReference<List<DroneModel>>() {
                 });
 

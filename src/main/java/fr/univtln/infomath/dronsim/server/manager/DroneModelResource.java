@@ -1,9 +1,9 @@
 package fr.univtln.infomath.dronsim.server.manager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import fr.univtln.infomath.dronsim.server.auth.AuthenticationService.AuthenticatedUser;
-import fr.univtln.infomath.dronsim.server.simulation.drones.Drone;
 import fr.univtln.infomath.dronsim.server.simulation.drones.DroneModel;
 import fr.univtln.infomath.dronsim.server.utils.AuthChecker;
 import jakarta.ws.rs.Consumes;
@@ -27,13 +27,12 @@ public class DroneModelResource {
             throw new jakarta.ws.rs.ForbiddenException("User is not a GM");
         }
 
-        // Return the list of drone models
+        // Return the list of drone models names
+        List<String> ModelsNames = new ArrayList<>();
         for (DroneModel drone : Manager.droneModels) {
-            // TODO: get the name of the drone model
+            ModelsNames.add(drone.getName());
         }
-        // List<String> droneModels = ;
-
-        return null;
+        return ModelsNames;
     }
 
 }

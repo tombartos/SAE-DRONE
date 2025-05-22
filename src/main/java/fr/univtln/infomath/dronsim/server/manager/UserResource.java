@@ -3,17 +3,13 @@ package fr.univtln.infomath.dronsim.server.manager;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.univtln.infomath.dronsim.server.auth.AuthenticationService;
-import fr.univtln.infomath.dronsim.server.auth.NaiveAuthService;
 import fr.univtln.infomath.dronsim.server.utils.AuthChecker;
 import fr.univtln.infomath.dronsim.server.auth.AuthenticationService.AuthenticatedUser;
 import fr.univtln.infomath.dronsim.shared.User;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.GET;
-import jakarta.ws.rs.NotAuthorizedException;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.HeaderParam;

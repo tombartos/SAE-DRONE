@@ -51,6 +51,23 @@ public class RestClient {
         }
     }
 
+    public static List<String> getDroneModels() {
+        try {
+            Response response = baseTarget.path("dronemodels")
+                    .request(MediaType.APPLICATION_JSON)
+                    .header("Authorization", authHeader)
+                    .get();
+            List<String> droneModels = response.readEntity(new GenericType<List<String>>() {
+            });
+            response.close();
+            log.info("Response received: " + droneModels);
+            return droneModels;
+        } catch (WebApplicationException e) {
+            log.error(e.getMessage());
+            return null;
+        }
+    }
+
     // public String RestClientTest() {
     // try {
     // Response response = baseTarget.path("users/plus/5")

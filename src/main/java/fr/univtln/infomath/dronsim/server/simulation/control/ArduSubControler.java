@@ -8,12 +8,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.jme3.system.osvr.osvrtimevalue.OsvrTimeValueLibrary.timeval;
-
 import io.dronefleet.mavlink.MavlinkConnection;
 import io.dronefleet.mavlink.MavlinkMessage;
 import io.dronefleet.mavlink.common.GpsInput;

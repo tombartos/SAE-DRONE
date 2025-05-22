@@ -1,8 +1,5 @@
 package fr.univtln.infomath.dronsim.client.launcher;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;

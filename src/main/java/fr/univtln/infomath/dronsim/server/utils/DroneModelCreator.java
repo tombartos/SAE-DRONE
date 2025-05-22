@@ -57,7 +57,7 @@ public class DroneModelCreator {
         initialThrusterVecs.add(new Vector3f(-0.0000f, -1f, 0f).normalize());
         initialThrusterLocalPosition.add(new Vector3f(-0.1f, 0f, 0f));
 
-        DroneModel BlueROV2 = new DroneModel(0, "BlueROV2", 200, "vehicle/bluerobotics/br2r4/br2-r4-vehicle.j3o", 6, 50,
+        DroneModel BlueROV2 = new DroneModel("BlueROV2", 200, "vehicle/bluerobotics/br2r4/br2-r4-vehicle.j3o", 6, 50,
                 initialThrusterVecs, initialThrusterLocalPosition);
         models.add(BlueROV2);
 

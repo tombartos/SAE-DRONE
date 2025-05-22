@@ -1,5 +1,4 @@
 [ {
-  "id" : 0,
   "name" : "BlueROV2",
   "initialWeight" : 200,
   "model3DPath" : "vehicle/bluerobotics/br2r4/br2-r4-vehicle.j3o",
