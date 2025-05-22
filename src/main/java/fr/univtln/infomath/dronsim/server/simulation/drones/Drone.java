@@ -31,6 +31,7 @@ public class Drone {
     @Setter
     protected List<Float> motors_speeds;
     protected Node node;
+    protected Spatial model;
 
     protected Drone(int id, int clientId, AssetManager assetManager, PhysicsSpace space, DroneModel droneModel,
             Vector3f position, int batteryLevel) {
@@ -50,7 +51,7 @@ public class Drone {
         // additionnels (qui ne sont pas prevus de base dans le modele de drone)
 
         node = new Node(name);
-        Spatial model = assetManager.loadModel(droneModel.getModel3DPath());
+        model = assetManager.loadModel(droneModel.getModel3DPath());
         model.setLocalTranslation(0, 0.05f, 0); // positionne le model par rapport à la collision shape
         node.attachChild(model);
         node.setLocalTranslation(position); // positionne le node principal

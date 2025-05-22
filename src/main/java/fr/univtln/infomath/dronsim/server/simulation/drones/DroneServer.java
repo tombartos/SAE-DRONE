@@ -3,6 +3,7 @@ package fr.univtln.infomath.dronsim.server.simulation.drones;
 import java.util.List;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
@@ -27,9 +28,9 @@ public class DroneServer extends Drone {
         super(id, clientId, assetManager, space, droneModel, position, batteryLevel);
 
         // Création de la collision
-        // TODO : Créer une collision shape adaptee au modele du drone
-        CollisionShape shape = new BoxCollisionShape(new Vector3f(0.2f, 0.14f, 0.2f));
-
+        BoundingBox bbox = (BoundingBox) model.getWorldBound();
+        Vector3f extent = bbox.getExtent(null);
+        BoxCollisionShape shape = new BoxCollisionShape(extent);
         body = new RigidBodyControl(shape, weight);
         this.node.addControl(body);
         space.add(body);
