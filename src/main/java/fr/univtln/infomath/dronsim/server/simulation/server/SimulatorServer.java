@@ -172,6 +172,14 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
 
             DroneDTO.createDroneDTO(droneA);
 
+            // droneA.getControler().setSensorValue(0, new float[] {704825.8186724937f, 5319252.78095437f, -1000f});
+            // float a= 5319252f;
+            // float b = 0;
+            // while(true)
+            // {
+            //     droneA.getControler().setSensorValue(0, new float[] {704825.f, a,b});
+            //     Thread.sleep(1000);
+            // }
 
         } catch (IOException | FactoryException e) {
             e.printStackTrace();
