@@ -32,9 +32,13 @@ import fr.univtln.infomath.dronsim.server.simulation.drones.Drone;
 import fr.univtln.infomath.dronsim.server.simulation.drones.DroneDTO;
 import fr.univtln.infomath.dronsim.server.simulation.drones.DroneInitData;
 import fr.univtln.infomath.dronsim.server.simulation.drones.DroneModel;
+import fr.univtln.infomath.dronsim.server.simulation.entiteMarine.EntiteMarine;
+import fr.univtln.infomath.dronsim.server.simulation.entiteMarine.EntiteMarineDTO;
+import fr.univtln.infomath.dronsim.server.simulation.entiteMarine.EntiteMarineInitData;
 import fr.univtln.infomath.dronsim.server.simulation.evenements.EvenementDTO;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.DroneDTOMessage;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.DroneMovementRequestMessage;
+import fr.univtln.infomath.dronsim.server.simulation.jme_messages.EntiteMarineDTOMessage;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.EvenementDTOMessage;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.Handshake1;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.Handshake2;
@@ -102,6 +106,7 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
             client.addMessageListener(clientListener, DroneDTOMessage.class);
             client.addMessageListener(clientListener, Handshake2.class);
             client.addMessageListener(clientListener, EvenementDTOMessage.class);
+            client.addMessageListener(clientListener, EntiteMarineDTOMessage.class);
             client.start();
             log.info("Connected to server at " + server_ip + ":" + server_port);
         } catch (IOException e) {
@@ -165,6 +170,10 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
         Serializer.registerClass(DroneMovementRequestMessage.class);
         Serializer.registerClass(EvenementDTO.class);
         Serializer.registerClass(EvenementDTOMessage.class);
+        Serializer.registerClass(EntiteMarineDTO.class);
+        Serializer.registerClass(EntiteMarineDTOMessage.class);
+        Serializer.registerClass(EntiteMarineInitData.class);
+
     }
 
     /**
@@ -208,6 +217,19 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
             chaseCam.setTrailingEnabled(true); // caméra suit le mouvement
             // Contrôle clavier du drone
             controlerA = new LocalTestingControler(inputManager, client, yourDrone.getId());
+        }
+
+        // Ajout des entités marines
+        for (EntiteMarineInitData marineInit : handshake2.getEntitesMarineInitData()) {
+            EntiteMarine entite = EntiteMarine.createEntite(
+                    marineInit.getId(),
+                    marineInit.getType(),
+                    marineInit.getModelPath(),
+                    marineInit.getPosition(),
+                    marineInit.getDirection(),
+                    marineInit.getSpeed(),
+                    assetManager);
+            scene.attachChild(entite.getModelNode());
         }
 
         sceneReady = true;
@@ -262,6 +284,15 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
                 node.setLocalRotation(drone.getAngular());
             }
         }
+
+        for (EntiteMarine entite : EntiteMarine.getEntites()) {
+
+            Node node = entite.getModelNode();
+            if (node != null) {
+                node.setLocalTranslation(entite.getPositionCourante());
+            }
+        }
+
     }
 
     @Override
@@ -282,12 +313,28 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
 
     }
 
+    public void updateEntitesMarine(List<EntiteMarineDTO> dtos) {
+        for (EntiteMarine entite : EntiteMarine.getEntites()) {
+            for (EntiteMarineDTO dto : dtos) {
+                if (entite.getId() == dto.getId()) {
+                    entite.setPositionCourante(dto.getPosition());
+                    entite.setDirection(dto.getDirection());
+                }
+            }
+        }
+    }
+
     public void updateEvenements(List<EvenementDTO> eventDTOs) {
         for (EvenementDTO eventDTO : eventDTOs) {
             if (!evenementsVisuels.containsKey(eventDTO.getId())) {
                 ParticleEmitter courant = createCourantVisuel(eventDTO.getZoneCenter(), eventDTO.getDirection());
                 evenementsVisuels.put(eventDTO.getId(), courant);
-                scene.attachChild(courant);
+                enqueue(() -> {
+                    // Cela garantit que scene.attachChild(...) est exécuté dans le thread principal
+                    // de JME
+                    scene.attachChild(courant);
+                    return null;
+                });
             }
         }
     }
