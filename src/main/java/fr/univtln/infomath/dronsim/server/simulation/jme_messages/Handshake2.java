@@ -18,6 +18,5 @@ import fr.univtln.infomath.dronsim.server.simulation.drones.DroneInitData;
 @Serializable
 public class Handshake2 extends AbstractMessage {
     private List<DroneInitData> dronesInitData;
-    private int idMap;
     private int yourDroneId;
 }

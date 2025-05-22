@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import com.jme3.app.SimpleApplication;
+import com.jme3.asset.AssetManager;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
@@ -33,6 +34,8 @@ import fr.univtln.infomath.dronsim.server.simulation.jme_messages.DroneDTOMessag
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.DroneMovementRequestMessage;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.Handshake1;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.Handshake2;
+import lombok.Getter;
+
 import com.jme3.network.Filters;
 import com.jme3.network.HostedConnection;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
@@ -46,23 +49,19 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
     private static final Logger log = LoggerFactory.getLogger(SimulatorServer.class);
     private static ServerListener serverListener;
     private static Server server;
-    private static int idMap;
     private BulletAppState bulletState;
-    private PhysicsSpace space;
+    private static PhysicsSpace space;
     private Node scene;
     private static int nbDrones;
     private static final float WATERLEVEL = 2.0f; // TODO: to be set by the map
-    private static List<String> Controler_IP_LIST = new ArrayList<>();
+    @Getter
+    private static List<DroneModel> models;
+    private static boolean ready = false;
+    @Getter
+    private static SimulatorServer instance; // Singleton instance, useful to access assetmanager from other classes
+                                             // like in initPilot which is called by another class
 
     public static void main(String[] args) {
-        // TODO: gerer ip dynamiquement quand on fera le launcher
-        if (args.length != 2) {
-            log.error("Launch arguments :  <map_id> <controler0_ip>");
-            System.exit(1);
-        }
-        idMap = Integer.parseInt(args[0]);
-        Controler_IP_LIST.add(args[1]);
-
         SimulatorServer app = new SimulatorServer();
         app.start(JmeContext.Type.Headless); // headless type for servers!
     }
@@ -83,6 +82,7 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
 
     @Override
     public void simpleInitApp() {
+        instance = this; // Singleton instance
         try {
             server = Network.createServer(SERVER_PORT);
             initializeSerializables();
@@ -119,32 +119,33 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
 
         // Ajout des modeles de drone
 
-        List<DroneModel> models = loadDroneModelsFromJson(
+        models = loadDroneModelsFromJson(
                 "JsonData/DronesModels.json");
         DroneModel ModelB = models.get(0);
 
-        // Init Ardusub controler
-        Controler controler;
-        try {
-            controler = new ArduSubControler(Controler_IP_LIST.get(0));
-            // Ajout du drone
-            DroneServer droneA = DroneServer.createDrone(
-                    0,
-                    0,
-                    assetManager,
-                    space,
-                    ModelB,
-                    new Vector3f(0.0f, 2.0f, 0.0f),
-                    100,
-                    controler);
-            scene.attachChild(droneA.getNode());
+        // // Init Ardusub controler
+        // Controler controler;
+        // try {
+        // controler = new ArduSubControler(Controler_IP_LIST.get(0));
+        // // Ajout du drone
+        // DroneServer droneA = DroneServer.createDrone(
+        // 0,
+        // 0,
+        // assetManager,
+        // space,
+        // ModelB,
+        // new Vector3f(0.0f, 2.0f, 0.0f),
+        // 100,
+        // controler);
+        // scene.attachChild(droneA.getNode());
 
-            DroneDTO.createDroneDTO(droneA);
-        } catch (IOException e) {
-            e.printStackTrace();
-            log.error("Error while connecting to the controler, skipping drone creation");
+        // DroneDTO.createDroneDTO(droneA);
+        // } catch (IOException e) {
+        // e.printStackTrace();
+        // log.error("Error while connecting to the controler, skipping drone
+        // creation");
 
-        }
+        // }
 
         // DroneServer droneB = DroneServer.createDrone(
         // 1,
@@ -157,7 +158,72 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         // scene.attachChild(droneB.getNode());
         // DroneDTO.createDroneDTO(droneB);
         nbDrones = Drone.getDrones().size();
-        log.info("Initialization complete, waiting for jME clients...");
+        ready = true;
+        log.info("Initialization complete, waiting for pilots to connect");
+    }
+
+    /**
+     * This method is called by the manager when a new pilot added by the GM
+     * try to connects to the server.
+     *
+     * @param clientId      The id of the client calculated by the manager
+     * @param ModelName     The name of the drone model
+     * @param pilotIP       The IP of the pilot
+     * @param controlerType The type of the controler, currently the only one
+     *                      supported is 0 (Ardusub), if you are making your own
+     *                      controler you need to add it in the code of this method
+     */
+    public static void pilotInit(int clientId, String modelName, String pilotIP, int controlerType) {
+        if (!ready) {
+            log.error("Server not ready, please wait and retry, aborting drone creation");
+            throw new IllegalStateException("Server not ready, please wait and retry, aborting drone creation");
+        }
+        Controler controler = null;
+        int tryCount = 0;
+        // Try to connect to the controler
+        while (controler == null && tryCount < 120) {
+            try {
+                controler = new ArduSubControler(pilotIP);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            tryCount++;
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (controler == null) {
+            log.error("Error while connecting to the controler " + pilotIP + ", aborting drone creation");
+            throw new IllegalStateException(
+                    "Error while connecting to the controler " + pilotIP + ", aborting drone creation");
+        }
+
+        DroneModel model = null;
+        for (DroneModel modeltmp : SimulatorServer.getModels()) {
+            if (modeltmp.getName().equals(modelName)) {
+                model = modeltmp;
+                break;
+            }
+        }
+        if (model == null) {
+            log.error("Model not found " + pilotIP + " " + modelName + ",aborting drone creation");
+            throw new IllegalStateException(
+                    "Model not found " + pilotIP + " " + modelName + ",aborting drone creation");
+        }
+        int id = Drone.getDrones().size();
+        DroneServer drone = DroneServer.createDrone(
+                id,
+                clientId,
+                SimulatorServer.getInstance().getAssetManager(), // Hacky way to get the asset manager
+                space,
+                model,
+                new Vector3f((float) id, 2.0f, 0.0f),
+                100,
+                controler);
+        DroneDTO.createDroneDTO(drone);
     }
 
     private void attachTerrain(Node parent) {
@@ -200,7 +266,7 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
                 droneId = drone.getId();
             }
         }
-        Handshake2 handshake2 = new Handshake2(dronesInitData, idMap, droneId);
+        Handshake2 handshake2 = new Handshake2(dronesInitData, droneId);
         server.broadcast(Filters.in(source), handshake2);
     }
 
