@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.univtln.infomath.dronsim.server.simulation.drones.DroneModel;
+import fr.univtln.infomath.dronsim.shared.DroneAssociation;
 import fr.univtln.infomath.dronsim.shared.User;
 import java.io.IOException;
 import java.net.URI;
@@ -20,10 +21,11 @@ import java.util.List;
  *
  */
 public class Manager {
+    private static final Logger log = LoggerFactory.getLogger(Manager.class);
     // Base URI the Grizzly HTTP server will listen on
     public static final String BASE_URI = "http://localhost:8080/api/v1/";
-    public static List<User> users;
-    public static List<DroneModel> droneModels;
+    private static List<User> users;
+    private static List<DroneModel> droneModels;
 
     /**
      * Starts Grizzly HTTP server exposing JAX-RS resources defined in this
@@ -40,19 +42,24 @@ public class Manager {
         return GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
     }
 
+    public static List<User> getUsers() {
+        return users;
+    }
+
+    public static List<DroneModel> getDroneModels() {
+        return droneModels;
+    }
+
     /**
      * Main method.
      *
      * @param args
      * @throws IOException
      */
-    private static final Logger log = LoggerFactory.getLogger(Manager.class);
-
     public static void main(String[] args) throws IOException {
 
         // Initialize the drone associations
-        DronesAssociations.init();
-        // Initialize users list
+        DroneAssociation.initDroneAssociations();
         // Initialize users list
         ObjectMapper mapper = new ObjectMapper();
         // We set this to avoid errors about the unitVector property when we serialize a

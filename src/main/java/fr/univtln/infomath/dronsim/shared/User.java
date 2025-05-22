@@ -11,7 +11,7 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-
+@EqualsAndHashCode
 /**
  * This class represents a user. It contains all the informations about the
  * user.

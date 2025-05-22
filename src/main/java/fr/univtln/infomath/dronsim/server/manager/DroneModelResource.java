@@ -29,7 +29,7 @@ public class DroneModelResource {
 
         // Return the list of drone models names
         List<String> ModelsNames = new ArrayList<>();
-        for (DroneModel drone : Manager.droneModels) {
+        for (DroneModel drone : Manager.getDroneModels()) {
             ModelsNames.add(drone.getName());
         }
         return ModelsNames;

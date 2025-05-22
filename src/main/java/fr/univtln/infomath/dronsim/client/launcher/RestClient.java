@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.glassfish.jersey.jackson.JacksonFeature;
 
+import fr.univtln.infomath.dronsim.shared.DroneAssociation;
 import fr.univtln.infomath.dronsim.shared.User;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.client.Client;
@@ -40,13 +41,19 @@ public class RestClient {
                     .request(MediaType.APPLICATION_JSON)
                     .header("Authorization", authHeader)
                     .get();
+            if (response.getStatus() >= 400) {
+                String errorMsg = response.readEntity(String.class);
+                log.error("HTTP {}: {}", response.getStatus(), errorMsg);
+                response.close();
+                return null;
+            }
             List<User> pilots = response.readEntity(new GenericType<List<User>>() {
             });
             response.close();
             log.info("Response received: " + pilots);
             return pilots;
         } catch (WebApplicationException e) {
-            log.error(e.getMessage());
+            log.error("WebApplicationException: {}", e.getMessage());
             return null;
         }
     }
@@ -57,13 +64,65 @@ public class RestClient {
                     .request(MediaType.APPLICATION_JSON)
                     .header("Authorization", authHeader)
                     .get();
+            if (response.getStatus() >= 400) {
+                String errorMsg = response.readEntity(String.class);
+                log.error("HTTP {}: {}", response.getStatus(), errorMsg);
+                response.close();
+                return null;
+            }
             List<String> droneModels = response.readEntity(new GenericType<List<String>>() {
             });
             response.close();
             log.info("Response received: " + droneModels);
             return droneModels;
         } catch (WebApplicationException e) {
-            log.error(e.getMessage());
+            log.error("WebApplicationException: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    public static boolean createDroneAssoReq(String droneModelName, String pilotLogin, int connxionMode) {
+        DroneAssociation droneAsso = new DroneAssociation(-1, droneModelName, pilotLogin, connxionMode);
+        try {
+            Response response = baseTarget.path("droneassociations")
+                    .request(MediaType.APPLICATION_JSON)
+                    .header("Authorization", authHeader)
+                    .post(jakarta.ws.rs.client.Entity.entity(droneAsso, MediaType.APPLICATION_JSON));
+            if (response.getStatus() >= 400) {
+                String errorMsg = response.readEntity(String.class);
+                log.error("HTTP {}: {}", response.getStatus(), errorMsg);
+                response.close();
+                return false;
+            }
+            boolean result = response.readEntity(Boolean.class);
+            response.close();
+            log.info("Response received: " + result);
+            return result;
+        } catch (WebApplicationException e) {
+            log.error("WebApplicationException: {}", e.getMessage());
+            return false;
+        }
+    }
+
+    public static List<DroneAssociation> getDroneAsso() {
+        try {
+            Response response = baseTarget.path("droneassociations")
+                    .request(MediaType.APPLICATION_JSON)
+                    .header("Authorization", authHeader)
+                    .get();
+            if (response.getStatus() >= 400) {
+                String errorMsg = response.readEntity(String.class);
+                log.error("HTTP {}: {}", response.getStatus(), errorMsg);
+                response.close();
+                return null;
+            }
+            List<DroneAssociation> droneAsso = response.readEntity(new GenericType<List<DroneAssociation>>() {
+            });
+            response.close();
+            log.info("Response received: " + droneAsso);
+            return droneAsso;
+        } catch (WebApplicationException e) {
+            log.error("WebApplicationException: {}", e.getMessage());
             return null;
         }
     }

@@ -1,6 +1,7 @@
 package fr.univtln.infomath.dronsim.client.launcher;
 
 import fr.univtln.infomath.dronsim.server.simulation.client.SimulatorClient;
+import fr.univtln.infomath.dronsim.shared.DroneAssociation;
 import fr.univtln.infomath.dronsim.shared.User;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -16,6 +17,7 @@ import com.jfoenix.controls.JFXComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,28 +91,6 @@ public class Gui {
                     -fx-padding: 0;
                     -fx-border-color: transparent;
                 """);
-
-        this.droneConnectes = List.of("Drone Alpha", "Drone Beta", "Drone Gamma", "Drone Delta", "Drone Epsilon");
-
-        this.listeDronesBox.getChildren().clear();
-        for (String drone : this.droneConnectes) {
-            HBox ligne = new HBox(10);
-            ligne.setAlignment(Pos.CENTER);
-
-            Label nomDrone = new Label(drone);
-            nomDrone.setStyle("-fx-text-fill: white; -fx-font-size: 16px;");
-
-            Button btnSuivre = new Button("Suivre");
-            btnSuivre.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
-
-            btnSuivre.setOnAction(ev -> {
-                System.out.println("Suivi activé pour " + drone);
-                // Logique de suivi ici
-            });
-
-            ligne.getChildren().addAll(nomDrone, btnSuivre);
-            listeDronesBox.getChildren().add(ligne);
-        }
 
         // Ajout du bouton pour ajouter un drone
         this.ajouterDroneBtn = new JFXButton("Ajouter un drone");
@@ -204,6 +184,19 @@ public class Gui {
                 this.centerBox.getChildren().add(index + 1, scrollPaneConnected);
             }
 
+            this.listeDronesBox.getChildren().clear();
+            this.droneConnectes = new ArrayList<>();
+            List<DroneAssociation> droneAssociations = RestClient.getDroneAsso();
+            for (DroneAssociation droneAsso : droneAssociations) {
+                String pilote = droneAsso.getPilotLogin();
+                String drone = droneAsso.getDroneModelName();
+                int mode = droneAsso.getConnexionMode();
+                String modeStr = (mode == 0) ? "cloud" : "local";
+                this.droneConnectes.add(drone);
+                Label nomDrone = new Label("Pilote : " + pilote + ", Drone : " + drone + ", Mode : " + modeStr);
+                nomDrone.setStyle("-fx-text-fill: white; -fx-font-size: 25px;");
+                listeDronesBox.getChildren().add(nomDrone);
+            }
         });
         // Comportement du bouton principal
         this.ajouterDroneBtn.setOnAction(e -> {
@@ -245,8 +238,23 @@ public class Gui {
             String pilote = this.piloteCombo.getValue();
             String mode = this.modeCombo.getValue();
             String drone = this.droneCombo.getValue();
+            int intmode;
 
             if (pilote != null && mode != null && drone != null) {
+                // Appel de la méthode pour créer la demande d'association
+                if (mode.equals("cloud"))
+                    intmode = 0;
+                else {
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "Mode de connexion non implémenté.");
+                    alert.showAndWait();
+                    return;
+                }
+                boolean result = RestClient.createDroneAssoReq(drone, pilote, intmode);
+                if (!result) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "Erreur lors de la création de la demande.");
+                    alert.showAndWait();
+                    return;
+                }
                 Alert alert = new Alert(Alert.AlertType.INFORMATION,
                         "Pilote '" + pilote + "' connecté en " + mode + " avec le drone '" + drone + "'.");
                 alert.showAndWait();
