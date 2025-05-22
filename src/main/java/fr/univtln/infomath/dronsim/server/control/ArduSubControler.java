@@ -125,7 +125,7 @@ public class ArduSubControler implements Controler {
                 .fixType(3) // 0-1: pas de fix, 2: fix 2D, 3: fix 3D. 4: 3D avec DGPS. 5: 3D avec RTK
                 .lat((int) (gpsPos[0])) // Latitude en degrés * 10^7
                 .lon((int) (gpsPos[1])) // Longitude en degrés * 10^7
-                .alt(gpsPos[2]) // Altitude en mm
+                .alt(gpsPos[2] / 1e4f) // Altitude en mm
                 .hdop(1) // scaled by 100
                 .vdop(1)
                 .vn(0) // Vitesse en m/s dans la direction NORD
