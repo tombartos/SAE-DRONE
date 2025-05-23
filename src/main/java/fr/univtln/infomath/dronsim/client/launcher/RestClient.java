@@ -1,5 +1,6 @@
 package fr.univtln.infomath.dronsim.client.launcher;
 
+import java.net.InetAddress;
 import java.util.List;
 
 import org.glassfish.jersey.jackson.JacksonFeature;
@@ -152,11 +153,23 @@ public class RestClient {
         }
     }
 
+    private static String getLocalIp() {
+        // WARNING: This method may not work if we are not in a local network
+        try {
+            return InetAddress.getLocalHost().getHostAddress();
+        } catch (Exception e) {
+            log.error("Could not get local IP address: {}", e.getMessage());
+            return "127.0.0.1";
+        }
+    }
+
     public static PilotInitResp connectPilot() {
         try {
+            String localIp = getLocalIp();
             Response response = baseTarget.path("SimulatorServer/connect/pilot")
                     .request(MediaType.APPLICATION_JSON)
                     .header("Authorization", authHeader)
+                    .header("X-Forwarded-For", localIp)
                     .post(null);
             if (response.getStatus() >= 400) {
                 String errorMsg = response.readEntity(String.class);

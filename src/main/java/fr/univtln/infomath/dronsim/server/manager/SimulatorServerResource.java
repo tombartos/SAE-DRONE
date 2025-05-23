@@ -2,7 +2,11 @@ package fr.univtln.infomath.dronsim.server.manager;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.univtln.infomath.dronsim.server.auth.AuthenticationService.AuthenticatedUser;
+import fr.univtln.infomath.dronsim.server.simulation.client.SimulatorClient;
 import fr.univtln.infomath.dronsim.server.simulation.server.SimulatorServer;
 import fr.univtln.infomath.dronsim.server.utils.AuthChecker;
 import fr.univtln.infomath.dronsim.shared.DroneAssociation;
@@ -20,6 +24,8 @@ import jakarta.ws.rs.core.Context;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class SimulatorServerResource {
+    private static final Logger log = LoggerFactory.getLogger(SimulatorServerResource.class);
+
     @POST
     @Path("/start")
     public String startSimulationServer(@HeaderParam("Authorization") String authHeader) {
@@ -28,6 +34,7 @@ public class SimulatorServerResource {
 
         // Check if the user is a GM
         if (!authUser.isGameMaster()) {
+            log.error("User is not a GM: " + authUser.getUsername());
             throw new jakarta.ws.rs.ForbiddenException("User is not a GM");
         }
 
@@ -59,23 +66,27 @@ public class SimulatorServerResource {
 
         // Check if the user is a Pilot
         if (!authUser.isPilot()) {
+            log.error("User is not a Pilot: " + authUser.getUsername());
             throw new jakarta.ws.rs.ForbiddenException("User is not a Pilot");
         }
 
         // Get the drone association
         DroneAssociation droneAssociation = null;
+        log.info("DEBUG: Drone associations: " + DroneAssociation.getDroneAssociations());
         for (DroneAssociation da : DroneAssociation.getDroneAssociations()) {
-            if (da.getPilotLogin() == authUser.getUsername()) {
+            if (da.getPilotLogin().equals(authUser.getUsername())) {
                 droneAssociation = da;
                 break;
             }
         }
         if (droneAssociation == null) {
+            log.error("Drone association not found for pilot: " + authUser.getUsername());
             throw new jakarta.ws.rs.ForbiddenException("Drone association not found");
         }
 
         String IP = requestContext.getHeaderString("X-Forwarded-For");
         if (IP == null) {
+            log.error("IP of the client not found");
             throw new jakarta.ws.rs.ForbiddenException("IP of the client not found");
         }
         // Connect the pilot to the simulation server
