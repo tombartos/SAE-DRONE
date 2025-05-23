@@ -84,11 +84,12 @@ public class LocalTestingControler implements ActionListener {
         // Update the thruster vectors
         // Rotate each initial thruster vector by the drone's local rotation
         List<Vector3f> rotatedThrusterVecs = new ArrayList<>();
-        Quaternion rotation = drone.getNode().getLocalRotation();
+        // Quaternion rotation = drone.getNode().getLocalRotation();
+        Quaternion rotation = drone.getNode().getWorldRotation();
         for (Vector3f vec : drone.getInitialThrusterVecs()) {
             rotatedThrusterVecs.add(rotation.mult(vec));
         }
-        drone.setThrusterVecs(rotatedThrusterVecs);
+        //drone.setThrusterVecs(rotatedThrusterVecs);
 
         // Update the thruster global positions based on the drone's position and
         // rotation
@@ -99,7 +100,8 @@ public class LocalTestingControler implements ActionListener {
             Vector3f rotatedPos = droneRotation.mult(initialPos);
             updatedThrusterPositions.add(rotatedPos.add(droneTranslation));
         }
-        drone.setThrusterGlobalPositions(updatedThrusterPositions);
+
+        //drone.setThrusterGlobalPositions(updatedThrusterPositions);
 
         if (forward) {
             // System.out.println("FORWARD");
@@ -120,10 +122,25 @@ public class LocalTestingControler implements ActionListener {
             Vector3f position4 = drone.getThrusterGlobalPositions().get(3);
 
             System.out.println("Force4 : " + drone.getThrusterGlobalPositions().get(3));
-            drone.getControl().applyForce(force1, drone.getInitialThrusterLocalPosition().get(0));
-            drone.getControl().applyForce(force2, drone.getInitialThrusterLocalPosition().get(1));
-            drone.getControl().applyForce(force3, drone.getInitialThrusterLocalPosition().get(2));
-            drone.getControl().applyForce(force4, drone.getInitialThrusterLocalPosition().get(3));
+            // drone.getControl().applyForce(force1, drone.getInitialThrusterLocalPosition().get(0));
+            // drone.getControl().applyForce(force2, drone.getInitialThrusterLocalPosition().get(1));
+            // drone.getControl().applyForce(force3, drone.getInitialThrusterLocalPosition().get(2));
+            // drone.getControl().applyForce(force4, drone.getInitialThrusterLocalPosition().get(3));
+
+            drone.getControl().applyForce(force1, Vector3f.ZERO.add(-1,0,1));
+            drone.getControl().applyForce(force2, Vector3f.ZERO.add(1,0,1));
+            drone.getControl().applyForce(force3, Vector3f.ZERO.add(-1,0,-1));
+            drone.getControl().applyForce(force4, Vector3f.ZERO.add(1,0,-1));
+
+            System.out.println("Thruster1: " + drone.getInitialThrusterLocalPosition().get(0));
+            System.out.println("Thruster1: " + drone.getThrusterGlobalPositions().get(0));
+            System.out.println("Thruster2: " + drone.getInitialThrusterLocalPosition().get(1));
+            System.out.println("Thruster2: " + drone.getThrusterGlobalPositions().get(1));
+            System.out.println("Thruster3: " + drone.getInitialThrusterLocalPosition().get(2));
+            System.out.println("Thruster3: " + drone.getThrusterGlobalPositions().get(2));
+            System.out.println("Thruster4: " + drone.getInitialThrusterLocalPosition().get(3));
+            System.out.println("Thruster4: " + drone.getThrusterGlobalPositions().get(3));
+
 
             // drone.getControl().applyForce(force1, position1);
             // drone.getControl().applyForce(force3, position3);
@@ -147,7 +164,7 @@ public class LocalTestingControler implements ActionListener {
                     position4,
                     position4.add(force4),
                     rootNode, drone.getAssetManager(), ColorRGBA.Blue);
-            System.out.println("Force42 : " + drone.getThrusterGlobalPositions().get(3));
+            //System.out.println("Force42 : " + drone.getThrusterGlobalPositions().get(3));
 
         }
 
@@ -174,12 +191,11 @@ public class LocalTestingControler implements ActionListener {
             drone.getControl().applyForce(force2, drone.getInitialThrusterLocalPosition().get(1));
             drone.getControl().applyForce(force3, drone.getInitialThrusterLocalPosition().get(2));
             drone.getControl().applyForce(force4, drone.getInitialThrusterLocalPosition().get(3));
-
             // drone.getControl().applyForce(force1, position1);
             // drone.getControl().applyForce(force3, position3);
             // drone.getControl().applyForce(force2, position2);
             // drone.getControl().applyForce(force4, position4);
-            //drone.setThrusterGlobalPositions(new ArrayList<>(List.of(position1.add(force1).normalize(), position2.add(force2).normalize(), position3.add(force3).normalize(), position4.add(force4).normalize())));
+            drone.setThrusterGlobalPositions(new ArrayList<>(List.of(position1.add(force1).normalize(), position2.add(force2).normalize(), position3.add(force3).normalize(), position4.add(force4).normalize())));
 
             Drawer.drawLineBetweenPoints(
                     position1,
@@ -247,21 +263,36 @@ public class LocalTestingControler implements ActionListener {
             Vector3f position4 = drone.getThrusterGlobalPositions().get(3);
 
 
-            System.out.println("Force4 : " + drone.getThrusterGlobalPositions().get(3));
+            // System.out.println("Force4 : " + drone.getThrusterGlobalPositions().get(3));
             // drone.getControl().applyForce(force1, drone.getThrusterGlobalPositions().get(0));
             // drone.getControl().applyForce(force2, drone.getThrusterGlobalPositions().get(1));
             // drone.getControl().applyForce(force3, drone.getThrusterGlobalPositions().get(2));
             // drone.getControl().applyForce(force4, drone.getThrusterGlobalPositions().get(3));
 
-            // drone.getControl().applyForce(force1, Vector3f.ZERO.add(-1,0,-1));
-            // drone.getControl().applyForce(force2, Vector3f.ZERO.add(1,0,-1));
-            // drone.getControl().applyForce(force3, Vector3f.ZERO.add(-1,0,1));
-            // drone.getControl().applyForce(force4, Vector3f.ZERO.add(1,0,1));
+            // drone.getControl().applyForce(force1, Vector3f.ZERO.add(-1,0,1));
+            // drone.getControl().applyForce(force2, Vector3f.ZERO.add(1,0,1));
+            // drone.getControl().applyForce(force3, Vector3f.ZERO.add(-1,0,-1));
+            // drone.getControl().applyForce(force4, Vector3f.ZERO.add(1,0,-1));
 
-            drone.getControl().applyForce(force1, position1);
-            drone.getControl().applyForce(force2, position2);
-            drone.getControl().applyForce(force3, position3);
-            drone.getControl().applyForce(force4, position4);
+            drone.getControl().applyForce(force1, drone.getInitialThrusterLocalPosition().get(0));
+            drone.getControl().applyForce(force2, drone.getInitialThrusterLocalPosition().get(1));
+            drone.getControl().applyForce(force3, drone.getInitialThrusterLocalPosition().get(2));
+            drone.getControl().applyForce(force4, drone.getInitialThrusterLocalPosition().get(3));
+
+
+            System.out.println("Thruster1: " + drone.getInitialThrusterLocalPosition().get(0));
+            System.out.println("Thruster1: " + drone.getThrusterGlobalPositions().get(0));
+            System.out.println("Thruster2: " + drone.getInitialThrusterLocalPosition().get(1));
+            System.out.println("Thruster2: " + drone.getThrusterGlobalPositions().get(1));
+            System.out.println("Thruster3: " + drone.getInitialThrusterLocalPosition().get(2));
+            System.out.println("Thruster3: " + drone.getThrusterGlobalPositions().get(2));
+            System.out.println("Thruster4: " + drone.getInitialThrusterLocalPosition().get(3));
+            System.out.println("Thruster4: " + drone.getThrusterGlobalPositions().get(3));
+
+            // drone.getControl().applyForce(force1, position1);
+            // drone.getControl().applyForce(force2, position2);
+            // drone.getControl().applyForce(force3, position3);
+            // drone.getControl().applyForce(force4, position4);
             //drone.setThrusterGlobalPositions(new ArrayList<>(List.of(position1.add(force1).normalize(), position2.add(force2).normalize(), position3.add(force3).normalize(), position4.add(force4).normalize())));
 
             Drawer.drawLineBetweenPoints(
@@ -280,7 +311,7 @@ public class LocalTestingControler implements ActionListener {
                     position4,
                     position4.add(force4),
                     rootNode, drone.getAssetManager(), ColorRGBA.Blue);
-            System.out.println("Force42 : " + drone.getThrusterGlobalPositions().get(3));
+            // System.out.println("Force42 : " + drone.getThrusterGlobalPositions().get(3));
         }
 
         if (ascend) {
