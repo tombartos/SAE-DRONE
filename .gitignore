@@ -17,7 +17,7 @@ data/
 *.swp
 *.swo
 *.DS_Store
-
 /ardupilot
 /venv
 /qgc
+/passwd
