@@ -1,7 +1,6 @@
 package fr.univtln.infomath.dronsim.client.launcher;
 
 import fr.univtln.infomath.dronsim.server.simulation.client.SimulatorClient;
-import fr.univtln.infomath.dronsim.server.simulation.server.SimulatorServer;
 import fr.univtln.infomath.dronsim.shared.DroneAssociation;
 import fr.univtln.infomath.dronsim.shared.User;
 import javafx.geometry.Insets;

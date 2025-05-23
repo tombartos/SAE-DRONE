@@ -23,6 +23,8 @@ import com.jme3.system.JmeContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import fr.univtln.infomath.dronsim.server.simulation.client.SimulatorClient;
 import fr.univtln.infomath.dronsim.server.simulation.control.ArduSubControler;
 import fr.univtln.infomath.dronsim.server.simulation.control.Controler;
 import fr.univtln.infomath.dronsim.server.simulation.drones.Drone;
@@ -34,6 +36,7 @@ import fr.univtln.infomath.dronsim.server.simulation.jme_messages.DroneDTOMessag
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.DroneMovementRequestMessage;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.Handshake1;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.Handshake2;
+import fr.univtln.infomath.dronsim.shared.DroneAssociation;
 import lombok.Getter;
 
 import com.jme3.network.Filters;
@@ -58,8 +61,13 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
     private static List<DroneModel> models;
     private static boolean ready = false;
     @Getter
-    private static SimulatorServer instance; // Singleton instance, useful to access assetmanager from other classes
-                                             // like in initPilot which is called by another class
+    private static SimulatorServer instance; // Singleton instance, useful to access assetmanager from other classes and
+                                             // check if the server is already running
+
+    @Getter
+    private static List<DroneAssociation> droneAssociations = DroneAssociation.getDroneAssociations();
+    // WARNING: we assume that the drone associations are already initialized from
+    // the manager
 
     public static void main(String[] args) {
         if (instance != null) {
@@ -125,7 +133,6 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
 
         models = loadDroneModelsFromJson(
                 "JsonData/DronesModels.json");
-        DroneModel ModelB = models.get(0);
 
         // // Init Ardusub controler
         // Controler controler;
@@ -161,6 +168,8 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         // 100);
         // scene.attachChild(droneB.getNode());
         // DroneDTO.createDroneDTO(droneB);
+
+        initDrones(assetManager, space);
         nbDrones = Drone.getDrones().size();
         ready = true;
         log.info("Initialization complete, waiting for pilots to connect");
@@ -177,7 +186,7 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
      *                      supported is 0 (Ardusub), if you are making your own
      *                      controler you need to add it in the code of this method
      */
-    public static void initPilot(int clientId, String modelName, String pilotIP, int controlerType) {
+    public static void initPilot(DroneAssociation droneAsso, String pilotIP, int controlerType) {
         if (!ready) {
             log.error("Server not ready, please wait and retry, aborting drone creation");
             throw new IllegalStateException("Server not ready, please wait and retry, aborting drone creation");
@@ -205,29 +214,20 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
                     "Error while connecting to the controler " + pilotIP + ", aborting drone creation");
         }
 
-        DroneModel model = null;
-        for (DroneModel modeltmp : SimulatorServer.getModels()) {
-            if (modeltmp.getName().equals(modelName)) {
-                model = modeltmp;
-                break;
+        for (Drone drone : Drone.getDrones()) {
+            if (droneAsso.getId() == drone.getClientId()) {
+                // We assume that the drone is already created and we just need to set the
+                // controler
+                DroneServer droneServer = (DroneServer) drone;
+                droneServer.setControler(controler);
             }
         }
-        if (model == null) {
-            log.error("Model not found " + pilotIP + " " + modelName + ",aborting drone creation");
-            throw new IllegalStateException(
-                    "Model not found " + pilotIP + " " + modelName + ",aborting drone creation");
-        }
-        int id = Drone.getDrones().size();
-        DroneServer drone = DroneServer.createDrone(
-                id,
-                clientId,
-                SimulatorServer.getInstance().getAssetManager(), // Hacky way to get the asset manager
-                space,
-                model,
-                new Vector3f((float) id, 2.0f, 0.0f),
-                100,
-                controler);
-        DroneDTO.createDroneDTO(drone);
+
+        // We start the jME client if the connection mode is cloud (0)
+        if (droneAsso.getConnexionMode() == 0)
+            new Thread(() -> {
+                SimulatorClient.main(new String[] { pilotIP, "127.0.0.1", String.valueOf(droneAsso.getId()) });
+            }).start();
     }
 
     private void attachTerrain(Node parent) {
@@ -324,13 +324,22 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
             }
             droneServer.setThrusterGlobalPositions(updatedThrusterPositions);
 
-            // Update the motors speeds list
             List<Float> motorsSpeeds = new ArrayList<>();
-            for (int i = 0; i < droneModel.getNbMotors(); i++) {
-                float motorspeed = droneServer.getControler().getMotorThrottle(i);
-                // log.info("Motor " + i + " speed: " + motorspeed);
-                motorsSpeeds.add(motorspeed * droneModel.getMotorsMaxSpeed());
+            // Update the motors speeds list if the controler is not null
+            if (droneServer.getControler() != null) {
+                for (int i = 0; i < droneModel.getNbMotors(); i++) {
+                    float motorspeed = droneServer.getControler().getMotorThrottle(i);
+                    // log.info("Motor " + i + " speed: " + motorspeed);
+                    motorsSpeeds.add(motorspeed * droneModel.getMotorsMaxSpeed());
+                }
             }
+            // If the controler is null, we set the motors speeds to 0
+            else {
+                for (int i = 0; i < droneModel.getNbMotors(); i++) {
+                    motorsSpeeds.add(0f);
+                }
+            }
+
             // We update the motors speeds list in the drone object for evnetual use in the
             // future
             drone.setMotors_speeds(motorsSpeeds);
@@ -366,6 +375,44 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
 
     }
 
+    /**
+     * Initializes the drones depending of the assotiations.
+     * This method is called in the simpleInitApp method
+     */
+    private static void initDrones(AssetManager assetmanager, PhysicsSpace space) {
+        for (DroneAssociation da : droneAssociations) {
+            DroneModel model = null;
+            for (DroneModel modeltmp : SimulatorServer.getModels()) {
+                if (modeltmp.getName().equals(da.getDroneModelName())) {
+                    model = modeltmp;
+                    break;
+                }
+            }
+            if (model == null) {
+                log.error("Model not found " + da.getDroneModelName() + ",aborting drone creation");
+                throw new IllegalStateException(
+                        "Model not found " + da.getDroneModelName() + ",aborting drone creation");
+            }
+            int id = Drone.getDrones().size();
+            DroneServer drone = DroneServer.createDrone(
+                    id,
+                    da.getId(),
+                    assetmanager,
+                    space,
+                    model,
+                    new Vector3f((float) id, 2.0f, 0.0f),
+                    100,
+                    null);
+            DroneDTO.createDroneDTO(drone);
+        }
+    }
+
+    /**
+     * Load the drone models from a JSON file.
+     *
+     * @param filePath The path to the JSON file.
+     * @return A list of DroneModel objects.
+     */
     public static List<DroneModel> loadDroneModelsFromJson(String filePath) {
         ObjectMapper mapper = new ObjectMapper();
         // We set this to avoid errors about the unitVector property when we serialize a

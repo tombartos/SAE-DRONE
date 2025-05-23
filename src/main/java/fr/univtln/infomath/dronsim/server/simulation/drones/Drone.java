@@ -27,8 +27,6 @@ public class Drone {
     protected int weight;
     protected List<Module> modules = new ArrayList<>();
     @Setter
-    protected List<String> directions = new ArrayList<>();
-    @Setter
     protected List<Float> motors_speeds;
     protected Node node;
     protected Spatial model;

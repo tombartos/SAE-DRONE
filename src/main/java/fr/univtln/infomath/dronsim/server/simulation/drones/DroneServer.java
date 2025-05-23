@@ -15,7 +15,8 @@ import lombok.Setter;
 
 @Getter
 public class DroneServer extends Drone {
-    private final Controler controler;
+    @Setter
+    private Controler controler;
     private RigidBodyControl body;
     @Setter
     private List<Vector3f> thrusterVecs;
