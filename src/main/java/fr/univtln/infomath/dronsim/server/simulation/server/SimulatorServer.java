@@ -198,7 +198,7 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
             try {
                 controler = new ArduSubControler(pilotIP);
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("Error while connecting to the controler " + pilotIP + ", retrying in 1s");
             }
             tryCount++;
             try {
