@@ -14,12 +14,14 @@ import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import lombok.Setter;
 
 public class RestClient {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RestClient.class);
     // private String baseUrl = "http://localhost:8080/api/v1";
     private static Client client;
     private static WebTarget baseTarget;
+    @Setter
     private static String authHeader = "Bearer TEST_TOKEN";
     // TODO: Replace with a real token when we will have the true
     // authentication system

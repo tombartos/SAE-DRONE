@@ -39,8 +39,6 @@ public class SimulatorServerResource {
         return "Simulation server started";
     }
 
-    @POST
-    @Path("/connect/pilot")
     /**
      * Mehtod called by the pilot to connect to the simulation server
      *
@@ -50,6 +48,9 @@ public class SimulatorServerResource {
      *         client ID, the clientID is -1 if
      *         the connection is in cloud mode,
      */
+
+    @POST
+    @Path("/connect/pilot")
     public PilotInitResp connectPilot(@HeaderParam("Authorization") String authHeader,
             @Context ContainerRequestContext requestContext) {
 
@@ -70,12 +71,12 @@ public class SimulatorServerResource {
             }
         }
         if (droneAssociation == null) {
-            throw new jakarta.ws.rs.NotFoundException("Drone association not found");
+            throw new jakarta.ws.rs.ForbiddenException("Drone association not found");
         }
 
         String IP = requestContext.getHeaderString("X-Forwarded-For");
         if (IP == null) {
-            throw new jakarta.ws.rs.NotFoundException("IP of the client not found");
+            throw new jakarta.ws.rs.ForbiddenException("IP of the client not found");
         }
         // Connect the pilot to the simulation server
         // Using Adrupilot controler

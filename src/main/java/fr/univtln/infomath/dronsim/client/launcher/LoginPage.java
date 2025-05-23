@@ -67,9 +67,10 @@ public class LoginPage {
                 Scene scene = new Scene(root, width, height);
                 new Gui(null, root, width, height, stage, scene, 2);
 
-            } else if (username.equals("pilot") && password.equals("1234")) {
+            } else if (username.equals("Bob35") && password.equals("1234")) {
                 Group root = new Group();
                 Scene scene = new Scene(root, width, height);
+                RestClient.setAuthHeader("Bearer " + username);
                 new Gui(null, root, width, height, stage, scene, 3);
 
             } else if (username.equals("admin") && password.equals("1234")) {
