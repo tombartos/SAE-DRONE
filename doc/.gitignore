@@ -7,3 +7,6 @@
 *.pdf
 *.synctex.gz
 *.out
+/ardupilot
+/venv
+/qgc
