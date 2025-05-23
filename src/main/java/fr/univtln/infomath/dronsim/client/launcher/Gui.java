@@ -2,6 +2,7 @@ package fr.univtln.infomath.dronsim.client.launcher;
 
 import fr.univtln.infomath.dronsim.server.simulation.client.SimulatorClient;
 import fr.univtln.infomath.dronsim.shared.DroneAssociation;
+import fr.univtln.infomath.dronsim.shared.PilotInitResp;
 import fr.univtln.infomath.dronsim.shared.User;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -203,7 +204,7 @@ public class Gui {
         // Comportement du bouton principal
         this.ajouterDroneBtn.setOnAction(e -> {
             this.modeCombo.getItems().clear();
-            this.modeCombo.getItems().addAll("cloud");
+            this.modeCombo.getItems().addAll("cloud", "local");
 
             this.piloteCombo.getItems().clear();
             List<User> pilotes = RestClient.getPilotList();
@@ -246,11 +247,8 @@ public class Gui {
                 // Appel de la méthode pour créer la demande d'association
                 if (mode.equals("cloud"))
                     intmode = 0;
-                else {
-                    Alert alert = new Alert(Alert.AlertType.ERROR, "Mode de connexion non implémenté.");
-                    alert.showAndWait();
-                    return;
-                }
+                else
+                    intmode = 1;
                 boolean result = RestClient.createDroneAssoReq(drone, pilote, intmode);
                 if (!result) {
                     Alert alert = new Alert(Alert.AlertType.ERROR, "Erreur lors de la création de la demande.");
@@ -364,6 +362,61 @@ public class Gui {
                 alert.showAndWait();
             }
         }
+
+        if (test_username == 3) {
+            PilotInitResp connReq = RestClient.connectPilot();
+            // The first boolean indicates if the connection is successful, the second
+            // indicates the connection mode
+            if (connReq.getSuccess()) {
+                // Start Ardupilot and QGroundControl in two different shells
+                // Start Ardupilot
+                try {
+                    String[] cmd = {
+                            "bash", "-c",
+                            "source ./venv/bin/activate && cd ardupilot && ./Tools/autotest/sim_vehicle.py -v ArduSub --out=udp:127.0.0.1:14551 --console --map; exec bash"
+                    };
+                    new ProcessBuilder(cmd)
+                            .directory(new java.io.File(System.getProperty("user.home")))
+                            .inheritIO()
+                            .start();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    Alert alert = new Alert(Alert.AlertType.ERROR,
+                            "Erreur lors du lancement du script shell pour Ardupilot.");
+                    alert.showAndWait();
+                }
+
+                // Start QGroundControl
+                try {
+                    String[] cmd = {
+                            "bash", "-c",
+                            "./qgc/QGroundControl.AppImage; exec bash"
+                    };
+                    new ProcessBuilder(cmd)
+                            .directory(new java.io.File(System.getProperty("user.home")))
+                            .inheritIO()
+                            .start();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "Erreur lors du lancement de QGroundControl.");
+                    alert.showAndWait();
+                }
+
+                if (connReq.getClientId() > -1) {
+                    // Start the simulator client
+                    new Thread(() -> {
+                        SimulatorClient.main(new String[] {
+                                "127.0.0.1", connReq.getJME_server_ip(), String.valueOf(connReq.getClientId()) });
+                    }).start();
+                }
+
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Erreur lors de la connexion au simulateur.");
+                alert.showAndWait();
+            }
+
+        }
+
         // new Thread(() -> {
         // Simulateur.main(new String[] {});
         // }).start();

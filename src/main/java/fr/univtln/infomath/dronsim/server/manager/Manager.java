@@ -16,6 +16,8 @@ import java.net.URI;
 import java.nio.file.Paths;
 import java.util.List;
 
+//TODO: Tester connexion pilote, voir comment on gere les ip base_uri manager
+
 /**
  * Main class.
  *
@@ -48,6 +50,16 @@ public class Manager {
 
     public static List<DroneModel> getDroneModels() {
         return droneModels;
+    }
+
+    public static String getBaseHost() {
+        try {
+            URI uri = new URI(BASE_URI);
+            return uri.getHost();
+        } catch (Exception e) {
+            log.error("Error parsing BASE_URI: {}", e.getMessage());
+            return null;
+        }
     }
 
     /**

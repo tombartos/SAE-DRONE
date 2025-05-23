@@ -5,6 +5,7 @@ import java.util.List;
 import org.glassfish.jersey.jackson.JacksonFeature;
 
 import fr.univtln.infomath.dronsim.shared.DroneAssociation;
+import fr.univtln.infomath.dronsim.shared.PilotInitResp;
 import fr.univtln.infomath.dronsim.shared.User;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.client.Client;
@@ -149,18 +150,26 @@ public class RestClient {
         }
     }
 
-    // public String RestClientTest() {
-    // try {
-    // Response response = baseTarget.path("users/plus/5")
-    // .request(MediaType.APPLICATION_JSON)
-    // .get();
-    // String stringResponse = response.readEntity(String.class);
-    // response.close();
-    // log.info("Response received: " + stringResponse);
-    // return stringResponse;
-    // } catch (WebApplicationException e) {
-    // log.error(e.getMessage());
-    // return e.getMessage();
-    // }
-    // }
+    public static PilotInitResp connectPilot() {
+        try {
+            Response response = baseTarget.path("SimulatorServer/connect/pilot")
+                    .request(MediaType.APPLICATION_JSON)
+                    .header("Authorization", authHeader)
+                    .post(null);
+            if (response.getStatus() >= 400) {
+                String errorMsg = response.readEntity(String.class);
+                log.error("HTTP {}: {}", response.getStatus(), errorMsg);
+                response.close();
+                return new PilotInitResp(false, -99, null); // -99 is a special value to indicate an error
+            }
+            PilotInitResp result = response.readEntity(PilotInitResp.class);
+            response.close();
+            log.info("Response received: " + result);
+            return result;
+        } catch (WebApplicationException e) {
+            log.error("WebApplicationException: {}", e.getMessage());
+            return new PilotInitResp(false, -99, null); // -99 is a special value to indicate an error
+        }
+    }
+
 }

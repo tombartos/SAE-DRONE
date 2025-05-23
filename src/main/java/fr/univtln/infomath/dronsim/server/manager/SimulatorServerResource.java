@@ -1,9 +1,12 @@
 package fr.univtln.infomath.dronsim.server.manager;
 
+import java.util.List;
+
 import fr.univtln.infomath.dronsim.server.auth.AuthenticationService.AuthenticatedUser;
 import fr.univtln.infomath.dronsim.server.simulation.server.SimulatorServer;
 import fr.univtln.infomath.dronsim.server.utils.AuthChecker;
 import fr.univtln.infomath.dronsim.shared.DroneAssociation;
+import fr.univtln.infomath.dronsim.shared.PilotInitResp;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.POST;
@@ -38,7 +41,16 @@ public class SimulatorServerResource {
 
     @POST
     @Path("/connect/pilot")
-    public String connectPilot(@HeaderParam("Authorization") String authHeader,
+    /**
+     * Mehtod called by the pilot to connect to the simulation server
+     *
+     * @param authHeader
+     * @param requestContext
+     * @return a PilotInitResp object containing the connection status and the
+     *         client ID, the clientID is -1 if
+     *         the connection is in cloud mode,
+     */
+    public PilotInitResp connectPilot(@HeaderParam("Authorization") String authHeader,
             @Context ContainerRequestContext requestContext) {
 
         // Check if the user is authenticated
@@ -62,10 +74,23 @@ public class SimulatorServerResource {
         }
 
         String IP = requestContext.getHeaderString("X-Forwarded-For");
+        if (IP == null) {
+            throw new jakarta.ws.rs.NotFoundException("IP of the client not found");
+        }
         // Connect the pilot to the simulation server
         // Using Adrupilot controler
-        SimulatorServer.initPilot(droneAssociation, IP, 0);
-        return "Server waiting for the Ardupilot controler to start";
+        final DroneAssociation finalDroneAssociation = droneAssociation;
+        new Thread(() -> SimulatorServer.initPilot(finalDroneAssociation, IP, 0)).start();
+        // Returns true to indicate that the server is ready to accept the pilot
+        // connection
+        PilotInitResp result;
+        if (droneAssociation.getConnexionMode() == 0) // Cloud
+            result = new PilotInitResp(true, -1, null);
+        else {
+            // Local
+            result = new PilotInitResp(true, droneAssociation.getId(), Manager.getBaseHost());
+        }
+        return result;
     }
 
 }
