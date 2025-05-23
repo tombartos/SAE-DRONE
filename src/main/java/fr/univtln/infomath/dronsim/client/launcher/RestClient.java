@@ -1,6 +1,10 @@
 package fr.univtln.infomath.dronsim.client.launcher;
 
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Enumeration;
+import java.net.Inet4Address;
 import java.util.List;
 
 import org.glassfish.jersey.jackson.JacksonFeature;
@@ -154,8 +158,20 @@ public class RestClient {
     }
 
     private static String getLocalIp() {
-        // WARNING: This method may not work if we are not in a local network
         try {
+            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+            while (interfaces.hasMoreElements()) {
+                NetworkInterface iface = interfaces.nextElement();
+                if (iface.isLoopback() || !iface.isUp())
+                    continue;
+                Enumeration<InetAddress> addresses = iface.getInetAddresses();
+                while (addresses.hasMoreElements()) {
+                    InetAddress addr = addresses.nextElement();
+                    if (addr instanceof Inet4Address && !addr.isLoopbackAddress()) {
+                        return addr.getHostAddress();
+                    }
+                }
+            }
             return InetAddress.getLocalHost().getHostAddress();
         } catch (Exception e) {
             log.error("Could not get local IP address: {}", e.getMessage());
