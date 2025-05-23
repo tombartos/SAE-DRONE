@@ -159,7 +159,7 @@ public class RestClient {
             return InetAddress.getLocalHost().getHostAddress();
         } catch (Exception e) {
             log.error("Could not get local IP address: {}", e.getMessage());
-            return "127.0.0.1";
+            throw new RuntimeException("Could not get local IP address", e);
         }
     }
 
