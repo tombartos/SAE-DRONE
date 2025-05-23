@@ -16,7 +16,7 @@ import java.net.URI;
 import java.nio.file.Paths;
 import java.util.List;
 
-//TODO: Tester connexion pilote, voir comment on gere les ip base_uri manager
+//TODO: Tester connexion pilote, voir comment on gere les ip base_uri manager, MERGER DEV
 
 /**
  * Main class.
@@ -25,7 +25,7 @@ import java.util.List;
 public class Manager {
     private static final Logger log = LoggerFactory.getLogger(Manager.class);
     // Base URI the Grizzly HTTP server will listen on
-    public static final String BASE_URI = "http://localhost:8080/api/v1/";
+    public static final String BASE_URI = "http://0.0.0.0:8080/api/v1/";
     private static List<User> users;
     private static List<DroneModel> droneModels;
 
