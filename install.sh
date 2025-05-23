@@ -70,7 +70,7 @@ echo
 echo  To launch Ardupilot :
 echo  source ./venv/bin/activate
 echo  cd ardupilot
-echo  ./Tools/autotest/sim_vehicle.py -v ArduSub --out=udp:127.0.0.1:14551 --console --map
+echo  ./Tools/autotest/sim_vehicle.py -v ArduSub --out=udp:127.0.0.1:14550 --console --map
 echo
 echo  To launch QGroundControl
 echo  cd qgc

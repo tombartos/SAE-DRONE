@@ -373,7 +373,7 @@ public class Gui {
                 try {
                     String[] cmd = {
                             "bash", "-c",
-                            "source ./venv/bin/activate && cd ardupilot && ./Tools/autotest/sim_vehicle.py -v ArduSub --out=udp:127.0.0.1:14551 --console --map; exec bash"
+                            "cd ~/SAE-DRONE && source ./venv/bin/activate && cd ardupilot && ./Tools/autotest/sim_vehicle.py -v ArduSub --out=udp:127.0.0.1:14550 --console --map; exec bash"
                     };
                     new ProcessBuilder(cmd)
                             .directory(new java.io.File(System.getProperty("user.home")))
@@ -390,7 +390,7 @@ public class Gui {
                 try {
                     String[] cmd = {
                             "bash", "-c",
-                            "./qgc/QGroundControl.AppImage; exec bash"
+                            "~/SAE-DRONE/qgc/QGroundControl.AppImage; exec bash"
                     };
                     new ProcessBuilder(cmd)
                             .directory(new java.io.File(System.getProperty("user.home")))

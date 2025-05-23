@@ -166,6 +166,7 @@ public class RestClient {
     public static PilotInitResp connectPilot() {
         try {
             String localIp = getLocalIp();
+            log.info("Local IP Address = " + localIp);
             Response response = baseTarget.path("SimulatorServer/connect/pilot")
                     .request(MediaType.APPLICATION_JSON)
                     .header("Authorization", authHeader)
