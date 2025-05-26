@@ -242,7 +242,7 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
                     "java",
                     "-cp",
                     System.getProperty("java.class.path"),
-                    "fr.univtln.infomath.dronsim.server.simulation.client",
+                    "fr.univtln.infomath.dronsim.server.simulation.client.SimulatorClient",
                     pilotIP, "127.0.0.1", String.valueOf(droneAsso.getId()) // Optional arguments
             );
             try {

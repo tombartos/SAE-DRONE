@@ -59,8 +59,8 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
     private static int server_port = 6143; // Default JME server port
 
     public static void main(String[] args) {
-        if (args.length != 4) {
-            log.info("Launch arguments :  <video_destination_ip> <server_ip> <client_id> <connection_mode>");
+        if (args.length != 3) {
+            log.info("Launch arguments :  <video_destination_ip> <server_ip> <client_id>");
             System.exit(1);
         }
         AppSettings settings = new AppSettings(true);
