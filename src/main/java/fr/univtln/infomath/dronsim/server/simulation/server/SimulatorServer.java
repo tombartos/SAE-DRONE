@@ -59,7 +59,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.File;
 import java.lang.ProcessBuilder;
 
-//TODO: Fix Jmonkey Serialization problem with server and client in same jvm (idea : put a launch param to tell the client to not do the serialization)
+//TODO: Vérifier que ça coompile et que ça marche
 public class SimulatorServer extends SimpleApplication implements PhysicsCollisionListener {
     private static final int SERVER_PORT = 6143; // Default JME server port
     private static final Logger log = LoggerFactory.getLogger(SimulatorServer.class);
