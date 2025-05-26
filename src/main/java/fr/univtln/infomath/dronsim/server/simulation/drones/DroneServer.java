@@ -15,6 +15,7 @@ import lombok.Setter;
 
 @Getter
 public class DroneServer extends Drone {
+    private static List<DroneServer> drones = new java.util.ArrayList<>();
     @Setter
     private Controler controler;
     private RigidBodyControl body;

@@ -38,7 +38,6 @@ import fr.univtln.infomath.dronsim.server.simulation.jme_messages.Handshake1;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.Handshake2;
 import fr.univtln.infomath.dronsim.shared.DroneAssociation;
 import lombok.Getter;
-
 import com.jme3.network.Filters;
 import com.jme3.network.HostedConnection;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
@@ -46,6 +45,7 @@ import com.jme3.bullet.collision.PhysicsCollisionListener;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.File;
+import java.lang.ProcessBuilder;
 
 //TODO: Fix Jmonkey Serialization problem with server and client in same jvm (idea : put a launch param to tell the client to not do the serialization)
 public class SimulatorServer extends SimpleApplication implements PhysicsCollisionListener {
@@ -230,14 +230,28 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
             }
         }
 
-        // We start the jME client if the connection mode is cloud (0)
+        // We start the jME client if the connection mode is cloud (0) in a new JVM
         int connMode = droneAsso.getConnexionMode();
-        if (connMode == 0)
-            new Thread(() -> {
-                SimulatorClient
-                        .main(new String[] { pilotIP, "127.0.0.1", String.valueOf(droneAsso.getId()),
-                                String.valueOf(connMode) });
-            }).start();
+        if (connMode == 0) {
+            // new Thread(() -> {
+            // SimulatorClient
+            // .main(new String[] { pilotIP, "127.0.0.1", String.valueOf(droneAsso.getId()),
+            // String.valueOf(connMode) });
+            // }).start();
+            ProcessBuilder pb = new ProcessBuilder(
+                    "java",
+                    "-cp",
+                    System.getProperty("java.class.path"),
+                    "fr.univtln.infomath.dronsim.server.simulation.client",
+                    pilotIP, "127.0.0.1", String.valueOf(droneAsso.getId()) // Optional arguments
+            );
+            try {
+                Process process = pb.inheritIO().start();
+                log.info("SimulatorClient started for pilot " + droneAsso.getId() + " at " + pilotIP);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void attachTerrain(Node parent) {

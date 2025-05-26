@@ -406,7 +406,7 @@ public class Gui {
                     // Start the simulator client
                     new Thread(() -> {
                         SimulatorClient.main(new String[] {
-                                "127.0.0.1", connReq.getJME_server_ip(), String.valueOf(connReq.getClientId()), "1" });
+                                "127.0.0.1", connReq.getJME_server_ip(), String.valueOf(connReq.getClientId()) });
                     }).start();
                 }
 
