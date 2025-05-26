@@ -170,8 +170,13 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         // scene.attachChild(droneB.getNode());
         // DroneDTO.createDroneDTO(droneB);
 
+        if (droneAssociations.size() == 0) {
+            log.error("No drone associations found, aborting server initialization");
+            throw new IllegalStateException("No drone associations found, aborting server initialization");
+        }
+        log.info("DEBUG : Drone associations: " + droneAssociations.toString());
         initDrones(assetManager, space);
-        nbDrones = Drone.getDrones().size();
+        nbDrones = DroneServer.getDroneServerList().size();
         log.info("Drones initialized: " + nbDrones + " drones created");
         ready = true;
         log.info("Initialization complete, waiting for pilots to connect");
@@ -222,11 +227,10 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
                     "Error while connecting to the controler " + pilotIP + ", aborting drone creation");
         }
 
-        for (Drone drone : Drone.getDrones()) {
-            if (droneAsso.getId() == drone.getClientId()) {
+        for (DroneServer droneServer : DroneServer.getDroneServerList()) {
+            if (droneAsso.getId() == droneServer.getClientId()) {
                 // We assume that the drone is already created and we just need to set the
                 // controler
-                DroneServer droneServer = (DroneServer) drone;
                 droneServer.setControler(controler);
             }
         }
@@ -286,7 +290,7 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
     public void sendHandshake2(int clientId, HostedConnection source) {
         int droneId = -1; // The id of the drone that belongs to the client, -1 if no drone
         ArrayList<DroneInitData> dronesInitData = new ArrayList<>();
-        for (Drone drone : Drone.getDrones()) {
+        for (Drone drone : DroneServer.getDroneServerList()) {
             dronesInitData
                     .add(new DroneInitData(drone.getId(), drone.getClientId(), drone.getDroneModel(),
                             drone.getBatteryLevel(), drone.getPosition(), drone.getAngular(), drone.getName(),
@@ -306,7 +310,7 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
     public void sendDronePositions() {
         // Direct access to attributes for performance reasons
         for (int i = 0; i < nbDrones; i++) {
-            Drone drone = Drone.getDrones().get(i);
+            Drone drone = DroneServer.getDroneServerList().get(i);
             DroneDTO droneDTO = DroneDTO.dronesDTOs.get(i);
             droneDTO.id = drone.getId();
             droneDTO.position = drone.getPosition();
@@ -329,11 +333,10 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
     // }
 
     public void updateDronePositions() {
-        for (Drone drone : DroneServer.getDrones()) {
+        for (DroneServer droneServer : DroneServer.getDroneServerList()) {
             // Update the thruster vectors
             // Rotate each initial thruster vector by the drone's local rotation
-            DroneModel droneModel = drone.getDroneModel();
-            DroneServer droneServer = (DroneServer) drone;
+            DroneModel droneModel = droneServer.getDroneModel();
             RigidBodyControl body = droneServer.getBody();
             List<Vector3f> rotatedThrusterVecs = new ArrayList<>();
             Quaternion rotation = body.getPhysicsRotation();
@@ -371,12 +374,12 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
 
             // We update the motors speeds list in the drone object for evnetual use in the
             // future
-            drone.setMotors_speeds(motorsSpeeds);
+            droneServer.setMotors_speeds(motorsSpeeds);
             // log.info("Motors speeds: " + motorsSpeeds.toString());
 
             // Apply forces to the drone based on the thruster vectors and speeds
             for (int i = 0; i < droneModel.getNbMotors(); i++) {
-                Vector3f force = droneServer.getThrusterVecs().get(i).mult(drone.getMotors_speeds().get(i));
+                Vector3f force = droneServer.getThrusterVecs().get(i).mult(droneServer.getMotors_speeds().get(i));
                 Vector3f thrusterPos = droneServer.getThrusterGlobalPositions().get(i);
                 body.applyForce(force, thrusterPos);
             }
@@ -391,14 +394,14 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
 
             // Drones doesnt flies
             if (body.getPhysicsLocation().y > WATERLEVEL) {
-                Vector3f newPos = drone.getNode().getLocalTranslation();
+                Vector3f newPos = droneServer.getNode().getLocalTranslation();
                 newPos.y = WATERLEVEL;
-                drone.getNode().setLocalTranslation(newPos);
+                droneServer.getNode().setLocalTranslation(newPos);
             }
 
             // Update the drone's position and rotation attributes
-            drone.setPosition(drone.getNode().getLocalTranslation());
-            drone.setAngular(drone.getNode().getLocalRotation());
+            droneServer.setPosition(droneServer.getNode().getLocalTranslation());
+            droneServer.setAngular(droneServer.getNode().getLocalRotation());
 
         }
 
