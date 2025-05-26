@@ -21,8 +21,8 @@ import fr.univtln.infomath.dronsim.shared.auth.AuthMessages;
 @Path("auth")
 public class AuthenticationServer {
     private static final Logger log = LoggerFactory.getLogger(AuthenticationServer.class);
-    private Service authService = new Service();
-    private PasswdDatabase passwd = new PasswdDatabase("passwd");
+    private static Service authService = new Service();
+    private static PasswdDatabase passwd = new PasswdDatabase("passwd");
 
     @POST
     @Consumes("application/x-www-form-urlencoded")
@@ -101,7 +101,7 @@ public class AuthenticationServer {
         }
     }
 
-    private class Service implements AuthenticationService {
+    private static class Service implements AuthenticationService {
         private HashMap<String, AuthenticatedUser> sessions = new HashMap<>();
         private SecureRandom rand = new SecureRandom();
         private byte[] buf = new byte[32];
