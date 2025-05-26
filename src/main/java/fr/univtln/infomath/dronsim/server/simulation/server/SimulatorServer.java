@@ -295,6 +295,10 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
                 droneId = drone.getId();
             }
         }
+        if (droneId == -1) {
+            log.error("No drone found for clientId " + clientId + ", aborting handshake");
+            throw new IllegalStateException("No drone found for clientId " + clientId + ", aborting handshake");
+        }
         Handshake2 handshake2 = new Handshake2(dronesInitData, droneId);
         server.broadcast(Filters.in(source), handshake2);
     }
