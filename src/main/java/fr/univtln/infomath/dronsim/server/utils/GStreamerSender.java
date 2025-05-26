@@ -28,7 +28,7 @@ public class GStreamerSender {
         String pipelineStr = "appsrc name=source is-live=true block=true format=TIME caps=video/x-raw,format=RGBA,width="
                 + width + ",height=" + height + ",framerate=60/1 ! " +
                 "videoconvert ! " +
-                "x264enc tune=zerolatency speed-preset=ultrafast bitrate=2500 ! " +
+                "x264enc tune=zerolatency speed-preset=ultrafast bitrate=3500 ! " +
                 "rtph264pay config-interval=1 ! " +
                 "udpsink host=" + ipDest + " port=" + port + " sync=false";
 

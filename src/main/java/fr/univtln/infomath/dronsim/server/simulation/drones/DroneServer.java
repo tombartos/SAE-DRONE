@@ -1,21 +1,20 @@
 package fr.univtln.infomath.dronsim.server.simulation.drones;
 
 import java.util.List;
-
 import com.jme3.asset.AssetManager;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Vector3f;
-
 import fr.univtln.infomath.dronsim.server.simulation.control.Controler;
 import lombok.Getter;
 import lombok.Setter;
+import java.util.ArrayList;
 
 @Getter
 public class DroneServer extends Drone {
-    private static List<DroneServer> droneServerList = new java.util.ArrayList<>();
+    private static List<DroneServer> droneServerList = new ArrayList<>();
     @Setter
     private Controler controler;
     private RigidBodyControl body;
@@ -49,7 +48,7 @@ public class DroneServer extends Drone {
             DroneModel droneModel, Vector3f position, int batteryLevel, Controler controler) {
         DroneServer drone = new DroneServer(id, clientId, assetManager, space, droneModel, position,
                 batteryLevel, controler);
-        drones.add(drone);
+        droneServerList.add(drone);
         return drone;
     }
 
