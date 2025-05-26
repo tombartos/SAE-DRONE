@@ -194,10 +194,16 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         }
         Controler controler = null;
         int tryCount = 0;
+        try {
+            Thread.sleep(3000); // Wait 3s to let Ardupilot start properly
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         // Try to connect to the controler
         while (controler == null && tryCount < 120) {
             try {
                 controler = new ArduSubControler(pilotIP);
+                log.info("Controler connected to " + pilotIP);
             } catch (IOException e) {
                 log.error("Error while connecting to the controler " + pilotIP + ", retrying in 1s");
             }
