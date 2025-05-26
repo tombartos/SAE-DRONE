@@ -57,11 +57,10 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
     private static int height = 768;
     private String server_ip;
     private static int server_port = 6143; // Default JME server port
-    private int connectionMode;
 
     public static void main(String[] args) {
         if (args.length != 3) {
-            log.info("Launch arguments :  <video_destination_ip> <server_ip> <client_id> <connection_mode>");
+            log.info("Launch arguments :  <video_destination_ip> <server_ip> <client_id>");
             System.exit(1);
         }
         AppSettings settings = new AppSettings(true);
@@ -79,11 +78,6 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
         this.ipDestVideo = args[0];
         this.server_ip = args[1];
         this.clientId = Integer.parseInt(args[2]);
-        this.connectionMode = Integer.parseInt(args[3]);
-        if (connectionMode != 0 && connectionMode != 1) {
-            log.error("Invalid connection mode. Use 0 for cloud or 1 for local.");
-            System.exit(1);
-        }
     }
 
     @Override
@@ -93,8 +87,6 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
         // Network initialisation
         try {
             client = Network.connectToServer(server_ip, server_port);
-            if (connectionMode == 1) // We only do the serialization for local connection, cloud connnection
-                initializeSerializables(); // serialization is done on the server
             ClientListener clientListener = new ClientListener(this);
             client.addMessageListener(clientListener, DroneDTOMessage.class);
             client.addMessageListener(clientListener, Handshake2.class);
@@ -189,6 +181,8 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
 
         if (yourDrone == null) {
             log.error("Your drone is not found in the list of drones");
+            log.error("Available drones: " + Drone.getDrones().toString());
+            log.error("Your client ID: " + handshake2.getYourDroneId());
             System.exit(1);
         } else {
             // ChaseCamera
