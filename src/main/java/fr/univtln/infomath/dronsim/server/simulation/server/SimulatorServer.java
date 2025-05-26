@@ -225,9 +225,12 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         }
 
         // We start the jME client if the connection mode is cloud (0)
-        if (droneAsso.getConnexionMode() == 0)
+        int connMode = droneAsso.getConnexionMode();
+        if (connMode == 0)
             new Thread(() -> {
-                SimulatorClient.main(new String[] { pilotIP, "127.0.0.1", String.valueOf(droneAsso.getId()) });
+                SimulatorClient
+                        .main(new String[] { pilotIP, "127.0.0.1", String.valueOf(droneAsso.getId()),
+                                String.valueOf(connMode) });
             }).start();
     }
 

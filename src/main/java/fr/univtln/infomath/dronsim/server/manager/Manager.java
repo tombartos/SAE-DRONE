@@ -16,8 +16,6 @@ import java.net.URI;
 import java.nio.file.Paths;
 import java.util.List;
 
-//TODO: Tester connexion pilote, voir comment on gere les ip base_uri manager, MERGER DEV
-
 /**
  * Main class.
  *

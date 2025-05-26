@@ -45,37 +45,45 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
     private static final Logger log = LoggerFactory.getLogger(SimulatorClient.class);
 
     private Client client;
-    private static int clientId;
+    private int clientId;
     private BulletAppState bulletState;
     private PhysicsSpace space;
     private FilterPostProcessor fpp;
     private Node scene;
     private LocalTestingControler controlerA;
-    private static String ipDestVideo;
+    private String ipDestVideo;
     private static int portDestVideo = 5600; // Default port for QGroundControl video stream
     private static int width = 1024; // Default window and video resolution
     private static int height = 768;
-    private static String server_ip;
+    private String server_ip;
     private static int server_port = 6143; // Default JME server port
+    private int connectionMode;
 
     public static void main(String[] args) {
-        if (args.length != 2) {
-            ipDestVideo = "127.0.0.1";
-            log.info("No destination IP address provided, using default: " + ipDestVideo);
-            log.info("Launch arguments :  <video_destination_ip> <server_ip> <client_id>");
+        if (args.length != 3) {
+            log.info("Launch arguments :  <video_destination_ip> <server_ip> <client_id> <connection_mode>");
+            System.exit(1);
         }
-        ipDestVideo = args[0];
-        server_ip = args[1];
-        clientId = Integer.parseInt(args[2]);
         AppSettings settings = new AppSettings(true);
         settings.setWidth(width);
         settings.setHeight(height);
         settings.setFrameRate(60);
 
-        SimulatorClient app = new SimulatorClient();
+        SimulatorClient app = new SimulatorClient(args);
         app.setShowSettings(false);
         app.setSettings(settings);
         app.start();
+    }
+
+    public SimulatorClient(String[] args) {
+        this.ipDestVideo = args[0];
+        this.server_ip = args[1];
+        this.clientId = Integer.parseInt(args[2]);
+        this.connectionMode = Integer.parseInt(args[3]);
+        if (connectionMode != 0 && connectionMode != 1) {
+            log.error("Invalid connection mode. Use 0 for cloud or 1 for local.");
+            System.exit(1);
+        }
     }
 
     @Override
@@ -85,7 +93,8 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
         // Network initialisation
         try {
             client = Network.connectToServer(server_ip, server_port);
-            initializeSerializables();
+            if (connectionMode == 1) // We only do the serialization for local connection, cloud connnection
+                initializeSerializables(); // serialization is done on the server
             ClientListener clientListener = new ClientListener(this);
             client.addMessageListener(clientListener, DroneDTOMessage.class);
             client.addMessageListener(clientListener, Handshake2.class);
