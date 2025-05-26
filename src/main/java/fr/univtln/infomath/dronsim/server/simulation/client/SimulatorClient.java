@@ -181,6 +181,8 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
 
         if (yourDrone == null) {
             log.error("Your drone is not found in the list of drones");
+            log.error("Available drones: " + Drone.getDrones().toString());
+            log.error("Your client ID: " + handshake2.getYourDroneId());
             System.exit(1);
         } else {
             // ChaseCamera

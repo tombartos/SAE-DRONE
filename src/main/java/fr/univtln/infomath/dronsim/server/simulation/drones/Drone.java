@@ -10,7 +10,9 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
+@ToString
 @Getter
 public class Drone {
     protected static List<Drone> drones = new ArrayList<>();
