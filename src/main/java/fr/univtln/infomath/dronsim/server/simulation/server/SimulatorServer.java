@@ -73,11 +73,9 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
     @Getter
     private static List<DroneModel> models;
     private static boolean ready = false;
-    @Getter
     private static SimulatorServer instance; // Singleton instance, useful to access assetmanager from other classes and
                                              // check if the server is already running
 
-    @Getter
     private static List<DroneAssociation> droneAssociations = DroneAssociation.getDroneAssociations();
     // WARNING: we assume that the drone associations are already initialized from
     // the manager
@@ -170,55 +168,46 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         // controler);
         // scene.attachChild(droneA.getNode());
 
-        DroneDTO.createDroneDTO(droneA);
+        Courant courant = new Courant(
+                0,
+                new Vector3f(0, 0, 0), // centre
+                new Vector3f(20, 20, 20), // taille
+                new Vector3f(0, 0, 1), // direction
+                1000f, // intensité
+                space);
 
-    }catch(IOException|
+        EvenementDTO.createEvenementDTO(courant);
 
-    FactoryException e)
-    {
-        e.printStackTrace();
-        log.error("Error while connecting to the controler, skipping drone creation");
+        EntiteMarineServer bateau1 = EntiteMarineServer.createEntite(
+                0,
+                "Bateau",
+                assetManager,
+                space,
+                "bateau/speedboat_n2.j3o",
+                new Vector3f(-5, 3, 10),
+                Vector3f.UNIT_Z,
+                0.7f);
+        scene.attachChild(bateau1.getModelNode());
+        EntiteMarineDTO.createEntiteMarineDTO(bateau1);
 
-    }
+        // DroneServer droneB = DroneServer.createDrone(
+        // 1,
+        // 1,
+        // assetManager,
+        // space,
+        // ModelB,
+        // new Vector3f(3.0f, 0.0f, 0.0f),
+        // 100);
+        // scene.attachChild(droneB.getNode());
+        // DroneDTO.createDroneDTO(droneB);
 
-    Courant courant = new Courant(
-            0,
-            new Vector3f(0, 0, 0), // centre
-            new Vector3f(20, 20, 20), // taille
-            new Vector3f(0, 0, 1), // direction
-            1000f, // intensité
-            space);
+        if (droneAssociations.size() == 0) {
+            log.error("No drone associations found, aborting server initialization");
+            throw new IllegalStateException("No drone associations found, aborting server initialization");
+        }
+        log.info("DEBUG : Drone associations: " + droneAssociations.toString());
 
-    EvenementDTO.createEvenementDTO(courant);
-
-    EntiteMarineServer bateau1 = EntiteMarineServer.createEntite(
-            0,
-            "Bateau",
-            assetManager,
-            space,
-            "bateau/speedboat_n2.j3o",
-            new Vector3f(-5, 3, 10),
-            Vector3f.UNIT_Z,
-            0.7f);scene.attachChild(bateau1.getModelNode());EntiteMarineDTO.createEntiteMarineDTO(bateau1);
-
-    // DroneServer droneB = DroneServer.createDrone(
-    // 1,
-    // 1,
-    // assetManager,
-    // space,
-    // ModelB,
-    // new Vector3f(3.0f, 0.0f, 0.0f),
-    // 100);
-    // scene.attachChild(droneB.getNode());
-    // DroneDTO.createDroneDTO(droneB);
-
-    if(droneAssociations.size()==0)
-    {
-        log.error("No drone associations found, aborting server initialization");
-        throw new IllegalStateException("No drone associations found, aborting server initialization");
-    }log.info("DEBUG : Drone associations: "+droneAssociations.toString());
-
-    initDrones(assetManager, space);
+        initDrones(assetManager, space);
         nbDrones = DroneServer.getDroneServerList().size();
         log.info("Drones initialized: " + nbDrones + " drones created");
         ready = true;
