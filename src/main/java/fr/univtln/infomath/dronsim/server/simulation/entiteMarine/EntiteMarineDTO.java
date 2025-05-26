@@ -7,6 +7,12 @@ import com.jme3.math.Vector3f;
 import com.jme3.network.serializing.Serializable;
 import lombok.*;
 
+/**
+ * EntiteMarineDTO is a Data Transfer Object for marine entities in the
+ * simulation.
+ * It contains the entity's ID, type, position, and direction.
+ * It also provides a static method to create and store instances of this DTO.
+ */
 @Serializable
 @Getter
 @Setter

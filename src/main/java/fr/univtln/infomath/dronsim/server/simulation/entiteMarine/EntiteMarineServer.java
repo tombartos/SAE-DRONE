@@ -8,11 +8,14 @@ import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
 
+/**
+ * EntiteMarineServer is a server-side representation of a marine entity.
+ * It extends the EntiteMarine class and adds physics simulation capabilities.
+ */
+@Getter
 public class EntiteMarineServer extends EntiteMarine {
-    private static final Logger log = LoggerFactory.getLogger(EntiteMarineServer.class);
 
     private RigidBodyControl control;
     private BoxCollisionShape shape;
@@ -64,7 +67,8 @@ public class EntiteMarineServer extends EntiteMarine {
         }
         Vector3f velocity = direction.mult(speed);
         control.setLinearVelocity(velocity);
-
+        // Synchroniser la position du node avec la physique
+        modelNode.setLocalTranslation(control.getPhysicsLocation());
     }
 
     private boolean isOutOfZone(Vector3f pos) {

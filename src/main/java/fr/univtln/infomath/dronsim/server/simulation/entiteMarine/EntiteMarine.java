@@ -9,6 +9,11 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Représente une entité marine dans la simulation.
+ * Les entités marines peuvent être des poissons, des bateaux, etc.
+ * Elles ont une position, une direction et une vitesse.
+ */
 @Getter
 public class EntiteMarine {
     public static final List<EntiteMarine> entites = new ArrayList<>();

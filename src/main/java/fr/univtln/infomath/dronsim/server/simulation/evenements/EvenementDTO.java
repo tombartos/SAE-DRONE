@@ -5,39 +5,44 @@ import java.util.ArrayList;
 
 import com.jme3.math.Vector3f;
 import com.jme3.network.serializing.Serializable;
+
 import lombok.*;
 
+/**
+ * EvenementDTO is a Data Transfer Object for events in the simulation.
+ * It contains the event's ID, zone center, zone size, type, direction,
+ * intensity, entity type, and model path.
+ * It also provides a static method to create and store instances of this DTO.
+ */
 @Serializable
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class EvenementDTO {
+    public static List<EvenementDTO> evenementsDTOs = new ArrayList<>();
     private int id;
     private Vector3f zoneCenter;
     private Vector3f zoneSize;
     private String type;
     private Vector3f direction;
     private float intensite;
+    private String entiteType;
+    private String modelPath;
 
-    public static EvenementDTO createEvenementDTO(Evenement evenement) {
-        if (evenement instanceof Courant courant) {
-            return new EvenementDTO(
-                    courant.getId(),
-                    courant.getZoneCenter(),
-                    courant.getZoneSize(),
-                    courant.getType(),
-                    courant.getDirection(),
-                    courant.getIntensite());
-        } else {
-            return new EvenementDTO(
-                    evenement.getId(),
-                    evenement.getZoneCenter(),
-                    evenement.getZoneSize(),
-                    evenement.getType(),
-                    null,
-                    0f);
-        }
+    public static EvenementDTO createEvenementDTO(int id, Vector3f zoneCenter, Vector3f zoneSize, String type,
+            Vector3f direction, float intensite, String entiteType,
+            String modelPath) {
+        EvenementDTO evenementDTO = new EvenementDTO(
+                id,
+                zoneCenter,
+                zoneSize,
+                type,
+                direction,
+                intensite,
+                entiteType,
+                modelPath);
+        evenementsDTOs.add(evenementDTO);
+        return evenementDTO;
     }
-
 }

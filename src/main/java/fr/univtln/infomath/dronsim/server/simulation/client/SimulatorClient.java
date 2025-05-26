@@ -1,6 +1,7 @@
 package fr.univtln.infomath.dronsim.server.simulation.client;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.asset.AssetManager;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
@@ -36,12 +37,17 @@ import fr.univtln.infomath.dronsim.server.simulation.entiteMarine.EntiteMarine;
 import fr.univtln.infomath.dronsim.server.simulation.entiteMarine.EntiteMarineDTO;
 import fr.univtln.infomath.dronsim.server.simulation.entiteMarine.EntiteMarineInitData;
 import fr.univtln.infomath.dronsim.server.simulation.evenements.EvenementDTO;
+import fr.univtln.infomath.dronsim.server.simulation.evenements.AjoutEntiteMarineEvent;
+import fr.univtln.infomath.dronsim.server.simulation.evenements.Evenement;
+import fr.univtln.infomath.dronsim.server.simulation.evenements.Courant;
+import fr.univtln.infomath.dronsim.server.simulation.jme_messages.AjoutEvenementMessage;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.DroneDTOMessage;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.DroneMovementRequestMessage;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.EntiteMarineDTOMessage;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.EvenementDTOMessage;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.Handshake1;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.Handshake2;
+import fr.univtln.infomath.dronsim.server.simulation.jme_messages.RetirerEvenementMessage;
 //import fr.univtln.infomath.dronsim.server.viewer.primitives.ReferentialNode;
 import fr.univtln.infomath.dronsim.server.utils.GStreamerSender;
 
@@ -70,9 +76,6 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
     private static int height = 768;
     private static String server_ip;
     private static int server_port = 6143; // Default JME server port
-    private Map<Integer, Spatial> evenementsVisuels = new HashMap<>();
-    private List<EvenementDTO> pendingEventDTOs = new ArrayList<>(); // buffer pour les événements reçus trop tôt
-    private boolean sceneReady = false;
 
     public static void main(String[] args) {
         if (args.length != 2) {
@@ -97,6 +100,7 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
     @Override
     public void simpleInitApp() {
         setPauseOnLostFocus(false);
+        assetManager.registerLocator("data/asset", FileLocator.class);
 
         // Network initialisation
         try {
@@ -133,7 +137,7 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
         rootNode.attachChild(scene);
 
         // Enregistrement du dossier d'assets
-        assetManager.registerLocator("data/asset", FileLocator.class);
+        // assetManager.registerLocator("data/asset", FileLocator.class);
 
         // Ajout d’un repère
         // ReferentialNode refNode = new ReferentialNode(assetManager);
@@ -154,6 +158,9 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
                 SkyFactory.EnvMapType.CubeMap));
 
         viewPort.addProcessor(frameCaptureProcessor); // Ajout du processeur de capture d'images
+        ajouterEvenementTest();
+        // retirerEvenement(999);
+
     }
 
     /**
@@ -170,6 +177,8 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
         Serializer.registerClass(DroneMovementRequestMessage.class);
         Serializer.registerClass(EvenementDTO.class);
         Serializer.registerClass(EvenementDTOMessage.class);
+        Serializer.registerClass(AjoutEvenementMessage.class);
+        Serializer.registerClass(RetirerEvenementMessage.class);
         Serializer.registerClass(EntiteMarineDTO.class);
         Serializer.registerClass(EntiteMarineDTOMessage.class);
         Serializer.registerClass(EntiteMarineInitData.class);
@@ -219,7 +228,7 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
             controlerA = new LocalTestingControler(inputManager, client, yourDrone.getId());
         }
 
-        // Ajout des entités marines
+        // Ajout des entités marines de base
         for (EntiteMarineInitData marineInit : handshake2.getEntitesMarineInitData()) {
             EntiteMarine entite = EntiteMarine.createEntite(
                     marineInit.getId(),
@@ -231,12 +240,23 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
                     assetManager);
             scene.attachChild(entite.getModelNode());
         }
+        // Ajout des événements initiaux
+        for (EvenementDTO dto : handshake2.getEvenementsInitData()) {
+            Evenement event = createEvenementFromDTO(dto, assetManager, space);
+            if (event instanceof Courant courant) {
+                enqueue(() -> {
+                    scene.attachChild(courant.getVisuel());
+                    return null;
+                });
+            } else if (event instanceof AjoutEntiteMarineEvent marineEvent) {
+                enqueue(() -> {
+                    scene.attachChild(marineEvent.getModelNode());
+                    return null;
+                });
+            }
 
-        sceneReady = true;
-        if (!pendingEventDTOs.isEmpty()) {
-            updateEvenements(pendingEventDTOs);
-            pendingEventDTOs.clear();
         }
+
     }
 
     private void attachTerrain(Node parent) {
@@ -286,10 +306,25 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
         }
 
         for (EntiteMarine entite : EntiteMarine.getEntites()) {
-
             Node node = entite.getModelNode();
             if (node != null) {
+
                 node.setLocalTranslation(entite.getPositionCourante());
+            }
+        }
+        for (Evenement event : Evenement.getEvenements()) {
+            if (event != null) {
+                if (event instanceof Courant courant) {
+                    courant.apply(tpf);
+                } else if (event instanceof AjoutEntiteMarineEvent marineEvent) {
+                    EntiteMarine entiteEvent = marineEvent.getEntite();
+                    Node nodemarine = entiteEvent.getModelNode();
+
+                    if (nodemarine != null) {
+                        nodemarine.setLocalTranslation(entiteEvent.getPositionCourante());
+                    }
+
+                }
             }
         }
 
@@ -314,6 +349,8 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
     }
 
     public void updateEntitesMarine(List<EntiteMarineDTO> dtos) {
+
+        // 1. Mise à jour des entités de base
         for (EntiteMarine entite : EntiteMarine.getEntites()) {
             for (EntiteMarineDTO dto : dtos) {
                 if (entite.getId() == dto.getId()) {
@@ -322,56 +359,128 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
                 }
             }
         }
-    }
 
-    public void updateEvenements(List<EvenementDTO> eventDTOs) {
-        for (EvenementDTO eventDTO : eventDTOs) {
-            if (!evenementsVisuels.containsKey(eventDTO.getId())) {
-                ParticleEmitter courant = createCourantVisuel(eventDTO.getZoneCenter(), eventDTO.getDirection());
-                evenementsVisuels.put(eventDTO.getId(), courant);
-                enqueue(() -> {
-                    // Cela garantit que scene.attachChild(...) est exécuté dans le thread principal
-                    // de JME
-                    scene.attachChild(courant);
-                    return null;
-                });
+        // 2. Mise à jour des entités créées via AjoutEntiteMarineEvent
+        for (Evenement event : Evenement.getEvenements()) {
+            if (event instanceof AjoutEntiteMarineEvent marineEvent) {
+                EntiteMarine entite = marineEvent.getEntite();
+                for (EntiteMarineDTO dto : dtos) {
+                    if (entite.getId() == dto.getId()) {
+                        entite.setPositionCourante(dto.getPosition());
+                        entite.setDirection(dto.getDirection());
+                    }
+                }
             }
         }
     }
 
-    private ParticleEmitter createCourantVisuel(Vector3f pos, Vector3f direction) {
-        ParticleEmitter courantVisuel = new ParticleEmitter("CourantVisuel", ParticleMesh.Type.Triangle, 300);
-        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Particle.j3md");
-        Texture tex = assetManager.loadTexture("Effects/courant.png");
-        mat.setTexture("Texture", tex);
-        courantVisuel.setMaterial(mat);
-        courantVisuel.setImagesX(1);
-        courantVisuel.setImagesY(1);
-        courantVisuel.setStartColor(new ColorRGBA(0.2f, 0.6f, 0.5f, 0.6f));
-        courantVisuel.setEndColor(new ColorRGBA(0.2f, 0.6f, 0.5f, 0.4f));
-        courantVisuel.setStartSize(2f);
-        courantVisuel.setEndSize(4f);
-        courantVisuel.setLowLife(2f);
-        courantVisuel.setHighLife(3f);
-        // courantVisuel.setParticlesPerSec(100f); // Plus de particules par seconde
-        // courantVisuel.setNumParticles(600);
-        courantVisuel.setFacingVelocity(true);
-        courantVisuel.getParticleInfluencer().setInitialVelocity(direction.normalize().mult(4f));
-        courantVisuel.getParticleInfluencer().setVelocityVariation(0.2f);
-        courantVisuel.setLocalTranslation(pos);
-        return courantVisuel;
+    public static Evenement createEvenementFromDTO(EvenementDTO dto, AssetManager assetManager, PhysicsSpace space) {
+        if (dto.getType().equals("Courant")) {
+            return new Courant(dto.getId(), dto.getZoneCenter(), dto.getZoneSize(), dto.getDirection(),
+                    dto.getIntensite(), space, assetManager);
+        } else if (dto.getType().equals("EntiteMarine")) {
+
+            EntiteMarineInitData initData = new EntiteMarineInitData(
+                    dto.getId(),
+                    dto.getEntiteType(),
+                    dto.getModelPath(),
+                    dto.getZoneCenter(),
+                    dto.getDirection(),
+                    dto.getIntensite());
+            return new AjoutEntiteMarineEvent(initData, assetManager);
+        } else {
+            log.error("Unknown event type: " + dto.getType());
+            return null;
+        }
+
+    }
+
+    public void updateEvenements(List<EvenementDTO> eventDTOs) {
+        // 1. Retirer les événements qui ne sont plus présents
+        List<Integer> idsRecus = eventDTOs.stream().map(EvenementDTO::getId).toList();
+        List<Evenement> toRemove = new ArrayList<>();
+        for (Evenement ev : new ArrayList<>(Evenement.getEvenements())) {
+            if (!idsRecus.contains(ev.getId())) {
+                toRemove.add(ev);
+            }
+        }
+        for (Evenement ev : toRemove) {
+            ev.retirer();
+            log.info("Evenement retiré du client: " + ev.getId());
+        }
+        // 2. Ajouter les nouveaux événements
+        for (EvenementDTO dto : eventDTOs) {
+            boolean dejaAjoute = Evenement.getEvenements().stream()
+                    .anyMatch(e -> e != null && e.getId() == dto.getId());
+            if (dejaAjoute)
+                continue;
+
+            // Création de l'événement selon son type
+            Evenement event = createEvenementFromDTO(dto, assetManager, space);
+            if (event instanceof Courant courant) {
+                // Ajout du visuel du courant à la scène
+                enqueue(() -> {
+                    if (!scene.hasChild(courant.getVisuel())) {
+                        scene.attachChild(courant.getVisuel());
+                        log.info("Courant attaché à la scène (updateEvenements): " + courant.getId());
+                    }
+                });
+            } else if (event instanceof AjoutEntiteMarineEvent marineEvent) {
+                // Ajout de l'entité marine à la scène
+                enqueue(() -> {
+                    if (!scene.hasChild(marineEvent.getModelNode())) {
+                        scene.attachChild(marineEvent.getModelNode());
+                        log.info("Entité marine attachée à la scène (updateEvenements): " + marineEvent.getId());
+                    }
+                });
+
+            }
+        }
+
     }
 
     public Node getScene() {
         return scene;
     }
 
-    public boolean isSceneReady() {
-        return sceneReady;
+    public void ajouterEvenementTest() {
+
+        // Exemple : ajouter un courant
+        EvenementDTO courant = EvenementDTO.createEvenementDTO(
+                999, // ID unique arbitraire
+                new Vector3f(0, 2, 0), // zoneCenter
+                new Vector3f(10, 10, 10),
+                "Courant", // type
+                new Vector3f(0, 0, 1), // direction
+                1000f, // intensité
+                null, // pas de modèle pour un courant
+                null); // pas de type d’entité pour un courant);
+        client.send(new AjoutEvenementMessage(courant));
+
+        // Exemple : ajouter une entité marine (bateau)
+        EvenementDTO entite = EvenementDTO.createEvenementDTO(
+                1000, // ID unique
+                new Vector3f(-25, 3, 5), // position = zoneCenter
+                new Vector3f(10, 10, 100), // zoneSize
+                "EntiteMarine", // type
+                Vector3f.UNIT_Z, // direction
+                1f, // intensité = vitesse
+                "Bateau", // type d’entité
+                "bateau/speedboat_n2.j3o" // modèle
+        );
+        client.send(new AjoutEvenementMessage(entite));
+
     }
 
-    public void bufferEvenements(List<EvenementDTO> dtos) {
-        pendingEventDTOs.addAll(dtos);
+    public void retirerEvenement(int id) {
+        Evenement event = Evenement.getEvenements().stream()
+                .filter(e -> e != null && e.getId() == id)
+                .findFirst()
+                .orElse(null);
+        if (event != null) {
+            event.retirer();
+            client.send(new RetirerEvenementMessage(id));
+        }
     }
 
 }
