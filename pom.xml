@@ -20,6 +20,11 @@
     <jme3_v>3.7.0-stable</jme3_v>
 
     <junit.version>5.12.1</junit.version>
+
+    <!-- Geotools -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <geotools.version>33.1</geotools.version>
+    <maven.deploy.skip>true</maven.deploy.skip>
   </properties>
 
   <dependencyManagement>
@@ -248,7 +253,55 @@
       <scope>compile</scope>
     </dependency>
 
+    <!-- Geotools dependencies -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13.2</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-shapefile</artifactId>
+      <version>${geotools.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-swing</artifactId>
+      <version>${geotools.version}</version>
+    </dependency>
+
+    <dependency>
+  <groupId>org.geotools</groupId>
+  <artifactId>gt-epsg-hsql</artifactId>
+  <version>${geotools.version}</version>
+</dependency>
+
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-referencing</artifactId>
+      <version>3.20-geoapi-3.0</version>
+    </dependency>
+
   </dependencies>
+
+    <repositories>
+    <repository>
+    <id>osgeo</id>
+    <name>OSGeo Release Repository</name>
+    <url>https://repo.osgeo.org/repository/release/</url>
+    <snapshots><enabled>false</enabled></snapshots>
+    <releases><enabled>true</enabled></releases>
+    </repository>
+    <repository>
+    <id>osgeo-snapshot</id>
+    <name>OSGeo Snapshot Repository</name>
+    <url>https://repo.osgeo.org/repository/snapshot/</url>
+    <snapshots><enabled>true</enabled></snapshots>
+    <releases><enabled>false</enabled></releases>
+    </repository>
+  </repositories>
 
   <build>
     <plugins>

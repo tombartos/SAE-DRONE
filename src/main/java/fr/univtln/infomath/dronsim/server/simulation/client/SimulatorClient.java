@@ -9,7 +9,11 @@ import com.jme3.bullet.collision.PhysicsCollisionListener;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
+import com.jme3.effect.ParticleEmitter;
+import com.jme3.effect.ParticleMesh;
 import com.jme3.light.*;
+import com.jme3.material.Material;
+import com.jme3.texture.Texture;
 import com.jme3.math.*;
 import com.jme3.network.Client;
 import com.jme3.network.Network;
@@ -28,15 +32,24 @@ import fr.univtln.infomath.dronsim.server.simulation.drones.Drone;
 import fr.univtln.infomath.dronsim.server.simulation.drones.DroneDTO;
 import fr.univtln.infomath.dronsim.server.simulation.drones.DroneInitData;
 import fr.univtln.infomath.dronsim.server.simulation.drones.DroneModel;
+import fr.univtln.infomath.dronsim.server.simulation.entiteMarine.EntiteMarine;
+import fr.univtln.infomath.dronsim.server.simulation.entiteMarine.EntiteMarineDTO;
+import fr.univtln.infomath.dronsim.server.simulation.entiteMarine.EntiteMarineInitData;
+import fr.univtln.infomath.dronsim.server.simulation.evenements.EvenementDTO;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.DroneDTOMessage;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.DroneMovementRequestMessage;
+import fr.univtln.infomath.dronsim.server.simulation.jme_messages.EntiteMarineDTOMessage;
+import fr.univtln.infomath.dronsim.server.simulation.jme_messages.EvenementDTOMessage;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.Handshake1;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.Handshake2;
 //import fr.univtln.infomath.dronsim.server.viewer.primitives.ReferentialNode;
 import fr.univtln.infomath.dronsim.server.utils.GStreamerSender;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +70,9 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
     private static int height = 768;
     private String server_ip;
     private static int server_port = 6143; // Default JME server port
+    private Map<Integer, Spatial> evenementsVisuels = new HashMap<>();
+    private List<EvenementDTO> pendingEventDTOs = new ArrayList<>(); // buffer pour les événements reçus trop tôt
+    private boolean sceneReady = false;
 
     public static void main(String[] args) {
         if (args.length != 3) {
@@ -90,6 +106,8 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
             ClientListener clientListener = new ClientListener(this);
             client.addMessageListener(clientListener, DroneDTOMessage.class);
             client.addMessageListener(clientListener, Handshake2.class);
+            client.addMessageListener(clientListener, EvenementDTOMessage.class);
+            client.addMessageListener(clientListener, EntiteMarineDTOMessage.class);
             client.start();
             log.info("Connected to server at " + server_ip + ":" + server_port);
         } catch (IOException e) {
@@ -151,6 +169,12 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
         Serializer.registerClass(DroneDTO.class);
         Serializer.registerClass(DroneDTOMessage.class);
         Serializer.registerClass(DroneMovementRequestMessage.class);
+        Serializer.registerClass(EvenementDTO.class);
+        Serializer.registerClass(EvenementDTOMessage.class);
+        Serializer.registerClass(EntiteMarineDTO.class);
+        Serializer.registerClass(EntiteMarineDTOMessage.class);
+        Serializer.registerClass(EntiteMarineInitData.class);
+
     }
 
     /**
@@ -197,12 +221,31 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
             // Contrôle clavier du drone
             controlerA = new LocalTestingControler(inputManager, client, yourDrone.getId());
         }
+
+        // Ajout des entités marines
+        for (EntiteMarineInitData marineInit : handshake2.getEntitesMarineInitData()) {
+            EntiteMarine entite = EntiteMarine.createEntite(
+                    marineInit.getId(),
+                    marineInit.getType(),
+                    marineInit.getModelPath(),
+                    marineInit.getPosition(),
+                    marineInit.getDirection(),
+                    marineInit.getSpeed(),
+                    assetManager);
+            scene.attachChild(entite.getModelNode());
+        }
+
+        sceneReady = true;
+        if (!pendingEventDTOs.isEmpty()) {
+            updateEvenements(pendingEventDTOs);
+            pendingEventDTOs.clear();
+        }
     }
 
     private void attachTerrain(Node parent) {
         Node terrainNode = new Node("Terrain");
         terrainNode.setLocalTranslation(new Vector3f(3.0f, -15.0f, 0.0f));
-        Spatial terrain = assetManager.loadModel("Models/manta_point_version_6_superseded.glb");
+        Spatial terrain = assetManager.loadModel("Models/manta_point_version_6_superseded.j3o");
         terrainNode.attachChild(terrain);
         parent.attachChild(terrainNode);
 
@@ -244,6 +287,15 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
                 node.setLocalRotation(drone.getAngular());
             }
         }
+
+        for (EntiteMarine entite : EntiteMarine.getEntites()) {
+
+            Node node = entite.getModelNode();
+            if (node != null) {
+                node.setLocalTranslation(entite.getPositionCourante());
+            }
+        }
+
     }
 
     @Override
@@ -263,4 +315,66 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
         }
 
     }
+
+    public void updateEntitesMarine(List<EntiteMarineDTO> dtos) {
+        for (EntiteMarine entite : EntiteMarine.getEntites()) {
+            for (EntiteMarineDTO dto : dtos) {
+                if (entite.getId() == dto.getId()) {
+                    entite.setPositionCourante(dto.getPosition());
+                    entite.setDirection(dto.getDirection());
+                }
+            }
+        }
+    }
+
+    public void updateEvenements(List<EvenementDTO> eventDTOs) {
+        for (EvenementDTO eventDTO : eventDTOs) {
+            if (!evenementsVisuels.containsKey(eventDTO.getId())) {
+                ParticleEmitter courant = createCourantVisuel(eventDTO.getZoneCenter(), eventDTO.getDirection());
+                evenementsVisuels.put(eventDTO.getId(), courant);
+                enqueue(() -> {
+                    // Cela garantit que scene.attachChild(...) est exécuté dans le thread principal
+                    // de JME
+                    scene.attachChild(courant);
+                    return null;
+                });
+            }
+        }
+    }
+
+    private ParticleEmitter createCourantVisuel(Vector3f pos, Vector3f direction) {
+        ParticleEmitter courantVisuel = new ParticleEmitter("CourantVisuel", ParticleMesh.Type.Triangle, 300);
+        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Particle.j3md");
+        Texture tex = assetManager.loadTexture("Effects/courant.png");
+        mat.setTexture("Texture", tex);
+        courantVisuel.setMaterial(mat);
+        courantVisuel.setImagesX(1);
+        courantVisuel.setImagesY(1);
+        courantVisuel.setStartColor(new ColorRGBA(0.2f, 0.6f, 0.5f, 0.6f));
+        courantVisuel.setEndColor(new ColorRGBA(0.2f, 0.6f, 0.5f, 0.4f));
+        courantVisuel.setStartSize(2f);
+        courantVisuel.setEndSize(4f);
+        courantVisuel.setLowLife(2f);
+        courantVisuel.setHighLife(3f);
+        // courantVisuel.setParticlesPerSec(100f); // Plus de particules par seconde
+        // courantVisuel.setNumParticles(600);
+        courantVisuel.setFacingVelocity(true);
+        courantVisuel.getParticleInfluencer().setInitialVelocity(direction.normalize().mult(4f));
+        courantVisuel.getParticleInfluencer().setVelocityVariation(0.2f);
+        courantVisuel.setLocalTranslation(pos);
+        return courantVisuel;
+    }
+
+    public Node getScene() {
+        return scene;
+    }
+
+    public boolean isSceneReady() {
+        return sceneReady;
+    }
+
+    public void bufferEvenements(List<EvenementDTO> dtos) {
+        pendingEventDTOs.addAll(dtos);
+    }
+
 }
