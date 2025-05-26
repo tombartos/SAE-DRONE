@@ -172,6 +172,7 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
 
         initDrones(assetManager, space);
         nbDrones = Drone.getDrones().size();
+        log.info("Drones initialized: " + nbDrones + " drones created");
         ready = true;
         log.info("Initialization complete, waiting for pilots to connect");
     }
