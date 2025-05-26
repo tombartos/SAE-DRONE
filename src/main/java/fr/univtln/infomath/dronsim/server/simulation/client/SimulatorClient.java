@@ -60,7 +60,7 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
     private int connectionMode;
 
     public static void main(String[] args) {
-        if (args.length != 3) {
+        if (args.length != 4) {
             log.info("Launch arguments :  <video_destination_ip> <server_ip> <client_id> <connection_mode>");
             System.exit(1);
         }
