@@ -7,13 +7,14 @@ public interface AuthenticationService {
     public AuthenticatedUser authenticate(String token) throws AuthenticationException;
 
     @lombok.AllArgsConstructor(access = lombok.AccessLevel.PROTECTED)
+    @lombok.Builder
     @lombok.Getter
     public class AuthenticatedUser {
         final String username;
-        final boolean isPilot;
-        final boolean isGameMaster;
-        final boolean isObserver;
-        final boolean isAdmin;
+        @lombok.Builder.Default final boolean isPilot = false;
+        @lombok.Builder.Default final boolean isGameMaster = false;
+        @lombok.Builder.Default final boolean isObserver = false;
+        @lombok.Builder.Default final boolean isAdmin;
     }
 
     // public static abstract class AuthorizationException extends Exception {}

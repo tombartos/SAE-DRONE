@@ -29,15 +29,22 @@
 
   <dependencyManagement>
     <dependencies>
-        <dependency>
-            <groupId>org.glassfish.jersey</groupId>
-            <artifactId>jersey-bom</artifactId>
-            <version>${jersey.version}</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency>
+      <dependency>
+        <groupId>org.glassfish.jersey</groupId>
+        <artifactId>jersey-bom</artifactId>
+        <version>${jersey.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson</groupId>
+        <artifactId>jackson-bom</artifactId>
+        <version>2.19.0</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
     </dependencies>
-</dependencyManagement>
+  </dependencyManagement>
 
 
   <dependencies>
@@ -49,6 +56,7 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- Test dependencies -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
@@ -80,67 +88,56 @@
       <artifactId>jme3-core</artifactId>
       <version>${jme3_v}</version>
     </dependency>
-
     <dependency>
       <groupId>${jme3_g}</groupId>
       <artifactId>jme3-desktop</artifactId>
       <version>${jme3_v}</version>
     </dependency>
-
     <dependency>
       <groupId>${jme3_g}</groupId>
       <artifactId>jme3-effects</artifactId>
       <version>${jme3_v}</version>
     </dependency>
-
     <dependency>
       <groupId>${jme3_g}</groupId>
       <artifactId>jme3-jbullet</artifactId>
       <version>${jme3_v}</version>
     </dependency>
-
     <dependency>
       <groupId>${jme3_g}</groupId>
       <artifactId>jme3-jogg</artifactId>
       <version>${jme3_v}</version>
     </dependency>
-
     <dependency>
       <groupId>${jme3_g}</groupId>
       <artifactId>jme3-lwjgl3</artifactId>
       <version>${jme3_v}</version>
     </dependency>
-
     <dependency>
       <groupId>${jme3_g}</groupId>
       <artifactId>jme3-networking</artifactId>
       <version>${jme3_v}</version>
     </dependency>
-
     <dependency>
       <groupId>${jme3_g}</groupId>
       <artifactId>jme3-niftygui</artifactId>
       <version>${jme3_v}</version>
     </dependency>
-
     <dependency>
       <groupId>${jme3_g}</groupId>
       <artifactId>jme3-plugins</artifactId>
       <version>${jme3_v}</version>
     </dependency>
-
     <dependency>
       <groupId>${jme3_g}</groupId>
       <artifactId>jme3-terrain</artifactId>
       <version>${jme3_v}</version>
     </dependency>
-
     <dependency>
       <groupId>${jme3_g}</groupId>
       <artifactId>jme3-testdata</artifactId>
       <version>${jme3_v}</version>
     </dependency>
-
     <dependency>
       <groupId>${jme3_g}</groupId>
       <artifactId>jme3-vr</artifactId>
@@ -171,13 +168,11 @@
 			<artifactId>gst1-java-core</artifactId>
 			<version>1.4.0</version>
 		</dependency>
-
 		<dependency>
 			<groupId>net.java.dev.jna</groupId>
 			<artifactId>jna</artifactId>
 			<version>5.17.0</version>
 		</dependency>
-
 		<dependency>
 			<groupId>net.java.dev.jna</groupId>
 			<artifactId>jna-platform</artifactId>
@@ -190,7 +185,6 @@
       <artifactId>slf4j-api</artifactId>
       <version>2.0.17</version>
     </dependency>
-
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
@@ -198,8 +192,7 @@
       <scope>compile</scope>
     </dependency>
 
-    <!-- Jersey dependencies-->
-
+    <!-- Jersey dependencies (for REST API) -->
     <dependency>
         <groupId>org.glassfish.jersey.containers</groupId>
         <artifactId>jersey-container-grizzly2-http</artifactId>
@@ -208,12 +201,10 @@
         <groupId>org.glassfish.jersey.inject</groupId>
         <artifactId>jersey-hk2</artifactId>
     </dependency>
-
     <dependency>
         <groupId>org.glassfish.jersey.media</groupId>
         <artifactId>jersey-media-json-binding</artifactId>
     </dependency>
-
     <dependency>
         <groupId>org.glassfish.jersey.media</groupId>
         <artifactId>jersey-media-json-jackson</artifactId>
@@ -238,19 +229,14 @@
       <version>9.0.10</version>
     </dependency>
 
-
-    <!-- Test dependencies -->
+    <!-- Json serialization (for REST API) -->
     <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-api</artifactId>
-      <version>${junit.version}</version>
-      <scope>compile</scope>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
     </dependency>
     <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <version>1.5.18</version>
-      <scope>compile</scope>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
     </dependency>
 
     <!-- Geotools dependencies -->
