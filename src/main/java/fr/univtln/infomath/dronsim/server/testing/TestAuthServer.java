@@ -4,7 +4,7 @@ import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 
-import fr.univtln.infomath.dronsim.server.auth.AuthenticationServer;
+import fr.univtln.infomath.dronsim.server.manager.AuthenticationResource;
 
 import java.io.IOException;
 import java.net.URI;
@@ -18,16 +18,19 @@ public class TestAuthServer {
     public static final String BASE_URI = "http://localhost:8080/";
 
     /**
-     * Starts Grizzly HTTP server exposing JAX-RS resources defined in this application.
+     * Starts Grizzly HTTP server exposing JAX-RS resources defined in this
+     * application.
+     * 
      * @return Grizzly HTTP server.
      */
     public static HttpServer startServer() {
-        final var rc = new ResourceConfig(AuthenticationServer.class);
+        final var rc = new ResourceConfig(AuthenticationResource.class);
         return GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
     }
 
     /**
      * Main method.
+     * 
      * @param args
      * @throws IOException
      */

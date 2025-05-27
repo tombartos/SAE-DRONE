@@ -1,5 +1,6 @@
 package fr.univtln.infomath.dronsim.client.launcher;
 
+import fr.univtln.infomath.dronsim.server.auth.AuthenticationService.AuthenticatedUser;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -56,31 +57,50 @@ public class LoginPage {
             String username = userField.getText();
             String password = passField.getText();
 
-            if (username.equals("obs") && password.equals("1234")) {
-                // MaitreDeJeu mdj = new MaitreDeJeu(username, password);
+            String response = RestClient.tryLogin(username, password);
+            if (response.equals("Login successful")) {
+                AuthenticatedUser user = RestClient.getAuthenticatedUser(RestClient.getAuthHeader());
                 Group root = new Group();
                 Scene scene = new Scene(root, width, height);
-                new Gui(null, root, width, height, stage, scene, 1);
-
-            } else if (username.equals("mdj") && password.equals("1234")) {
-                Group root = new Group();
-                Scene scene = new Scene(root, width, height);
-                new Gui(null, root, width, height, stage, scene, 2);
-
-            } else if (username.equals("Bob35") && password.equals("1234")) {
-                Group root = new Group();
-                Scene scene = new Scene(root, width, height);
-                RestClient.setAuthHeader("Bearer " + username);
-                new Gui(null, root, width, height, stage, scene, 3);
-
-            } else if (username.equals("admin") && password.equals("1234")) {
-                Group root = new Group();
-                Scene scene = new Scene(root, width, height);
-                new Gui(null, root, width, height, stage, scene, 4);
+                if (user.isGameMaster()) {
+                    new Gui(null, root, width, height, stage, scene, 2); // Game Master
+                } else if (user.isObserver()) {
+                    new Gui(null, root, width, height, stage, scene, 1); // Observer
+                } else if (user.isPilot()) {
+                    new Gui(null, root, width, height, stage, scene, 3); // Pilot
+                } else {
+                    new Gui(null, root, width, height, stage, scene, 4); // Admin
+                }
             } else {
-                message.setText("Identifiants incorrects.");
+                message.setText(response);
                 message.setStyle("-fx-text-fill: red;");
             }
+
+            // if (username.equals("obs") && password.equals("1234")) {
+            // // MaitreDeJeu mdj = new MaitreDeJeu(username, password);
+            // Group root = new Group();
+            // Scene scene = new Scene(root, width, height);
+            // new Gui(null, root, width, height, stage, scene, 1);
+
+            // } else if (username.equals("mdj") && password.equals("1234")) {
+            // Group root = new Group();
+            // Scene scene = new Scene(root, width, height);
+            // new Gui(null, root, width, height, stage, scene, 2);
+
+            // } else if (username.equals("Bob35") && password.equals("1234")) {
+            // Group root = new Group();
+            // Scene scene = new Scene(root, width, height);
+            // RestClient.setAuthHeader("Bearer " + username);
+            // new Gui(null, root, width, height, stage, scene, 3);
+
+            // } else if (username.equals("admin") && password.equals("1234")) {
+            // Group root = new Group();
+            // Scene scene = new Scene(root, width, height);
+            // new Gui(null, root, width, height, stage, scene, 4);
+            // } else {
+            // message.setText("Identifiants incorrects.");
+            // message.setStyle("-fx-text-fill: red;");
+            // }
 
             /*
              * try {

@@ -1,8 +1,6 @@
-package fr.univtln.infomath.dronsim.server.utils;
+package fr.univtln.infomath.dronsim.server.auth;
 
-import fr.univtln.infomath.dronsim.server.auth.AuthenticationService;
 import fr.univtln.infomath.dronsim.server.auth.AuthenticationService.AuthenticatedUser;
-import fr.univtln.infomath.dronsim.server.auth.NaiveAuthService;
 import jakarta.ws.rs.NotAuthorizedException;
 
 public class AuthChecker {

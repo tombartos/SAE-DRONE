@@ -2,9 +2,9 @@ package fr.univtln.infomath.dronsim.server.manager;
 
 import java.util.List;
 
+import fr.univtln.infomath.dronsim.server.auth.AuthChecker;
 import fr.univtln.infomath.dronsim.server.auth.AuthenticationService.AuthenticatedUser;
 import fr.univtln.infomath.dronsim.server.simulation.drones.DroneModel;
-import fr.univtln.infomath.dronsim.server.utils.AuthChecker;
 import fr.univtln.infomath.dronsim.shared.DroneAssociation;
 import fr.univtln.infomath.dronsim.shared.User;
 import jakarta.ws.rs.Consumes;

@@ -3,7 +3,8 @@ package fr.univtln.infomath.dronsim.shared.auth;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 public final class AuthMessages {
-    private AuthMessages() {}
+    private AuthMessages() {
+    }
 
     @lombok.AllArgsConstructor
     @lombok.Getter

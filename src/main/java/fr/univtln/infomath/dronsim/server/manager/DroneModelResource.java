@@ -3,9 +3,9 @@ package fr.univtln.infomath.dronsim.server.manager;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.univtln.infomath.dronsim.server.auth.AuthChecker;
 import fr.univtln.infomath.dronsim.server.auth.AuthenticationService.AuthenticatedUser;
 import fr.univtln.infomath.dronsim.server.simulation.drones.DroneModel;
-import fr.univtln.infomath.dronsim.server.utils.AuthChecker;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.HeaderParam;

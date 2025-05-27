@@ -8,16 +8,20 @@ import java.util.List;
 
 import org.glassfish.jersey.jackson.JacksonFeature;
 
+import fr.univtln.infomath.dronsim.server.auth.AuthenticationService.AuthenticatedUser;
 import fr.univtln.infomath.dronsim.shared.DroneAssociation;
 import fr.univtln.infomath.dronsim.shared.PilotInitResp;
 import fr.univtln.infomath.dronsim.shared.User;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.Form;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import lombok.Getter;
 import lombok.Setter;
 
 public class RestClient {
@@ -26,6 +30,7 @@ public class RestClient {
     private static Client client;
     private static WebTarget baseTarget;
     @Setter
+    @Getter
     private static String authHeader = "Bearer TEST_TOKEN";
     // TODO: Replace with a real token when we will have the true
     // authentication system
@@ -42,11 +47,33 @@ public class RestClient {
         }
     }
 
+    public static AuthenticatedUser getAuthenticatedUser(String authHeader) {
+        try {
+            Response response = baseTarget.path("auth")
+                    .request(MediaType.APPLICATION_JSON)
+                    .header("Authorization", authHeader)
+                    .get();
+            if (response.getStatus() >= 400) {
+                String errorMsg = response.readEntity(String.class);
+                log.error("HTTP {}: {}", response.getStatus(), errorMsg);
+                response.close();
+                return null;
+            }
+            AuthenticatedUser authUser = response.readEntity(AuthenticatedUser.class);
+            response.close();
+            log.info("Authenticated user: " + authUser);
+            return authUser;
+        } catch (WebApplicationException e) {
+            log.error("WebApplicationException: {}", e.getMessage());
+            return null;
+        }
+    }
+
     public static String tryLogin(String username, String password) {
         try {
             Response response = baseTarget.path("auth")
                     .request(MediaType.APPLICATION_JSON)
-                    .post(jakarta.ws.rs.client.Entity.form(new jakarta.ws.rs.core.Form()
+                    .post(Entity.form(new Form()
                             .param("username", username)
                             .param("password", password)));
             if (response.getStatus() >= 400) {
