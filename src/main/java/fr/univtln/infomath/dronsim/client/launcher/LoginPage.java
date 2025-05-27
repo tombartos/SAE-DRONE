@@ -1,6 +1,11 @@
 package fr.univtln.infomath.dronsim.client.launcher;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.univtln.infomath.dronsim.server.auth.AuthenticationService.AuthenticatedUser;
+import fr.univtln.infomath.dronsim.server.simulation.client.SimulatorClient;
+import fr.univtln.infomath.dronsim.shared.auth.AuthUserDTO;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -15,6 +20,7 @@ import javafx.stage.Stage;
  * based on their role (student, professor, or administrator).
  */
 public class LoginPage {
+    private static final Logger log = LoggerFactory.getLogger(LoginPage.class);
     // private static final Logger log = LoggerFactory.getLogger(Utils.class);
 
     public static void showLoginPage(Stage stage, int width, int height) {
@@ -59,7 +65,7 @@ public class LoginPage {
 
             String response = RestClient.tryLogin(username, password);
             if (response.equals("Login successful")) {
-                AuthenticatedUser user = RestClient.getAuthenticatedUser(RestClient.getAuthHeader());
+                AuthUserDTO user = RestClient.getAuthenticatedUser(RestClient.getAuthHeader());
                 Group root = new Group();
                 Scene scene = new Scene(root, width, height);
                 if (user.isGameMaster()) {
@@ -68,8 +74,11 @@ public class LoginPage {
                     new Gui(null, root, width, height, stage, scene, 1); // Observer
                 } else if (user.isPilot()) {
                     new Gui(null, root, width, height, stage, scene, 3); // Pilot
-                } else {
+                } else if (user.isAdmin()) {
                     new Gui(null, root, width, height, stage, scene, 4); // Admin
+                } else {
+                    log.error("Unknown user role for username: {}", username);
+                    throw new IllegalStateException("Unknown user role for username: " + username);
                 }
             } else {
                 message.setText(response);

@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Gui {
-    private static final Logger log = LoggerFactory.getLogger(SimulatorClient.class);
+    private static final Logger log = LoggerFactory.getLogger(Gui.class);
 
     private final Group root;
     private final int width;
@@ -157,21 +157,28 @@ public class Gui {
                     -fx-border-color: transparent;
                 """);
 
-        if (test_username == 1) {
-            // si l'utilisateur observateur
-            this.centerBox.getChildren().addAll(this.playBtn, this.dronesConnectBtn, this.quitBtn);
-
-        } else if (test_username == 2) {
-            // si l'utilisateur est un maitre de jeu
-            this.centerBox.getChildren().addAll(this.playBtn, this.dronesConnectBtn, this.ajouterDroneBtn,
-                    this.quitBtn);
-        } else if (test_username == 3) {
-            // si l'utilisateur est un pilote
-            this.centerBox.getChildren().addAll(this.playBtn, this.quitBtn);
-        } else {
-            // si l'utilisateur est un administrateur
-            this.centerBox.getChildren().addAll(this.playBtn, this.dronesConnectBtn, this.gererUtilisateursBtn,
-                    this.quitBtn);
+        switch (test_username) {
+            case 1:
+                // si l'utilisateur observateur
+                this.centerBox.getChildren().addAll(this.playBtn, this.dronesConnectBtn, this.quitBtn);
+                break;
+            case 2:
+                // si l'utilisateur est un maitre de jeu
+                this.centerBox.getChildren().addAll(this.playBtn, this.dronesConnectBtn, this.ajouterDroneBtn,
+                        this.quitBtn);
+                break;
+            case 3:
+                // si l'utilisateur est un pilote
+                this.centerBox.getChildren().addAll(this.playBtn, this.quitBtn);
+                break;
+            case 4:
+                // si l'utilisateur est un administrateur
+                this.centerBox.getChildren().addAll(this.playBtn, this.dronesConnectBtn, this.gererUtilisateursBtn,
+                        this.quitBtn);
+                break;
+            default:
+                // Optionally handle unexpected values
+                break;
         }
 
         rootPane.setCenter(this.centerBox);

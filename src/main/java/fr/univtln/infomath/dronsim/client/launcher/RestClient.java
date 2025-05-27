@@ -12,6 +12,8 @@ import fr.univtln.infomath.dronsim.server.auth.AuthenticationService.Authenticat
 import fr.univtln.infomath.dronsim.shared.DroneAssociation;
 import fr.univtln.infomath.dronsim.shared.PilotInitResp;
 import fr.univtln.infomath.dronsim.shared.User;
+import fr.univtln.infomath.dronsim.shared.auth.AuthUserDTO;
+import fr.univtln.infomath.dronsim.shared.auth.TokenResponse;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
@@ -47,7 +49,7 @@ public class RestClient {
         }
     }
 
-    public static AuthenticatedUser getAuthenticatedUser(String authHeader) {
+    public static AuthUserDTO getAuthenticatedUser(String authHeader) {
         try {
             Response response = baseTarget.path("auth")
                     .request(MediaType.APPLICATION_JSON)
@@ -59,7 +61,7 @@ public class RestClient {
                 response.close();
                 return null;
             }
-            AuthenticatedUser authUser = response.readEntity(AuthenticatedUser.class);
+            AuthUserDTO authUser = response.readEntity(AuthUserDTO.class);
             response.close();
             log.info("Authenticated user: " + authUser);
             return authUser;
@@ -82,8 +84,14 @@ public class RestClient {
                 response.close();
                 return errorMsg;
             } else {
-                authHeader = "Bearer " + response.readEntity(String.class);
-                log.info("Login successful, auth header set.");
+                TokenResponse tokenResponse = response.readEntity(TokenResponse.class);
+                if (!tokenResponse.isSuccess()) {
+                    log.error("Login failed: " + tokenResponse.getMessage());
+                    response.close();
+                    return tokenResponse.getMessage();
+                }
+                authHeader = "Bearer " + tokenResponse.getToken();
+                log.info("Login successful, auth header set: " + authHeader);
                 response.close();
                 return "Login successful";
             }

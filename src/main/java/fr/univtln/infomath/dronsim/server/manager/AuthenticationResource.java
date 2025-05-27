@@ -27,10 +27,9 @@ import org.slf4j.LoggerFactory;
 import fr.univtln.infomath.dronsim.server.auth.AuthChecker;
 import fr.univtln.infomath.dronsim.server.auth.AuthenticationService;
 import fr.univtln.infomath.dronsim.server.auth.AuthenticationService.AuthenticatedUser;
-import fr.univtln.infomath.dronsim.server.auth.AuthenticationService.AuthenticationException;
-import fr.univtln.infomath.dronsim.server.auth.AuthenticationService.AuthenticatedUser.AuthenticatedUserBuilder;
 import fr.univtln.infomath.dronsim.shared.User;
-import fr.univtln.infomath.dronsim.shared.auth.AuthMessages;
+import fr.univtln.infomath.dronsim.shared.auth.AuthUserDTO;
+import fr.univtln.infomath.dronsim.shared.auth.TokenResponse;
 
 @Path("auth")
 public class AuthenticationResource {
@@ -41,25 +40,29 @@ public class AuthenticationResource {
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public AuthenticatedUser whoAmI(@HeaderParam("Authorization") String authHeader) {
-        return AuthChecker.checkAuth(authHeader);
+    public AuthUserDTO whoAmI(@HeaderParam("Authorization") String authHeader) {
+        AuthenticatedUser user = AuthChecker.checkAuth(authHeader);
+        AuthUserDTO userDto = new AuthUserDTO(user.getUsername(), user.isPilot(),
+                user.isGameMaster(), user.isObserver(), user.isAdmin());
+        log.info("DEBUG : SENDING USER: " + userDto.toString());
+        return userDto;
     }
 
     @POST
     @Consumes("application/x-www-form-urlencoded")
     @Produces(MediaType.APPLICATION_JSON)
-    public AuthMessages.TokenResponse postLogin(@FormParam("username") String username,
+    public TokenResponse postLogin(@FormParam("username") String username,
             @FormParam("password") String password) {
         if (username == null || password == null) {
             throw new BadRequestException("null username or password");
         }
         if (passwd.authenticate(username, password)) {
             log.info("Logged in " + username);
-            return new AuthMessages.TokenResponse(true, authService.newSessionTokenFor(username),
+            return new TokenResponse(true, authService.newSessionTokenFor(username),
                     "logged in successfully");
         } else {
             log.info("Bad login for " + username);
-            return new AuthMessages.TokenResponse(false, null, "invalid username or password");
+            return new TokenResponse(false, null, "invalid username or password");
         }
     }
 
@@ -101,6 +104,7 @@ public class AuthenticationResource {
                     this.passwd.put(username, password);
                     this.users.put(username, user.build());
                     lineNumber++;
+                    log.info("DEBUG : Loaded user: " + user);
                 }
             } catch (Exception e) {
                 log.error("Error reading '{}': {}", usersJsonPath, e.getMessage());
@@ -136,6 +140,7 @@ public class AuthenticationResource {
 
         @Override
         public AuthenticatedUser authenticate(String token) throws AuthenticationException {
+            log.info("DEBUG : autehnticate : " + sessions.get(token).toString());
             return sessions.get(token);
         }
 
@@ -143,12 +148,13 @@ public class AuthenticationResource {
             rand.nextBytes(buf);
             var token = java.util.Base64.getEncoder().encodeToString(buf);
             var user = passwd.lookup(username);
+            log.info("DEBUG : session.put " + user.toString());
             sessions.put(token, user);
             return token;
         }
     }
 
-    public AuthenticationService getAuthService() {
+    public static AuthenticationService getAuthService() {
         return authService;
     }
 }

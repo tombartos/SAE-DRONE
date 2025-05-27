@@ -1,11 +1,14 @@
 package fr.univtln.infomath.dronsim.server.auth;
 
+import org.checkerframework.checker.units.qual.A;
+
 import fr.univtln.infomath.dronsim.server.auth.AuthenticationService.AuthenticatedUser;
+import fr.univtln.infomath.dronsim.server.manager.AuthenticationResource;
 import jakarta.ws.rs.NotAuthorizedException;
 
 public class AuthChecker {
-    // TODO: Replace with a real authentication service
-    private static AuthenticationService authService = new NaiveAuthService();
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AuthChecker.class);
+    private static AuthenticationService authService = AuthenticationResource.getAuthService();
 
     public static AuthenticatedUser checkAuth(String authHeader) {
         // Extract token from header
@@ -21,6 +24,7 @@ public class AuthChecker {
         } catch (AuthenticationService.AuthenticationException e) {
             throw new NotAuthorizedException("Invalid token");
         }
+        log.info("DEBUG : AUTHENTICATED USER: " + authUser);
         return authUser;
 
     }
