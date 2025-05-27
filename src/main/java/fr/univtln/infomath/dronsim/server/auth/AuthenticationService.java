@@ -11,10 +11,14 @@ public interface AuthenticationService {
     @lombok.Getter
     public class AuthenticatedUser {
         final String username;
-        @lombok.Builder.Default final boolean isPilot = false;
-        @lombok.Builder.Default final boolean isGameMaster = false;
-        @lombok.Builder.Default final boolean isObserver = false;
-        @lombok.Builder.Default final boolean isAdmin;
+        @lombok.Builder.Default
+        final boolean isPilot = false;
+        @lombok.Builder.Default
+        final boolean isGameMaster = false;
+        @lombok.Builder.Default
+        final boolean isObserver = false;
+        @lombok.Builder.Default
+        final boolean isAdmin = false;
     }
 
     // public static abstract class AuthorizationException extends Exception {}

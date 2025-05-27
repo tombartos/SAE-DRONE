@@ -16,7 +16,7 @@ import lombok.*;
  * This class represents a user. It contains all the informations about the
  * user.
  * role = 0 : Pilot
- * role = 1 : Observator
+ * role = 1 : Observer
  * role = 2 : Game Master
  * role = 3 : Administrator
  */

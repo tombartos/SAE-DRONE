@@ -1,12 +1,9 @@
 package fr.univtln.infomath.dronsim.server.manager;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.univtln.infomath.dronsim.server.auth.AuthenticationService.AuthenticatedUser;
-import fr.univtln.infomath.dronsim.server.simulation.client.SimulatorClient;
 import fr.univtln.infomath.dronsim.server.simulation.server.SimulatorServer;
 import fr.univtln.infomath.dronsim.server.utils.AuthChecker;
 import fr.univtln.infomath.dronsim.shared.DroneAssociation;
