@@ -287,7 +287,7 @@ public class Gui {
 
         // Liste réelle : chaque objet est une instance de sous-classe
         List<User> utilisateurs = List.of(
-                User.builder().id(0).login("test").role(1).build()
+                User.builder().login("test").role(1).hashedPasswd("hashedpasswd").build()
         // User.builder().nom("Charlie").prenom("Lefevre").login("charlie321").build(),
         // User.builder().nom("David").prenom("Martin").login("david456").build(),
         // User.builder().nom("Bob").prenom("Martin").login("bob456").build(),

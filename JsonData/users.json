@@ -1,21 +1,21 @@
 [ {
-  "id" : 0,
   "login" : "Bob35",
-  "role" : 0
+  "role" : 0,
+  "hashedPasswd" : "pOHiWcOoDG3idQBr0ZAWKZUs0qvYmjQUa+e4Pdwaa7pihB8OzFw6k4hw95X+cfKolau8rWO+osoRQxfDn0LU9Q=="
 }, {
-  "id" : 1,
   "login" : "Alice42",
-  "role" : 0
+  "role" : 0,
+  "hashedPasswd" : "VtDUmXRbncEpi49WBdd0ZmKBMu/PDbgO1pHWwOMxK/k4qyJB5zFUsyl3ssjNV5UPy//yDz/lCmt5CKOBELTKGA=="
 }, {
-  "id" : 2,
   "login" : "Charlie21",
-  "role" : 1
+  "role" : 1,
+  "hashedPasswd" : "pRYbv3EoW05UCLn/ERueAeA4LbQ2PEirIE4PHEK2V/6INmOekX80At0oL/gGMw7sJ3BYkFnLGCEyZEYXhYsnSQ=="
 }, {
-  "id" : 3,
   "login" : "Diana99",
-  "role" : 2
+  "role" : 2,
+  "hashedPasswd" : "wVXHhjRv2hVA09ZZjnSxAdyvUHvl6zXDbAs64RX7ySQNfITGvVS8m/8R5yJu1Lx82mun+89+Vj7aAJryDsEJcw=="
 }, {
-  "id" : 4,
   "login" : "Eve88",
-  "role" : 3
+  "role" : 3,
+  "hashedPasswd" : "vRaEtAqDFTKNCf2uRPTI1AtgOp0BOt6mk2aQEWNqpG0DKg5GeHTsmlzDlhIOLuC8zTiKSRJmMmph7wUDRNWL+Q=="
 } ]
