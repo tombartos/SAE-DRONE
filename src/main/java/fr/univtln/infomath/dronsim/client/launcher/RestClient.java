@@ -42,6 +42,30 @@ public class RestClient {
         }
     }
 
+    public static String tryLogin(String username, String password) {
+        try {
+            Response response = baseTarget.path("auth")
+                    .request(MediaType.APPLICATION_JSON)
+                    .post(jakarta.ws.rs.client.Entity.form(new jakarta.ws.rs.core.Form()
+                            .param("username", username)
+                            .param("password", password)));
+            if (response.getStatus() >= 400) {
+                String errorMsg = response.readEntity(String.class);
+                log.error("HTTP {}: {}", response.getStatus(), errorMsg);
+                response.close();
+                return errorMsg;
+            } else {
+                authHeader = "Bearer " + response.readEntity(String.class);
+                log.info("Login successful, auth header set.");
+                response.close();
+                return "Login successful";
+            }
+        } catch (WebApplicationException e) {
+            log.error("WebApplicationException: {}", e.getMessage());
+            return "Login failed: " + e.getMessage();
+        }
+    }
+
     public static List<User> getPilotList() {
         try {
             Response response = baseTarget.path("users/pilots")
