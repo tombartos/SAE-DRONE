@@ -36,14 +36,8 @@ public class ClientListener implements MessageListener<Client> {
             simulatorClient.updateDronesInfo(DronePosMessage.getDronesInfos());
             return;
         }
-        if (message instanceof EvenementDTOMessage) {
-            EvenementDTOMessage msg = (EvenementDTOMessage) message;
-            if (simulatorClient.isSceneReady()) {
-                simulatorClient.updateEvenements(msg.getEvenements());
-            } else {
-                log.info("Scene not ready yet, buffering EvenementDTOs...");
-                simulatorClient.bufferEvenements(msg.getEvenements());
-            }
+        if (message instanceof EvenementDTOMessage msg) {
+            simulatorClient.updateEvenements(msg.getEvenements());
             return;
         }
         if (message instanceof EntiteMarineDTOMessage msg) {

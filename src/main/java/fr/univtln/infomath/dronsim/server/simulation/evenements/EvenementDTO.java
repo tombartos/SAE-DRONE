@@ -13,31 +13,31 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EvenementDTO {
+
+    public static List<EvenementDTO> evenementsDTOs = new ArrayList<>();
     private int id;
     private Vector3f zoneCenter;
     private Vector3f zoneSize;
     private String type;
     private Vector3f direction;
     private float intensite;
+    private String entiteType;
+    private String modelPath;
 
-    public static EvenementDTO createEvenementDTO(Evenement evenement) {
-        if (evenement instanceof Courant courant) {
-            return new EvenementDTO(
-                    courant.getId(),
-                    courant.getZoneCenter(),
-                    courant.getZoneSize(),
-                    courant.getType(),
-                    courant.getDirection(),
-                    courant.getIntensite());
-        } else {
-            return new EvenementDTO(
-                    evenement.getId(),
-                    evenement.getZoneCenter(),
-                    evenement.getZoneSize(),
-                    evenement.getType(),
-                    null,
-                    0f);
-        }
+    public static EvenementDTO createEvenementDTO(int id, Vector3f zoneCenter, Vector3f zoneSize, String type,
+            Vector3f direction, float intensite, String entiteType,
+            String modelPath) {
+        EvenementDTO evenementDTO = new EvenementDTO(
+                id,
+                zoneCenter,
+                zoneSize,
+                type,
+                direction,
+                intensite,
+                entiteType,
+                modelPath);
+        evenementsDTOs.add(evenementDTO);
+        return evenementDTO;
     }
 
 }

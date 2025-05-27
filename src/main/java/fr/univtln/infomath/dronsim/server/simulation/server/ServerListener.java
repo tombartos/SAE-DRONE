@@ -5,7 +5,10 @@ import com.jme3.network.MessageListener;
 import com.jme3.network.HostedConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import fr.univtln.infomath.dronsim.server.simulation.jme_messages.AjoutEvenementMessage;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.Handshake1;
+import fr.univtln.infomath.dronsim.server.simulation.jme_messages.RetirerEvenementMessage;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -20,6 +23,13 @@ public class ServerListener implements MessageListener<HostedConnection> {
             log.info("Server received Handshake1 : ClientId = " + handshake.getClientId());
             // send back a Handshake2 message to the client
             simulatorServer.sendHandshake2(handshake.getClientId(), source);
+            return;
+        }
+        if (message instanceof AjoutEvenementMessage ajoutMsg) {
+            simulatorServer.ajoutEvenement(ajoutMsg.getEvenement());
+            return;
+        } else if (message instanceof RetirerEvenementMessage retirerMsg) {
+            simulatorServer.retirerEvenement(retirerMsg.getEvenementId());
             return;
         }
         // if (message instanceof DroneMovementRequestMessage) {

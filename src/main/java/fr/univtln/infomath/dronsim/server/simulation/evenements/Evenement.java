@@ -17,16 +17,20 @@ public abstract class Evenement {
     protected Vector3f zoneCenter;
     protected Vector3f zoneSize;
     protected String type;
+    protected Vector3f direction;
+    private float intensite;
     protected PhysicsSpace physicsSpace;
 
     public static final List<Evenement> evenements = new ArrayList<>();
 
-    public Evenement(int id, Vector3f zoneCenter, Vector3f zoneSize, PhysicsSpace physicsSpace) {
+    public Evenement(int id, Vector3f zoneCenter, Vector3f zoneSize, Vector3f direction, float intensite,
+            PhysicsSpace physicsSpace) {
         this.id = id;
         this.zoneCenter = zoneCenter;
         this.zoneSize = zoneSize;
+        this.direction = direction;
+        this.intensite = intensite;
         this.physicsSpace = physicsSpace;
-        evenements.add(this);
     }
 
     public abstract void apply(float tpf);
@@ -41,5 +45,12 @@ public abstract class Evenement {
 
     public static List<Evenement> getEvenements() {
         return evenements;
+    }
+    public static void ajouterEvenement(Evenement event) {
+        evenements.add(event);
+    }
+
+    public void retirer() {
+        evenements.remove(this);
     }
 }
