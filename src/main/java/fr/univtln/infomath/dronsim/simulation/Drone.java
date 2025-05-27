@@ -88,6 +88,11 @@ public class Drone {
         initialThrusterLocalPosition = new ArrayList<>();
         this.thrusterNodes = new ArrayList<>();
 
+        this.node.attachChild(new Node("ForwardMarker"));
+        this.node.getChild("ForwardMarker").setLocalTranslation(0, 0, 0.25f);
+        this.node.attachChild(new Node("BackwardMarker"));
+        this.node.getChild("BackwardMarker").setLocalTranslation(0, 0, -0.25f);
+
         //initialThrusterVecs.add(new Vector3f(-0.7431f, 0.0000f, -0.6691f).normalize());
         //initialThrusterLocalPosition.add(new Vector3f(-0.1f, 0f, 0.16f));
         initialThrusterVecs.add(new Vector3f(-0.25f,0.0f,-0.25f).normalize());
