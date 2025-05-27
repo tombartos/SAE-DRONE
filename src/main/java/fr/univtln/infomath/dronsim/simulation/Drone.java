@@ -7,6 +7,8 @@ import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Matrix3f;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -36,24 +38,26 @@ public class Drone {
     @Setter
     private List<Vector3f> thrusterGlobalPositions;
 
+    private List<Node> thrusterNodes;
+
     public Drone(AssetManager assetManager, PhysicsSpace space, String modelPath, String name, Vector3f position,
             float mass, float speed) {
 
         this.assetManager = assetManager;
         this.node = new Node(name);
+        this.node.setLocalTranslation(position); // positionne le node principal
         Spatial model = assetManager.loadModel(modelPath);
-        model.setLocalTranslation(0, 0.05f, 0);
         this.position = position;
         // model.rotate(FastMath.HALF_PI, 0f, 0f); // Applique la rotation au modèle,
         // pas au noeud global
         this.node.attachChild(model);
-        this.node.setLocalTranslation(position); // positionne le node principal
+        model.setLocalTranslation(0, 0.05f, 0);
         this.speed = speed;
 
         // Ajoute un point pour la caméra à l'avant du drone
         this.cameraNode = new Node("CameraNode");
-        this.cameraNode.setLocalTranslation(0, 0.2f, 1f);
         this.node.attachChild(this.cameraNode);
+        this.cameraNode.setLocalTranslation(0, 0.2f, 1f);
 
         // Création de la collision
         Vector3f dim = new Vector3f(0.2f, 0.14f, 0.2f);
@@ -82,24 +86,59 @@ public class Drone {
         // Initial thruster position based on the node referencial (local position)
         // WARNING : Can be broken if the node is rotated at creation, need to fix this
         initialThrusterLocalPosition = new ArrayList<>();
+        this.thrusterNodes = new ArrayList<>();
 
-        initialThrusterVecs.add(new Vector3f(-0.7431f, 0.0000f, -0.6691f).normalize());
-        initialThrusterLocalPosition.add(new Vector3f(-0.1f, 0f, 0.16f));
+        //initialThrusterVecs.add(new Vector3f(-0.7431f, 0.0000f, -0.6691f).normalize());
+        //initialThrusterLocalPosition.add(new Vector3f(-0.1f, 0f, 0.16f));
+        initialThrusterVecs.add(new Vector3f(-0.25f,0.0f,-0.25f).normalize());
+        initialThrusterLocalPosition.add(new Vector3f(-0.1f, 0f, 0.1f));
+        this.thrusterNodes.add(new Node("ThrusterNode1"));
+        this.node.attachChild(this.thrusterNodes.getLast());
+        this.thrusterNodes.getLast().lookAt(initialThrusterVecs.getLast(), new Vector3f(0, 1, 0));
+        this.thrusterNodes.getLast().setLocalTranslation(initialThrusterLocalPosition.getLast());
 
-        initialThrusterVecs.add(new Vector3f(0.7431f, 0.0000f, -0.6691f).normalize());
-        initialThrusterLocalPosition.add(new Vector3f(0.1f, 0f, 0.16f));
+        //initialThrusterVecs.add(new Vector3f(0.7431f, 0.0000f, -0.6691f).normalize());
+        //initialThrusterLocalPosition.add(new Vector3f(0.1f, 0f, 0.16f));
+        initialThrusterVecs.add(new Vector3f(0.25f,0.0f,-0.25f).normalize());
+        initialThrusterLocalPosition.add(new Vector3f(0.1f, 0f, 0.1f));
+        this.thrusterNodes.add(new Node("ThrusterNode2"));
+        this.node.attachChild(this.thrusterNodes.getLast());
+        this.thrusterNodes.getLast().lookAt(initialThrusterVecs.getLast(), new Vector3f(0,1,0));
+        this.thrusterNodes.getLast().setLocalTranslation(initialThrusterLocalPosition.getLast());
 
-        initialThrusterVecs.add(new Vector3f(0.7431f, 0.0000f, 0.6691f).normalize());
-        initialThrusterLocalPosition.add(new Vector3f(0.1f, 0f, -0.16f));
 
-        initialThrusterVecs.add(new Vector3f(-0.7431f, -0.0000f, 0.6691f).normalize());
-        initialThrusterLocalPosition.add(new Vector3f(-0.1f, 0f, -0.16f));
+        //initialThrusterVecs.add(new Vector3f(0.7431f, 0.0000f, 0.6691f).normalize());
+        //initialThrusterLocalPosition.add(new Vector3f(0.1f, 0f, -0.16f));
+        initialThrusterVecs.add(new Vector3f(0.25f,0.0f,0.25f).normalize());
+        initialThrusterLocalPosition.add(new Vector3f(0.1f, 0f, -0.1f));
+        this.thrusterNodes.add(new Node("ThrusterNode3"));
+        this.node.attachChild(this.thrusterNodes.getLast());
+        this.thrusterNodes.getLast().lookAt(initialThrusterVecs.getLast(), new Vector3f(0,1,0));
+        this.thrusterNodes.getLast().setLocalTranslation(initialThrusterLocalPosition.getLast());
+
+        //initialThrusterVecs.add(new Vector3f(-0.7431f, -0.0000f, 0.6691f).normalize());
+        //initialThrusterLocalPosition.add(new Vector3f(-0.1f, 0f, -0.16f));
+        initialThrusterVecs.add(new Vector3f(-0.25f,0.0f,0.25f).normalize());
+        initialThrusterLocalPosition.add(new Vector3f(-0.1f, 0f, -0.1f));
+        this.thrusterNodes.add(new Node("ThrusterNode4"));
+        this.thrusterNodes.getLast().lookAt(initialThrusterVecs.getLast(), new Vector3f(0,1,0));
+        this.thrusterNodes.getLast().setLocalTranslation(initialThrusterLocalPosition.getLast());
+        this.node.attachChild(this.thrusterNodes.getLast());
 
         initialThrusterVecs.add(new Vector3f(0.0000f, 1f, 0f).normalize());
         initialThrusterLocalPosition.add(new Vector3f(0.1f, 0f, 0f));
+        this.thrusterNodes.add(new Node("ThrusterNode5"));
+        this.node.attachChild(this.thrusterNodes.getLast());
+        this.thrusterNodes.getLast().setLocalTranslation(initialThrusterLocalPosition.getLast());
+        this.thrusterNodes.getLast().lookAt(initialThrusterVecs.getLast(), initialThrusterVecs.getLast());
+
 
         initialThrusterVecs.add(new Vector3f(-0.0000f, -1f, 0f).normalize());
         initialThrusterLocalPosition.add(new Vector3f(-0.1f, 0f, 0f));
+        this.thrusterNodes.add(new Node("ThrusterNode6"));
+        this.node.attachChild(this.thrusterNodes.getLast());
+        this.thrusterNodes.getLast().setLocalTranslation(initialThrusterLocalPosition.getLast());
+        this.thrusterNodes.getLast().lookAt(initialThrusterVecs.getLast(), initialThrusterVecs.getLast());
 
         thrusterVecs = new ArrayList<>();
         for (Vector3f v : initialThrusterVecs) {
