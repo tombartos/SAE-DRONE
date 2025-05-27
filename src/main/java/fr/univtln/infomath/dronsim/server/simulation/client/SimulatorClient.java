@@ -10,11 +10,7 @@ import com.jme3.bullet.collision.PhysicsCollisionListener;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
-import com.jme3.effect.ParticleEmitter;
-import com.jme3.effect.ParticleMesh;
 import com.jme3.light.*;
-import com.jme3.material.Material;
-import com.jme3.texture.Texture;
 import com.jme3.math.*;
 import com.jme3.network.Client;
 import com.jme3.network.Network;
@@ -55,8 +51,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -158,6 +152,8 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
                 SkyFactory.EnvMapType.CubeMap));
 
         viewPort.addProcessor(frameCaptureProcessor); // Ajout du processeur de capture d'images
+        // ajouterEvenementTest();
+        // retirerEvenement(999);
     }
 
     /**

@@ -537,6 +537,17 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         }
     }
 
+    /**
+     * Returns the list of all events currently in
+     * the simulation.
+     * 
+     * @return List of Evenement objects.
+     */
+
+    public List<Evenement> getEvenements() {
+        return Evenement.getEvenements();
+    }
+
     private void broadcastEvenements() {
         List<EvenementDTO> eventDTOs = new ArrayList<>();
         for (Evenement event : Evenement.getEvenements()) {
