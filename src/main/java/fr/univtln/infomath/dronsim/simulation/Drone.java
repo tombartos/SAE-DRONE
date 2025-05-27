@@ -50,7 +50,7 @@ public class Drone {
         this.position = position;
         // model.rotate(FastMath.HALF_PI, 0f, 0f); // Applique la rotation au modèle,
         // pas au noeud global
-        this.node.attachChild(model);
+        //this.node.attachChild(model);
         model.setLocalTranslation(0, 0.05f, 0);
         this.speed = speed;
 
@@ -99,8 +99,8 @@ public class Drone {
         initialThrusterLocalPosition.add(new Vector3f(-0.1f, 0f, 0.1f));
         this.thrusterNodes.add(new Node("ThrusterNode1"));
         this.node.attachChild(this.thrusterNodes.getLast());
-        this.thrusterNodes.getLast().lookAt(initialThrusterVecs.getLast(), new Vector3f(0, 1, 0));
         this.thrusterNodes.getLast().setLocalTranslation(initialThrusterLocalPosition.getLast());
+        this.thrusterNodes.getLast().lookAt(initialThrusterVecs.getLast(), new Vector3f(0, 1, 0));
 
         //initialThrusterVecs.add(new Vector3f(0.7431f, 0.0000f, -0.6691f).normalize());
         //initialThrusterLocalPosition.add(new Vector3f(0.1f, 0f, 0.16f));
@@ -108,8 +108,8 @@ public class Drone {
         initialThrusterLocalPosition.add(new Vector3f(0.1f, 0f, 0.1f));
         this.thrusterNodes.add(new Node("ThrusterNode2"));
         this.node.attachChild(this.thrusterNodes.getLast());
-        this.thrusterNodes.getLast().lookAt(initialThrusterVecs.getLast(), new Vector3f(0,1,0));
         this.thrusterNodes.getLast().setLocalTranslation(initialThrusterLocalPosition.getLast());
+        this.thrusterNodes.getLast().lookAt(initialThrusterVecs.getLast(), new Vector3f(0,1,0));
 
 
         //initialThrusterVecs.add(new Vector3f(0.7431f, 0.0000f, 0.6691f).normalize());
@@ -118,16 +118,16 @@ public class Drone {
         initialThrusterLocalPosition.add(new Vector3f(0.1f, 0f, -0.1f));
         this.thrusterNodes.add(new Node("ThrusterNode3"));
         this.node.attachChild(this.thrusterNodes.getLast());
-        this.thrusterNodes.getLast().lookAt(initialThrusterVecs.getLast(), new Vector3f(0,1,0));
         this.thrusterNodes.getLast().setLocalTranslation(initialThrusterLocalPosition.getLast());
+        this.thrusterNodes.getLast().lookAt(initialThrusterVecs.getLast(), new Vector3f(0,1,0));
 
         //initialThrusterVecs.add(new Vector3f(-0.7431f, -0.0000f, 0.6691f).normalize());
         //initialThrusterLocalPosition.add(new Vector3f(-0.1f, 0f, -0.16f));
         initialThrusterVecs.add(new Vector3f(-0.25f,0.0f,0.25f).normalize());
         initialThrusterLocalPosition.add(new Vector3f(-0.1f, 0f, -0.1f));
         this.thrusterNodes.add(new Node("ThrusterNode4"));
-        this.thrusterNodes.getLast().lookAt(initialThrusterVecs.getLast(), new Vector3f(0,1,0));
         this.thrusterNodes.getLast().setLocalTranslation(initialThrusterLocalPosition.getLast());
+        this.thrusterNodes.getLast().lookAt(initialThrusterVecs.getLast(), new Vector3f(0,1,0));
         this.node.attachChild(this.thrusterNodes.getLast());
 
         initialThrusterVecs.add(new Vector3f(0.0000f, 1f, 0f).normalize());
