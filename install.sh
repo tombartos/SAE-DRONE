@@ -136,7 +136,8 @@ echo  build of QGroundControl
 mkdir qgc
 cd qgc
 
-wget https://d176tv9ibo4jno.cloudfront.net/latest/QGroundControl.AppImage
+wget https://github.com/mavlink/qgroundcontrol/releases/download/v4.4.4/QGroundControl.AppImage
+
 chmod +x QGroundControl.AppImage
 
 cd ..
