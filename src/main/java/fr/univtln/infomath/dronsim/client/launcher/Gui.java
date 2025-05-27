@@ -371,9 +371,11 @@ public class Gui {
                 // Start Ardupilot and QGroundControl in two different shells
                 // Start Ardupilot
                 try {
+                    String projectDir = System.getProperty("user.dir");
                     String[] cmd = {
                             "bash", "-c",
-                            "cd ~/SAE-DRONE && source ./venv/bin/activate && cd ardupilot && ./Tools/autotest/sim_vehicle.py -v ArduSub --out=udp:127.0.0.1:14550 --console --map; exec bash"
+                            "cd " + projectDir
+                                    + " && source ./venv/bin/activate && cd ardupilot && ./Tools/autotest/sim_vehicle.py -v ArduSub --out=udp:127.0.0.1:14550 --console --map; exec bash"
                     };
                     new ProcessBuilder(cmd)
                             .directory(new java.io.File(System.getProperty("user.home")))
@@ -388,9 +390,10 @@ public class Gui {
 
                 // Start QGroundControl
                 try {
+                    String projectDir = System.getProperty("user.dir");
                     String[] cmd = {
                             "bash", "-c",
-                            "~/SAE-DRONE/qgc/QGroundControl.AppImage; exec bash"
+                            projectDir + "/qgc/QGroundControl.AppImage; exec bash"
                     };
                     new ProcessBuilder(cmd)
                             .directory(new java.io.File(System.getProperty("user.home")))
