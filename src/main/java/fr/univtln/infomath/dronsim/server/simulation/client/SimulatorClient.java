@@ -222,17 +222,18 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
         }
 
         // Ajout des entités marines
-        for (EntiteMarineInitData marineInit : handshake2.getEntitesMarineInitData()) {
-            EntiteMarine entite = EntiteMarine.createEntite(
-                    marineInit.getId(),
-                    marineInit.getType(),
-                    marineInit.getModelPath(),
-                    marineInit.getPosition(),
-                    marineInit.getDirection(),
-                    marineInit.getSpeed(),
-                    assetManager);
-            scene.attachChild(entite.getModelNode());
-        }
+        // for (EntiteMarineInitData marineInit : handshake2.getEntitesMarineInitData())
+        // {
+        // EntiteMarine entite = EntiteMarine.createEntite(
+        // marineInit.getId(),
+        // marineInit.getType(),
+        // marineInit.getModelPath(),
+        // marineInit.getPosition(),
+        // marineInit.getDirection(),
+        // marineInit.getSpeed(),
+        // assetManager);
+        // scene.attachChild(entite.getModelNode());
+        // }
 
         // Ajout des événements initiaux
         for (EvenementDTO dto : handshake2.getEvenementsInitData()) {
@@ -298,13 +299,13 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
             }
         }
 
-        // for (EntiteMarine entite : EntiteMarine.getEntites()) {
+        for (EntiteMarine entite : EntiteMarine.getEntites()) {
 
-        // Node node = entite.getModelNode();
-        // if (node != null) {
-        // node.setLocalTranslation(entite.getPositionCourante());
-        // }
-        // }
+            Node node = entite.getModelNode();
+            if (node != null) {
+                node.setLocalTranslation(entite.getPositionCourante());
+            }
+        }
 
         for (Evenement event : Evenement.getEvenements()) {
             if (event != null) {
