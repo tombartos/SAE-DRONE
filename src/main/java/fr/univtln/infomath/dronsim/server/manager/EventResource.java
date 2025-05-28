@@ -51,14 +51,14 @@ public class EventResource {
 
         String type;
         String entiteType;
-        if (eventCreateRequest.getType() == "Courant") {
+        if (eventCreateRequest.getType().equals("Courant")) {
             type = "Courant";
             entiteType = null;
 
-        } else if (eventCreateRequest.getType() == "Bateau") {
+        } else if (eventCreateRequest.getType().equals("Bateau")) {
             type = "EntiteMarine";
             entiteType = "Bateau";
-        } else if (eventCreateRequest.getType() == "Poisson") {
+        } else if (eventCreateRequest.getType().equals("Poisson")) {
             type = "EntiteMarine";
             entiteType = "Poisson";
         } else {
