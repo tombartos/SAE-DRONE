@@ -298,13 +298,13 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
             }
         }
 
-        for (EntiteMarine entite : EntiteMarine.getEntites()) {
+        // for (EntiteMarine entite : EntiteMarine.getEntites()) {
 
-            Node node = entite.getModelNode();
-            if (node != null) {
-                node.setLocalTranslation(entite.getPositionCourante());
-            }
-        }
+        // Node node = entite.getModelNode();
+        // if (node != null) {
+        // node.setLocalTranslation(entite.getPositionCourante());
+        // }
+        // }
 
         for (Evenement event : Evenement.getEvenements()) {
             if (event != null) {
