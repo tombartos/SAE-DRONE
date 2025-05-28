@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jme3.math.Vector3f;
 import com.jme3.network.serializing.Serializable;
 
@@ -22,9 +23,12 @@ public class EvenementDTO {
     private static final Logger log = LoggerFactory.getLogger(EvenementDTO.class);
     public static List<EvenementDTO> evenementsDTOs = new ArrayList<>();
     private int id;
+    @JsonIgnoreProperties(ignoreUnknown = true)
     private Vector3f zoneCenter;
+    @JsonIgnoreProperties(ignoreUnknown = true)
     private Vector3f zoneSize;
     private String type;
+    @JsonIgnoreProperties(ignoreUnknown = true)
     private Vector3f direction;
     private float intensite;
     private String entiteType;
