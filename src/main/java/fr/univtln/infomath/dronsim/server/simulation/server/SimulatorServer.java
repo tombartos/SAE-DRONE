@@ -588,6 +588,24 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         server.broadcast(new EvenementDTOMessage(eventDTOs));
     }
 
+    public static List<EvenementDTO> getEvenementDTOs() {
+        List<EvenementDTO> eventDTOs = new ArrayList<>();
+        for (Evenement event : Evenement.getEvenements()) {
+            eventDTOs.add(EvenementDTO.createEvenementDTO(event.getId(),
+                    event.getZoneCenter(),
+                    event.getZoneSize(),
+                    event.getType(),
+                    event.getDirection(),
+                    event instanceof Courant ? ((Courant) event).getIntensite() : 1f,
+                    event instanceof AjoutEntiteMarineEvent ? ((AjoutEntiteMarineEvent) event).getEntite().getType()
+                            : null,
+                    event instanceof AjoutEntiteMarineEvent
+                            ? ((AjoutEntiteMarineEvent) event).getEntite().getModelPath()
+                            : null));
+        }
+        return eventDTOs;
+    }
+
     public void sendEntiteMarinePositions() {
         List<EntiteMarineDTO> dtos = new ArrayList<>();
 

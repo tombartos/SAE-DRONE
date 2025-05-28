@@ -2,6 +2,7 @@ package fr.univtln.infomath.dronsim.client.launcher;
 
 import fr.univtln.infomath.dronsim.server.simulation.client.SimulatorClient;
 import fr.univtln.infomath.dronsim.server.simulation.evenements.Evenement;
+import fr.univtln.infomath.dronsim.server.simulation.evenements.EvenementDTO;
 import fr.univtln.infomath.dronsim.shared.DroneAssociation;
 import fr.univtln.infomath.dronsim.shared.PilotInitResp;
 import fr.univtln.infomath.dronsim.shared.User;
@@ -483,30 +484,27 @@ public class Gui {
 
             this.listeEventsBox.getChildren().clear();
 
-            // TODO : Récupérer la liste des événements actifs depuis le serveur
-            // List<Evenement> evenementsActifs = RestClient.getActiveEvents(); // méthode à
-            // implémenter
-            /*
-             * for (Evenement evt : evenementsActifs) {
-             * Label eventLabel = new Label(evt.getType() + " à " + evt.getZoneCenter());
-             * eventLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: white;");
-             *
-             * JFXButton stopBtn = new JFXButton("Arrêter");
-             * stopBtn.setStyle("-fx-background-color: #f44336; -fx-text-fill: white;");
-             *
-             * HBox eventLine = new HBox(10, eventLabel, stopBtn);
-             * eventLine.setAlignment(Pos.CENTER);
-             * this.listeEventsBox.getChildren().add(eventLine);
-             *
-             * // Action pour le bouton "Arrêter"
-             * stopBtn.setOnAction(evStop -> {
-             * // TODO : implémenter la méthode pour arrêter l'événement
-             * // ReadableString response = RestClient.stopEvent(evt.getId());
-             * this.listeEventsBox.getChildren().remove(eventLine);
-             * });
-             *
-             * }
-             */
+            List<EvenementDTO> evenementsActifs = RestClient.getEvents();
+
+            for (EvenementDTO evt : evenementsActifs) {
+                Label eventLabel = new Label(evt.getType() + " à " + evt.getZoneCenter());
+                eventLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: white;");
+
+                JFXButton stopBtn = new JFXButton("Arrêter");
+                stopBtn.setStyle("-fx-background-color: #f44336; -fx-text-fill: white;");
+
+                HBox eventLine = new HBox(10, eventLabel, stopBtn);
+                eventLine.setAlignment(Pos.CENTER);
+                this.listeEventsBox.getChildren().add(eventLine);
+
+                // Action pour le bouton "Arrêter"
+                stopBtn.setOnAction(evStop -> {
+                    // TODO : implémenter la méthode pour arrêter l'événement
+                    // ReadableString response = RestClient.stopEvent(evt.getId());
+                    this.listeEventsBox.getChildren().remove(eventLine);
+                });
+
+            }
 
             if (eventsBtnBox.getChildren().contains(scrollEventBox)) {
                 eventsBtnBox.getChildren().remove(scrollEventBox);

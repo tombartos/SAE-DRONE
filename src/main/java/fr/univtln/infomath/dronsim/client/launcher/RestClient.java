@@ -9,6 +9,7 @@ import java.util.List;
 import org.glassfish.jersey.jackson.JacksonFeature;
 
 import fr.univtln.infomath.dronsim.server.auth.AuthenticationService.AuthenticatedUser;
+import fr.univtln.infomath.dronsim.server.simulation.evenements.EvenementDTO;
 import fr.univtln.infomath.dronsim.shared.DroneAssociation;
 import fr.univtln.infomath.dronsim.shared.PilotInitResp;
 import fr.univtln.infomath.dronsim.shared.User;
@@ -259,6 +260,29 @@ public class RestClient {
         } catch (WebApplicationException e) {
             log.error("WebApplicationException: {}", e.getMessage());
             return new PilotInitResp(false, -99, null); // -99 is a special value to indicate an error
+        }
+    }
+
+    public static List<EvenementDTO> getEvents() {
+        try {
+            Response response = baseTarget.path("events")
+                    .request(MediaType.APPLICATION_JSON)
+                    .header("Authorization", authHeader)
+                    .get();
+            if (response.getStatus() >= 400) {
+                String errorMsg = response.readEntity(String.class);
+                log.error("HTTP {}: {}", response.getStatus(), errorMsg);
+                response.close();
+                return null;
+            }
+            List<EvenementDTO> events = response.readEntity(new GenericType<List<EvenementDTO>>() {
+            });
+            response.close();
+            log.info("Response received: " + events);
+            return events;
+        } catch (WebApplicationException e) {
+            log.error("WebApplicationException: {}", e.getMessage());
+            return null;
         }
     }
 
