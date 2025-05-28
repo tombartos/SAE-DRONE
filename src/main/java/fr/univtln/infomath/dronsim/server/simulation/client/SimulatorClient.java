@@ -42,7 +42,6 @@ import fr.univtln.infomath.dronsim.server.simulation.jme_messages.EntiteMarineDT
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.EvenementDTOMessage;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.Handshake1;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.Handshake2;
-//import fr.univtln.infomath.dronsim.server.viewer.primitives.ReferentialNode;
 import fr.univtln.infomath.dronsim.server.utils.GStreamerSender;
 
 import java.io.IOException;
