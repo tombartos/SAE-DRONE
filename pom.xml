@@ -65,7 +65,6 @@
 			<timezone>France/Paris</timezone>
 			<properties><!-- <picUrl>http://www.example.com/jdoe/pic</picUrl> --></properties>
 		</developer>
-	</developers>
   <developer>
 			<id>jseinturier</id>
 			<name>Julien Seinturier</name>
@@ -80,6 +79,7 @@
 			<timezone>France/Paris</timezone>
 			<properties><!-- <picUrl>http://www.example.com/jdoe/pic</picUrl> --></properties>
 		</developer>
+  </developers>
 
 
   <properties>
