@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import fr.univtln.infomath.dronsim.server.simulation.drones.DroneInitData;
 import fr.univtln.infomath.dronsim.server.simulation.entiteMarine.EntiteMarineInitData;
+import fr.univtln.infomath.dronsim.server.simulation.evenements.EvenementDTO;
 
 @Getter
 @Setter
@@ -22,4 +23,6 @@ public class Handshake2 extends AbstractMessage {
     private int yourDroneId;
 
     private List<EntiteMarineInitData> entitesMarineInitData;
+    private List<EvenementDTO> evenementsInitData;
+
 }

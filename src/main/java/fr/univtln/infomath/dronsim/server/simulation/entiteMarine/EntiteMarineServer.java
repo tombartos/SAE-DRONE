@@ -7,10 +7,14 @@ import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
+import lombok.Getter;
 
 import org.slf4j.Logger;
+
 import org.slf4j.LoggerFactory;
 
+
+@Getter
 public class EntiteMarineServer extends EntiteMarine {
     private static final Logger log = LoggerFactory.getLogger(EntiteMarineServer.class);
 
