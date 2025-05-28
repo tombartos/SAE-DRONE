@@ -4,6 +4,84 @@
   <artifactId>png</artifactId>
   <version>0.0.1-SNAPSHOT</version>
 
+  <name>SDF Simulateur de Drone Francais</name>
+	<description>A multi-environment drone simulator</description>
+
+
+	<licenses>
+		<license>
+			<name>The GNU Lesser General Public License, Version 3.0</name>
+			<url>http://www.gnu.org/licenses/lgpl-3.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+<developers>
+		<developer>
+			<id>tombartos</id>
+			<name>Tom BARTIER</name>
+			<email>tom-bartier@etud.univ-tln.fr</email>
+			<organization>University of Toulon</organization>
+			<organizationUrl>http://www.univ-tln.fr</organizationUrl>
+			<roles>
+				<role>student</role>
+			</roles>
+			<timezone>France/Paris</timezone>
+			<properties><!-- <picUrl>http://www.example.com/jdoe/pic</picUrl> --></properties>
+		</developer>
+    <developer>
+			<id>grifire</id>
+			<name>Yann ROBLIN</name>
+			<email>yann-roblin@etud.univ-tln.fr</email>
+			<organization>University of Toulon</organization>
+			<organizationUrl>http://www.univ-tln.fr</organizationUrl>
+			<roles>
+				<role>student</role>
+			</roles>
+			<timezone>France/Paris</timezone>
+			<properties><!-- <picUrl>http://www.example.com/jdoe/pic</picUrl> --></properties>
+		</developer>
+    <developer>
+			<id>BAGUBAIR</id>
+			<name>Emad BA GUBAIR</name>
+			<email>emad-ba-gubair@etud.univ-tln.fr</email>
+			<organization>University of Toulon</organization>
+			<organizationUrl>http://www.univ-tln.fr</organizationUrl>
+			<roles>
+				<role>student</role>
+			</roles>
+			<timezone>France/Paris</timezone>
+			<properties><!-- <picUrl>http://www.example.com/jdoe/pic</picUrl> --></properties>
+		</developer>
+    <developer>
+			<id>andremarcais</id>
+			<name>André Marçais</name>
+			<email>andre-marcais@etud.univ-tln.fr</email>
+			<organization>University of Toulon</organization>
+			<organizationUrl>http://www.univ-tln.fr</organizationUrl>
+			<roles>
+				<role>student</role>
+			</roles>
+			<timezone>France/Paris</timezone>
+			<properties><!-- <picUrl>http://www.example.com/jdoe/pic</picUrl> --></properties>
+		</developer>
+	</developers>
+  <developer>
+			<id>jseinturier</id>
+			<name>Julien Seinturier</name>
+			<email>julien.seinturier@univ-tln.fr</email>
+			<url>http://www.seinturier.fr</url>
+			<organization>University of Toulon</organization>
+			<organizationUrl>http://www.univ-tln.fr</organizationUrl>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+			<timezone>France/Paris</timezone>
+			<properties><!-- <picUrl>http://www.example.com/jdoe/pic</picUrl> --></properties>
+		</developer>
+
+
   <properties>
     <jersey.version>3.1.10</jersey.version>
     <javafx.version>21</javafx.version>

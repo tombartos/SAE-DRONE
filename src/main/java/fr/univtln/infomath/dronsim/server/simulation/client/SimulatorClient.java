@@ -54,6 +54,34 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * SimulatorClient is the main client application for the drone simulation.
+ * <p>
+ * It connects to a simulation server, initializes the 3D environment using
+ * jMonkeyEngine, manages the rendering of drones and marine entities, handles
+ * network communication, and streams video output using GStreamer.
+ * <p>
+ * The class is responsible for:
+ * <ul>
+ * <li>Connecting to the simulation server and handling handshake messages</li>
+ * <li>Initializing and updating the 3D scene, including terrain, water,
+ * lighting, and sky</li>
+ * <li>Managing drones and marine entities, updating their positions and
+ * states</li>
+ * <li>Displaying visual effects for simulation events</li>
+ * <li>Streaming the rendered scene to a specified video destination</li>
+ * </ul>
+ * <p>
+ * Usage: The application expects three command-line arguments:
+ *
+ * <pre>
+ *   &lt;video_destination_ip&gt; &lt;server_ip&gt; &lt;client_id&gt;
+ * </pre>
+ *
+ * @author Tom BARTIER
+ * @author Emad BA GUBAIR
+ * @author Julien Seinturier
+ */
 public class SimulatorClient extends SimpleApplication implements PhysicsCollisionListener {
     private static final Logger log = LoggerFactory.getLogger(SimulatorClient.class);
 
@@ -242,6 +270,11 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
         }
     }
 
+    /**
+     * Attaches the terrain model to the specified parent node.
+     *
+     * @param parent The parent node to which the terrain will be attached.
+     */
     private void attachTerrain(Node parent) {
         Node terrainNode = new Node("Terrain");
         terrainNode.setLocalTranslation(new Vector3f(3.0f, -15.0f, 0.0f));
@@ -255,6 +288,12 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
         space.add(terrainPhysics);
     }
 
+    /**
+     * Initializes the water filter for the scene.
+     * <p>
+     * This method creates a WaterFilter and adds it to the FilterPostProcessor,
+     * which is then added to the viewPort for rendering.
+     */
     private void initWater() {
         WaterFilter waterFilter = new WaterFilter();
         waterFilter.setWaterHeight(3.0f);
@@ -265,6 +304,12 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
         viewPort.addProcessor(fpp);
     }
 
+    /**
+     * Initializes the lighting for the scene.
+     * <p>
+     * This method adds an ambient light and a directional light to the root node
+     * to illuminate the scene.
+     */
     private void initLighting() {
         rootNode.addLight(new AmbientLight(ColorRGBA.White));
 
@@ -303,6 +348,12 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
         // Rien à faire ici, la physique gère la collision naturellement
     }
 
+    /**
+     * Updates the positions and states of drones based on the provided list of
+     * DroneDTOs.
+     *
+     * @param dronesDTOsList List of DroneDTOs containing updated drone information.
+     */
     public void updateDronesInfo(List<DroneDTO> dronesDTOsList) {
         for (Drone drone : Drone.getDrones()) {
             for (DroneDTO droneDTO : dronesDTOsList) {
