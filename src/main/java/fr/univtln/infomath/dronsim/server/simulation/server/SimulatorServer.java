@@ -545,7 +545,7 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         broadcastEvenements();
     }
 
-    public void retirerEvenement(int id) {
+    public boolean retirerEvenement(int id) {
         Evenement toRemove = null;
         for (Evenement ev : Evenement.getEvenements()) {
             if (ev.getId() == id) {
@@ -556,7 +556,9 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         if (toRemove != null) {
             toRemove.retirer();
             broadcastEvenements();
+            return true; // Event found and removed
         }
+        return false; // Event not found
     }
 
     /**

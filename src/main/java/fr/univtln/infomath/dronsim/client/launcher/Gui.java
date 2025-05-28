@@ -485,6 +485,7 @@ public class Gui {
             this.listeEventsBox.getChildren().clear();
 
             List<EvenementDTO> evenementsActifs = RestClient.getEvents();
+            log.info("DEBUG = " + evenementsActifs.toString());
 
             for (EvenementDTO evt : evenementsActifs) {
                 Label eventLabel = new Label(evt.getType() + " à " + evt.getZoneCenter());
@@ -499,9 +500,11 @@ public class Gui {
 
                 // Action pour le bouton "Arrêter"
                 stopBtn.setOnAction(evStop -> {
-                    // TODO : implémenter la méthode pour arrêter l'événement
-                    // ReadableString response = RestClient.stopEvent(evt.getId());
-                    this.listeEventsBox.getChildren().remove(eventLine);
+                    String response = RestClient.removeEvent(evt.getId());
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION, response);
+                    alert.showAndWait();
+                    if (response.equals("Event deleted successfully"))
+                        this.listeEventsBox.getChildren().remove(eventLine);
                 });
 
             }

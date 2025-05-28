@@ -19,6 +19,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class EvenementDTO {
     private static final Logger log = LoggerFactory.getLogger(EvenementDTO.class);
     public static List<EvenementDTO> evenementsDTOs = new ArrayList<>();

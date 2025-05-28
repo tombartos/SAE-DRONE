@@ -313,4 +313,26 @@ public class RestClient {
         }
     }
 
+    public static String removeEvent(int eventId) {
+        try {
+            Response response = baseTarget.path("events/" + eventId)
+                    .request(MediaType.APPLICATION_JSON)
+                    .header("Authorization", authHeader)
+                    .delete();
+            if (response.getStatus() >= 400) {
+                String errorMsg = response.readEntity(String.class);
+                log.error("HTTP {}: {}", response.getStatus(), errorMsg);
+                response.close();
+                return errorMsg;
+            }
+            String result = response.readEntity(String.class);
+            response.close();
+            log.info("Response received: " + result);
+            return result;
+        } catch (WebApplicationException e) {
+            log.error("WebApplicationException: {}", e.getMessage());
+            return ("Error removing event: " + e.getMessage());
+        }
+    }
+
 }

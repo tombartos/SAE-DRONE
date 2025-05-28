@@ -1,8 +1,10 @@
 package fr.univtln.infomath.dronsim.server.manager;
 
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.POST;
@@ -83,5 +85,24 @@ public class EventResource {
         }
         instance.ajoutEvenement(evenementDTO);
         return "Event created successfully";
+    }
+
+    @Path("/{id}")
+    @DELETE
+    public String deleteEvent(@HeaderParam("Authorization") String authHeader, @PathParam("id") int id) {
+        // Check if the user is authenticated
+        AuthenticatedUser authUser = AuthChecker.checkAuth(authHeader);
+
+        // Check if the user is a GM
+        if (!authUser.isGameMaster()) {
+            throw new jakarta.ws.rs.ForbiddenException("User is not a GM");
+        }
+
+        // Remove the event from the server
+        boolean removed = SimulatorServer.getInstance().retirerEvenement(id);
+        if (!removed) {
+            throw new jakarta.ws.rs.BadRequestException("Event with id " + id + " not found");
+        }
+        return "Event deleted successfully";
     }
 }
