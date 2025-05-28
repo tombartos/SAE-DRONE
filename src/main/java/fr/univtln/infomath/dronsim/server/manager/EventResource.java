@@ -75,7 +75,13 @@ public class EventResource {
                 eventCreateRequest.getDirection(),
                 eventCreateRequest.getSpeed(),
                 entiteType);
-        SimulatorServer.getInstance().ajoutEvenement(evenementDTO);
+
+        SimulatorServer instance = SimulatorServer.getInstance();
+        if (instance == null) {
+            log.error("SimulatorServer instance is null, server is not initialized");
+            throw new jakarta.ws.rs.BadRequestException("SimulatorServer instance is not initialized");
+        }
+        instance.ajoutEvenement(evenementDTO);
         return "Event created successfully";
     }
 }
