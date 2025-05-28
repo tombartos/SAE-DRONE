@@ -31,6 +31,8 @@ import fr.univtln.infomath.dronsim.shared.User;
 import fr.univtln.infomath.dronsim.shared.auth.AuthUserDTO;
 import fr.univtln.infomath.dronsim.shared.auth.TokenResponse;
 
+//TODO : revoir le chargement des utilisateurs (actuellement on les charge une fois dans manager et une fois ici)
+
 @Path("auth")
 public class AuthenticationResource {
     private static final Logger log = LoggerFactory.getLogger(AuthenticationResource.class);
