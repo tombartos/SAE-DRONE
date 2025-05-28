@@ -196,7 +196,29 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         // 100);
         // scene.attachChild(droneB.getNode());
         // DroneDTO.createDroneDTO(droneB);
-
+        // Initialisation des entités marines de base
+        EntiteMarineServer bateau = EntiteMarineServer.createEntite(
+                3,
+                "Bateau",
+                assetManager,
+                space,
+                "bateau/speedboat_n2.j3o",
+                new Vector3f(-15, 3.5f, -40),
+                Vector3f.UNIT_Z,
+                1.0f);
+        scene.attachChild(bateau.getModelNode());
+        EntiteMarineDTO.createEntiteMarineDTO(bateau);
+        EntiteMarineServer poisson1 = EntiteMarineServer.createEntite(
+                0,
+                "Poisson",
+                assetManager,
+                space,
+                "poisson/school_of_fish.j3o",
+                new Vector3f(-28, -8, -3),
+                new Vector3f(1, 0, 0),
+                0.5f);
+        scene.attachChild(poisson1.getModelNode());
+        EntiteMarineDTO.createEntiteMarineDTO(poisson1);
         if (droneAssociations.size() == 0) {
             log.error("No drone associations found, aborting server initialization");
             throw new IllegalStateException("No drone associations found, aborting server initialization");
@@ -540,7 +562,7 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
     /**
      * Returns the list of all events currently in
      * the simulation.
-     * 
+     *
      * @return List of Evenement objects.
      */
 
@@ -648,7 +670,6 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
             return List.of();
         }
     }
-
     // geotools WSG84
     // Choisir zone UTM
 }
