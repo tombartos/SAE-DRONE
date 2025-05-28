@@ -80,29 +80,33 @@ public class LocalTestingControler implements ActionListener {
 
         // Vector3f angular = drone.getAngular().clone();
 
+
+
         Drawer.deleteAllLines(rootNode);
 
+        Drawer.drawLineBetweenPoints(drone.getNode().getWorldTranslation(), drone.getNode().getWorldTranslation().add(drone.getNode().getWorldRotation().getRotationColumn(2).normalize()), rootNode, drone.getAssetManager(), ColorRGBA.Orange);
+
         // Drawer.drawLineBetweenPoints(drone.getPosition(), drone.getPosition().add(Vector3f.UNIT_Y), rootNode, drone.getAssetManager(), ColorRGBA.Green);
-        Drawer.drawLineBetweenPoints(
-                drone.getNode().getWorldTranslation().add(drone.getNode().getChild("ThrusterNode1").getLocalTranslation()),
-                drone.getNode().getWorldTranslation().add(drone.getNode().getChild("ThrusterNode1").getLocalTranslation().add(new Vector3f(0,2,0))),
-                rootNode, drone.getAssetManager(), ColorRGBA.Orange);
-        Drawer.drawLineBetweenPoints(
-            drone.getNode().getLocalTranslation().add(drone.getNode().getLocalRotation().getRotationColumn(2).mult(-2)),
-            drone.getNode().getLocalTranslation().add(drone.getNode().getLocalRotation().getRotationColumn(2).mult(2)),
-                drone.getNode(), drone.getAssetManager(), ColorRGBA.Orange);
-        Drawer.drawLineBetweenPoints(
-                drone.getNode().getWorldTranslation().add(drone.getNode().getChild("ThrusterNode2").getLocalTranslation()),
-                drone.getNode().getWorldTranslation().add(drone.getNode().getChild("ThrusterNode2").getLocalTranslation().add(new Vector3f(0,2,0))),
-                rootNode, drone.getAssetManager(), ColorRGBA.White);
-        Drawer.drawLineBetweenPoints(
-                drone.getNode().getWorldTranslation().add(drone.getNode().getChild("ThrusterNode3").getLocalTranslation()),
-                drone.getNode().getWorldTranslation().add(drone.getNode().getChild("ThrusterNode3").getLocalTranslation().add(new Vector3f(0,2,0))),
-                rootNode, drone.getAssetManager(), ColorRGBA.Red);
-        Drawer.drawLineBetweenPoints(
-                drone.getNode().getWorldTranslation().add(drone.getNode().getChild("ThrusterNode4").getLocalTranslation()),
-                drone.getNode().getWorldTranslation().add(drone.getNode().getChild("ThrusterNode4").getLocalTranslation().add(new Vector3f(0,2,0))),
-                rootNode, drone.getAssetManager(), ColorRGBA.Green);
+        // Drawer.drawLineBetweenPoints(
+        //         drone.getNode().getChild("ThrusterNode1").getLocalTranslation(),
+        //         drone.getNode().getChild("ThrusterNode1").getLocalTranslation().add(new Vector3f(0,2,0)),
+        //         drone.getNode(), drone.getAssetManager(), ColorRGBA.Orange);
+        // Drawer.drawLineBetweenPoints(
+        //         drone.getNode().getLocalRotation().getRotationColumn(2).mult(-2),
+        //         drone.getNode().getLocalRotation().getRotationColumn(2).mult(2),
+        //         drone.getNode(), drone.getAssetManager(), ColorRGBA.Orange);
+        // Drawer.drawLineBetweenPoints(
+        //         drone.getNode().getChild("ThrusterNode2").getLocalTranslation(),
+        //         drone.getNode().getChild("ThrusterNode2").getLocalTranslation().add(new Vector3f(0,2,0)),
+        //         drone.getNode(), drone.getAssetManager(), ColorRGBA.White);
+        // Drawer.drawLineBetweenPoints(
+        //         drone.getNode().getChild("ThrusterNode3").getLocalTranslation(),
+        //         drone.getNode().getChild("ThrusterNode3").getLocalTranslation().add(new Vector3f(0,2,0)),
+        //         drone.getNode(), drone.getAssetManager(), ColorRGBA.Red);
+        // Drawer.drawLineBetweenPoints(
+        //         drone.getNode().getChild("ThrusterNode4").getLocalTranslation(),
+        //         drone.getNode().getChild("ThrusterNode4").getLocalTranslation().add(new Vector3f(0,2,0)),
+        //         drone.getNode(), drone.getAssetManager(), ColorRGBA.Green);
         // Drawer.drawLineBetweenPoints(
         //         drone.getNode().getWorldTranslation(),
         //         drone.getNode().getWorldTranslation().add(new Vector3f(0,2,0)),
@@ -141,6 +145,13 @@ public class LocalTestingControler implements ActionListener {
         //         drone.getNode().getWorldTranslation().add(new Vector3f(0,2,0)),
         //         rootNode, drone.getAssetManager(), ColorRGBA.Magenta);
 
+        drone.getNode().getChild("ForwardMarker").setLocalTranslation(new Vector3f(0, 0, -0.25f));
+        drone.getNode().getChild("BackwardMarker").setLocalTranslation(new Vector3f(0, 0, 0.25f));
+
+        drone.getNode().getChild("ThrusterNode1").lookAt(drone.getNode().getChild("BackwardMarker").getWorldTranslation(), Vector3f.UNIT_Y);
+        drone.getNode().getChild("ThrusterNode2").lookAt(drone.getNode().getChild("BackwardMarker").getWorldTranslation(), Vector3f.UNIT_Y);
+        drone.getNode().getChild("ThrusterNode3").lookAt(drone.getNode().getChild("ForwardMarker").getWorldTranslation(), Vector3f.UNIT_Y);
+        drone.getNode().getChild("ThrusterNode4").lookAt(drone.getNode().getChild("ForwardMarker").getWorldTranslation(), Vector3f.UNIT_Y);
         // Update the thruster global positions based on the drone's position and
         // rotation
         // List<Vector3f> updatedThrusterPositions = new ArrayList<>();
@@ -167,26 +178,26 @@ public class LocalTestingControler implements ActionListener {
 
         // Update the thruster vectors
         // Rotate each initial thruster vector by the drone's local rotation
-        List<Vector3f> rotatedThrusterVecs = new ArrayList<>();
-        //Quaternion rotation = drone.getNode().getLocalRotation();
-        Quaternion rotation = drone.getNode().getWorldRotation();
-        Vector3f[] rotationAxe = new Vector3f[3];
-        rotation.toAxes(rotationAxe);
-        //System.out.println("Rotation Axe N: " + rotation.mult(Vector3f.UNIT_XYZ));
-        // System.out.println("Rotation Axe N: " + rotation.getRotationColumn(2));
-        // System.out.println("Rotation Axe 0: " + rotationAxe[0]);
-        // System.out.println("Rotation Axe 1: " + rotationAxe[1]);
-        // System.out.println("Rotation Axe 2: " + rotationAxe[2]);
-        int i=0;
-        for (Vector3f vec : drone.getInitialThrusterVecs()) {
-            //rotatedThrusterVecs.add(vec.mult(rotationAxe[2]));
-            //drone.getThrusterVecs().set(i,rotationAxe[2].mult(drone.getInitialThrusterVecs().get(i)).normalize());
-            //drone.getThrusterVecs().set(i, drone.getNode().getChild(i+1).getWorldRotation().getRotationColumn(2));
-            // System.out.println("Thruster " + i + " : " + drone.getNode().getChild(i+1).getWorldRotation().getRotationColumn(2));
-            i++;
+    //     List<Vector3f> rotatedThrusterVecs = new ArrayList<>();
+    //     Quaternion rotation = drone.getNode().getLocalRotation();
+    //     Quaternion rotation = drone.getNode().getWorldRotation();
+    //     Vector3f[] rotationAxe = new Vector3f[3];
+    //     rotation.toAxes(rotationAxe);
+    //     System.out.println("Rotation Axe N: " + rotation.mult(Vector3f.UNIT_XYZ));
+    //     System.out.println("Rotation Axe N: " + rotation.getRotationColumn(2));
+    //     System.out.println("Rotation Axe 0: " + rotationAxe[0]);
+    //     System.out.println("Rotation Axe 1: " + rotationAxe[1]);
+    //     System.out.println("Rotation Axe 2: " + rotationAxe[2]);
+    //     int i=0;
+    //     for (Vector3f vec : drone.getInitialThrusterVecs()) {
+    //         rotatedThrusterVecs.add(vec.mult(rotationAxe[2]));
+    //         drone.getThrusterVecs().set(i,rotationAxe[2].mult(drone.getInitialThrusterVecs().get(i)).normalize());
+    //         drone.getThrusterVecs().set(i, drone.getNode().getChild(i+1).getWorldRotation().getRotationColumn(2));
+    //         System.out.println("Thruster " + i + " : " + drone.getNode().getChild(i+1).getWorldRotation().getRotationColumn(2));
+    //         i++;
 
-        }
-     // System.out.println("Direction of thruster 1: " + drone.getNode().getChild("ThrusterNode1").getLocalRotation());
+    //     }
+    //  System.out.println("Direction of thruster 1: " + drone.getNode().getChild("ThrusterNode1").getLocalRotation());
      // System.out.println("Direction of thruster 2: " + drone.getNode().getChild("ThrusterNode2").getLocalRotation());
      // System.out.println("Direction of thruster 3: " + drone.getNode().getChild("ThrusterNode3").getLocalRotation());
      // System.out.println("Direction of thruster 4: " + drone.getNode().getChild("ThrusterNode4").getLocalRotation());
@@ -195,9 +206,16 @@ public class LocalTestingControler implements ActionListener {
 
         //drone.setThrusterVecs(rotatedThrusterVecs);
 
-        Vector3f pos1 = drone.getCameraNode().getWorldTranslation();
+
+        Vector3f pos1 = drone.getNode().getWorldTranslation();
         Vector3f pos2 = drone.getControl().getPhysicsLocation();
-        System.out.println("Distance between Node and Control: " + pos1.distance(pos2));
+        // drone.getControl().setPhysicsLocation(drone.getNode().getWorldTranslation());
+        // drone.getControl().setPhysicsRotation(drone.getNode().getWorldRotation());
+
+        System.out.println("Parent Node Rotation: " + drone.getNode().getWorldRotation().normalizeLocal());
+        // System.out.println("Position Node Add: " + drone.getNode().getLocalTranslation().add(new Vector3f(0,0,2)));
+        // System.out.println("Position Node Neu: " + drone.getNode().getLocalTranslation());
+        // System.out.println("Distance between Node and Control: " + pos1.distance(pos2));
         // System.out.println("Position Node: " + pos1);
         // System.out.println("Position ThrusterNode1: " + pos2);
 
@@ -205,30 +223,31 @@ public class LocalTestingControler implements ActionListener {
         if (forward) {
             //System.out.println("Thruster1: " + drone.getThrusterGlobalPositions());
             // System.out.println("FORWARD");
-            int speed1 = -20;
-            int speed2 = 20;
+            int speed1 = 200;
+            int speed2 = -200;
             Vector3f forwardDir1 = drone.getNode().getChild("ThrusterNode1").getWorldRotation().getRotationColumn(2);
             Vector3f force1 = forwardDir1.mult(speed1);
-            Vector3f position1 = drone.getNode().getChild("ThrusterNode1").getWorldTranslation();
+            Vector3f position1 = drone.getNode().getWorldTranslation().add(drone.getNode().getChild("ThrusterNode1").getWorldTranslation().mult(-1));
             drone.getControl().applyForce(force1, position1);
 
             // Repeat for other thrusters
             Vector3f forwardDir2 = drone.getNode().getChild("ThrusterNode2").getWorldRotation().getRotationColumn(2);
             Vector3f force2 = forwardDir2.mult(speed1);
-            Vector3f position2 = drone.getNode().getChild("ThrusterNode2").getWorldTranslation();
+            Vector3f position2 = drone.getNode().getWorldTranslation().add(drone.getNode().getChild("ThrusterNode2").getWorldTranslation().mult(-1));
             drone.getControl().applyForce(force2, position2);
 
             // ThrusterNode1 forward direction
             Vector3f forwardDir3 = drone.getNode().getChild("ThrusterNode3").getWorldRotation().getRotationColumn(2);
             Vector3f force3 = forwardDir3.mult(speed2);
-            Vector3f position3 = drone.getNode().getChild("ThrusterNode3").getWorldTranslation();
+            Vector3f position3 = drone.getNode().getWorldTranslation().add(drone.getNode().getChild("ThrusterNode3").getWorldTranslation().mult(-1));
             drone.getControl().applyForce(force3, position3);
 
             // Repeat for other thrusters
             Vector3f forwardDir4 = drone.getNode().getChild("ThrusterNode4").getWorldRotation().getRotationColumn(2);
             Vector3f force4 = forwardDir4.mult(speed2);
-            Vector3f position4 = drone.getNode().getChild("ThrusterNode4").getWorldTranslation();
+            Vector3f position4 = drone.getNode().getWorldTranslation().add(drone.getNode().getChild("ThrusterNode4").getWorldTranslation().mult(-1));
             drone.getControl().applyForce(force4, position4);
+
 
 
             // Use thruster lists instead of individual fields
@@ -381,42 +400,44 @@ public class LocalTestingControler implements ActionListener {
             //         position4.add(force4),
             //         rootNode, drone.getAssetManager(), ColorRGBA.Yellow);
 
+
             Drawer.drawLineBetweenPoints(
-                    position1,
-                    position1.add(new Vector3f(0,2,0)),
+                    drone.getNode().getChild("ThrusterNode1").getWorldTranslation(),
+                    drone.getNode().getChild("ThrusterNode1").getWorldTranslation().add(new Vector3f(0,2,0)),
                     rootNode, drone.getAssetManager(), ColorRGBA.Orange);
             Drawer.drawLineBetweenPoints(
-                    position2,
-                    position2.add(new Vector3f(0,2,0)),
+                    drone.getNode().getChild("ThrusterNode2").getWorldTranslation(),
+                    drone.getNode().getChild("ThrusterNode2").getWorldTranslation().add(new Vector3f(0,2,0)),
                     rootNode, drone.getAssetManager(), ColorRGBA.White);
             Drawer.drawLineBetweenPoints(
-                    position3,
-                    position3.add(new Vector3f(0,2,0)),
+                    drone.getNode().getChild("ThrusterNode3").getWorldTranslation(),
+                    drone.getNode().getChild("ThrusterNode3").getWorldTranslation().add(new Vector3f(0,2,0)),
                     rootNode, drone.getAssetManager(), ColorRGBA.Red);
             Drawer.drawLineBetweenPoints(
-                    position4,
-                    position4.add(new Vector3f(0,2,0)),
+                    drone.getNode().getChild("ThrusterNode4").getWorldTranslation(),
+                    drone.getNode().getChild("ThrusterNode4").getWorldTranslation().add(new Vector3f(0,2,0)),
                     rootNode, drone.getAssetManager(), ColorRGBA.Green);
+
             Drawer.drawLineBetweenPoints(
                     drone.getNode().getWorldTranslation(),
                     drone.getNode().getWorldTranslation().add(new Vector3f(0,2,0)),
                     rootNode, drone.getAssetManager(), ColorRGBA.Magenta);
 
             Drawer.drawLineBetweenPoints(
-                    position1,
-                    position1.add(force1),
+                    drone.getNode().getChild("ThrusterNode1").getWorldTranslation(),
+                    drone.getNode().getChild("ThrusterNode1").getWorldTranslation().add(force1),
                     rootNode, drone.getAssetManager(), ColorRGBA.Orange);
             Drawer.drawLineBetweenPoints(
-                    position2,
-                    position2.add(force2),
-                  rootNode, drone.getAssetManager(), ColorRGBA.White);
+                    drone.getNode().getChild("ThrusterNode2").getWorldTranslation(),
+                    drone.getNode().getChild("ThrusterNode2").getWorldTranslation().add(force2),
+                    rootNode, drone.getAssetManager(), ColorRGBA.White);
             Drawer.drawLineBetweenPoints(
-                    position3,
-                    position4.add(force3),
-                  rootNode, drone.getAssetManager(), ColorRGBA.Red);
+                    drone.getNode().getChild("ThrusterNode3").getWorldTranslation(),
+                    drone.getNode().getChild("ThrusterNode3").getWorldTranslation().add(force3),
+                    rootNode, drone.getAssetManager(), ColorRGBA.Red);
             Drawer.drawLineBetweenPoints(
-                    position4,
-                    position4.add(force4),
+                    drone.getNode().getChild("ThrusterNode4").getWorldTranslation(),
+                    drone.getNode().getChild("ThrusterNode4").getWorldTranslation().add(force4),
                     rootNode, drone.getAssetManager(), ColorRGBA.Green);
         }
 
@@ -503,31 +524,36 @@ public class LocalTestingControler implements ActionListener {
 
         if(rotateLeft) {
             // System.out.println("FORWARD");
-            int speed1 = -20;
-            int speed2 = 20;
+            int speed1 = -10;
+            int speed2 = 10;
             // ThrusterNode1 forward direction
-            Vector3f forwardDir1 = drone.getNode().getChild("ThrusterNode1").getWorldRotation().getRotationColumn(2);
+
+            Vector3f forwardDir1 = drone.getNode().getChild("ThrusterNode1").getWorldRotation().getRotationColumn(2).normalize();
             Vector3f force1 = forwardDir1.mult(speed1);
-            Vector3f position1 = drone.getNode().getChild("ThrusterNode1").getWorldTranslation();
+            Vector3f position1 = drone.getNode().getWorldTranslation().add(drone.getNode().getChild("ThrusterNode1").getWorldTranslation().mult(-1));
             drone.getControl().applyForce(force1, position1);
 
             // Repeat for other thrusters
-            Vector3f forwardDir2 = drone.getNode().getChild("ThrusterNode2").getWorldRotation().getRotationColumn(2);
+            Vector3f forwardDir2 = drone.getNode().getChild("ThrusterNode2").getWorldRotation().getRotationColumn(2).normalize();
             Vector3f force2 = forwardDir2.mult(speed2);
-            Vector3f position2 = drone.getNode().getChild("ThrusterNode2").getWorldTranslation();
+            Vector3f position2 = drone.getNode().getWorldTranslation().add(drone.getNode().getChild("ThrusterNode2").getWorldTranslation().mult(-1));
             drone.getControl().applyForce(force2, position2);
 
             // ThrusterNode1 forward direction
-            Vector3f forwardDir3 = drone.getNode().getChild("ThrusterNode3").getWorldRotation().getRotationColumn(2);
+            Vector3f forwardDir3 = drone.getNode().getChild("ThrusterNode3").getWorldRotation().getRotationColumn(2).normalize();
             Vector3f force3 = forwardDir3.mult(speed1);
-            Vector3f position3 = drone.getNode().getChild("ThrusterNode3").getWorldTranslation();
+            Vector3f position3 = drone.getNode().getWorldTranslation().add(drone.getNode().getChild("ThrusterNode3").getWorldTranslation().mult(-1));
             drone.getControl().applyForce(force3, position3);
 
             // Repeat for other thrusters
-            Vector3f forwardDir4 = drone.getNode().getChild("ThrusterNode4").getWorldRotation().getRotationColumn(2);
+            Vector3f forwardDir4 = drone.getNode().getChild("ThrusterNode4").getWorldRotation().getRotationColumn(2).normalize();
             Vector3f force4 = forwardDir4.mult(speed2);
-            Vector3f position4 = drone.getNode().getChild("ThrusterNode4").getWorldTranslation();
+            Vector3f position4 = drone.getNode().getWorldTranslation().add(drone.getNode().getChild("ThrusterNode4").getWorldTranslation().mult(-1));
             drone.getControl().applyForce(force4, position4);
+
+            //drone.getControl().applyForce(force1.add(force2).add(force3).add(force4), new Vector3f(0, 0, 0));
+            //drone.getControl().applyTorque(position4.cross(force4).add(position3.cross(force3)).add(position2.cross(force2)).add(position1.cross(force1)));
+
             // Use thruster lists instead of individual fields
             // Vector3f force1 = drone.getThrusterVecs().get(0).mult(speed1);
             // Vector3f force2 = drone.getThrusterVecs().get(1).mult(speed2);
@@ -659,41 +685,42 @@ public class LocalTestingControler implements ActionListener {
             //drone.setThrusterGlobalPositions(new ArrayList<>(List.of(position1.add(force1).normalize(), position2.add(force2).normalize(), position3.add(force3).normalize(), position4.add(force4).normalize())));
 
             Drawer.drawLineBetweenPoints(
-                    position1,
-                    position1.add(new Vector3f(0,2,0)),
-                    drone.getNode(), drone.getAssetManager(), ColorRGBA.Orange);
+                    drone.getNode().getChild("ThrusterNode1").getWorldTranslation(),
+                    drone.getNode().getChild("ThrusterNode1").getWorldTranslation().add(new Vector3f(0,2,0)),
+                    rootNode, drone.getAssetManager(), ColorRGBA.Orange);
             Drawer.drawLineBetweenPoints(
-                    position2,
-                    position2.add(new Vector3f(0,2,0)),
-                    drone.getNode(), drone.getAssetManager(), ColorRGBA.White);
+                    drone.getNode().getChild("ThrusterNode2").getWorldTranslation(),
+                    drone.getNode().getChild("ThrusterNode2").getWorldTranslation().add(new Vector3f(0,2,0)),
+                    rootNode, drone.getAssetManager(), ColorRGBA.White);
             Drawer.drawLineBetweenPoints(
-                    position3,
-                    position3.add(new Vector3f(0,2,0)),
-                    drone.getNode(), drone.getAssetManager(), ColorRGBA.Red);
+                    drone.getNode().getChild("ThrusterNode3").getWorldTranslation(),
+                    drone.getNode().getChild("ThrusterNode3").getWorldTranslation().add(new Vector3f(0,2,0)),
+                    rootNode, drone.getAssetManager(), ColorRGBA.Red);
             Drawer.drawLineBetweenPoints(
-                    position4,
-                    position4.add(new Vector3f(0,2,0)),
-                    drone.getNode(), drone.getAssetManager(), ColorRGBA.Green);
+                    drone.getNode().getChild("ThrusterNode4").getWorldTranslation(),
+                    drone.getNode().getChild("ThrusterNode4").getWorldTranslation().add(new Vector3f(0,2,0)),
+                    rootNode, drone.getAssetManager(), ColorRGBA.Green);
+
             Drawer.drawLineBetweenPoints(
                     drone.getNode().getWorldTranslation(),
                     drone.getNode().getWorldTranslation().add(new Vector3f(0,2,0)),
-                    drone.getNode(), drone.getAssetManager(), ColorRGBA.Magenta);
+                    rootNode, drone.getAssetManager(), ColorRGBA.Magenta);
 
             Drawer.drawLineBetweenPoints(
-                    drone.getNode().getWorldTranslation().add(position1),
-                    drone.getNode().getWorldTranslation().add(position1.add(force1)),
+                    drone.getNode().getChild("ThrusterNode1").getWorldTranslation(),
+                    drone.getNode().getChild("ThrusterNode1").getWorldTranslation().add(force1),
                     rootNode, drone.getAssetManager(), ColorRGBA.Orange);
             Drawer.drawLineBetweenPoints(
-                drone.getNode().getWorldTranslation().add(position2),
-                drone.getNode().getWorldTranslation().add(position2.add(force2)),
+                    drone.getNode().getChild("ThrusterNode2").getWorldTranslation(),
+                    drone.getNode().getChild("ThrusterNode2").getWorldTranslation().add(force2),
                     rootNode, drone.getAssetManager(), ColorRGBA.White);
             Drawer.drawLineBetweenPoints(
-                drone.getNode().getWorldTranslation().add(position3),
-                drone.getNode().getWorldTranslation().add(position4.add(force3)),
+                    drone.getNode().getChild("ThrusterNode3").getWorldTranslation(),
+                    drone.getNode().getChild("ThrusterNode3").getWorldTranslation().add(force3),
                     rootNode, drone.getAssetManager(), ColorRGBA.Red);
             Drawer.drawLineBetweenPoints(
-                drone.getNode().getWorldTranslation().add(position4),
-                drone.getNode().getWorldTranslation().add(position4.add(force4)),
+                    drone.getNode().getChild("ThrusterNode4").getWorldTranslation(),
+                    drone.getNode().getChild("ThrusterNode4").getWorldTranslation().add(force4),
                     rootNode, drone.getAssetManager(), ColorRGBA.Green);
             // System.out.println("Force42 : " + drone.getThrusterGlobalPositions().get(3));
         }

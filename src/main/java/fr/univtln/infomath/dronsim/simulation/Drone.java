@@ -76,6 +76,7 @@ public class Drone {
 
         // configure la physique
         this.control.setGravity(Vector3f.ZERO);
+        //this.control.setKinematic(true);
         this.control.setLinearDamping(0.2f);
         this.control.setAngularDamping(0.9f);
         // this.control.setAngularFactor(0.0f);
@@ -89,9 +90,9 @@ public class Drone {
         this.thrusterNodes = new ArrayList<>();
 
         this.node.attachChild(new Node("ForwardMarker"));
-        this.node.getChild("ForwardMarker").setLocalTranslation(0, 0, 0.25f);
+        this.node.getChild("ForwardMarker").setLocalTranslation(0f, 0f, 0.25f);
         this.node.attachChild(new Node("BackwardMarker"));
-        this.node.getChild("BackwardMarker").setLocalTranslation(0, 0, -0.25f);
+        this.node.getChild("BackwardMarker").setLocalTranslation(0f, 0f, -0.25f);
 
         //initialThrusterVecs.add(new Vector3f(-0.7431f, 0.0000f, -0.6691f).normalize());
         //initialThrusterLocalPosition.add(new Vector3f(-0.1f, 0f, 0.16f));
@@ -116,10 +117,10 @@ public class Drone {
         //initialThrusterLocalPosition.add(new Vector3f(0.1f, 0f, -0.16f));
         initialThrusterVecs.add(new Vector3f(0.25f,0.0f,0.25f).normalize());
         initialThrusterLocalPosition.add(new Vector3f(0.1f, 0f, -0.1f));
-        this.thrusterNodes.add(new Node("ThrusterNode3"));
-        this.node.attachChild(this.thrusterNodes.getLast());
-        this.thrusterNodes.getLast().setLocalTranslation(initialThrusterLocalPosition.getLast());
-        this.thrusterNodes.getLast().lookAt(initialThrusterVecs.getLast(), new Vector3f(0,1,0));
+        //this.thrusterNodes.add(new Node("ThrusterNode3"));
+        this.getNode().attachChild(new Node("ThrusterNode3"));
+        this.getNode().getChild("ThrusterNode3").lookAt(initialThrusterVecs.getLast(), new Vector3f(0,1,0));
+        this.getNode().getChild("ThrusterNode3").setLocalTranslation(initialThrusterLocalPosition.getLast());
 
         //initialThrusterVecs.add(new Vector3f(-0.7431f, -0.0000f, 0.6691f).normalize());
         //initialThrusterLocalPosition.add(new Vector3f(-0.1f, 0f, -0.16f));
