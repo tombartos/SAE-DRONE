@@ -231,7 +231,10 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
                     marineInit.getDirection(),
                     marineInit.getSpeed(),
                     assetManager);
-            // scene.attachChild(entite.getModelNode());
+            enqueue(() -> {
+                scene.attachChild(entite.getModelNode());
+                return null;
+            });
         }
 
         // Ajout des événements initiaux
