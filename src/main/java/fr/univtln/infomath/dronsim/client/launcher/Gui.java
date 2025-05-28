@@ -436,9 +436,9 @@ public class Gui {
                             alert.showAndWait();
                             return;
                         }
-                        if (centre.y != -3.0f) {
+                        if (centre.y != 3.0f) {
                             Alert alert = new Alert(Alert.AlertType.ERROR,
-                                    "Le centre du bateau doit être  à -3.0 en Y.");
+                                    "Le centre du bateau doit être  à 3.0 en Y.");
                             alert.showAndWait();
                             return;
                         }
