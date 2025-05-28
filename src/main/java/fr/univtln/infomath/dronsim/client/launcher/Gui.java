@@ -445,9 +445,9 @@ public class Gui {
                         }
                     }
                     // Appel de la méthode pour créer l'événement
-                    RestClient.createEvent(type, centre, taille, vitesse, direction);
+                    String req = RestClient.createEvent(type, centre, taille, vitesse, direction);
                     Alert alert = new Alert(Alert.AlertType.INFORMATION,
-                            "Événement '" + type + "' créé avec succès.");
+                            req);
                     alert.showAndWait();
 
                     this.ajouteEventBox.getChildren().clear();

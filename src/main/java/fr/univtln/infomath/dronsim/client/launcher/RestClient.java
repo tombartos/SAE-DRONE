@@ -301,7 +301,7 @@ public class RestClient {
                 String errorMsg = response.readEntity(String.class);
                 log.error("HTTP {}: {}", response.getStatus(), errorMsg);
                 response.close();
-                return null;
+                return errorMsg;
             }
             String result = response.readEntity(String.class);
             response.close();
@@ -309,7 +309,7 @@ public class RestClient {
             return result;
         } catch (WebApplicationException e) {
             log.error("WebApplicationException: {}", e.getMessage());
-            return null;
+            return ("Error creating event: " + e.getMessage());
         }
     }
 
