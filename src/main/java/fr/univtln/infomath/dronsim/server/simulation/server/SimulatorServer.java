@@ -12,6 +12,7 @@ import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
+import com.jme3.font.BitmapText;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.network.Network;
@@ -437,23 +438,7 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
             // Rotate each initial thruster vector by the drone's local rotation
             DroneModel droneModel = droneServer.getDroneModel();
             RigidBodyControl body = droneServer.getBody();
-            List<Vector3f> rotatedThrusterVecs = new ArrayList<>();
-            Quaternion rotation = body.getPhysicsRotation();
-            for (Vector3f vec : droneModel.getInitialThrusterVecs()) {
-                rotatedThrusterVecs.add(rotation.mult(vec));
-            }
-            droneServer.setThrusterVecs(rotatedThrusterVecs);
 
-            // Update the thruster global positions based on the drone's position and
-            // rotation
-            List<Vector3f> updatedThrusterPositions = new ArrayList<>();
-            Quaternion droneRotation = droneServer.getNode().getLocalRotation();
-            Vector3f droneTranslation = droneServer.getNode().getLocalTranslation();
-            for (Vector3f initialPos : droneModel.getInitialThrusterLocalPosition()) {
-                Vector3f rotatedPos = droneRotation.mult(initialPos);
-                updatedThrusterPositions.add(rotatedPos.add(droneTranslation));
-            }
-            droneServer.setThrusterGlobalPositions(updatedThrusterPositions);
 
             List<Float> motorsSpeeds = droneServer.getMotors_speeds();
             motorsSpeeds.clear(); // Clear the list to update it with new values
@@ -465,9 +450,6 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
                     // log.info("Motor " + i + " speed: " + motorspeed + " x " +
                     // droneModel.getMotorsMaxSpeed());
                 }
-                // log.info("DEBUG: Motors speeds for drone " + droneServer.getId() + ": "
-                // + motorsSpeeds.toString() + " Drone motorspeeds: " +
-                // droneServer.getMotors_speeds().toString());
             }
             // If the controler is null, we set the motors speeds to 0
             else {
@@ -478,12 +460,9 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
 
             // Apply forces to the drone based on the thruster vectors and speeds
             for (int i = 0; i < droneModel.getNbMotors(); i++) {
-                Vector3f force = droneServer.getThrusterVecs().get(i).mult(droneServer.getMotors_speeds().get(i));
-                // log.info("DEBUG: Trhuster " + i + " force: " + force.toString() + "Thruster
-                // vec: "
-                // + droneServer.getThrusterVecs().get(i).toString() + " Speed: "
-                // + droneServer.getMotors_speeds().get(i));
-                Vector3f thrusterPos = droneServer.getThrusterGlobalPositions().get(i);
+
+                Vector3f thrusterPos = droneServer.getNode().getWorldTranslation().add(droneServer.getNode().getChild("ThrusterNode"+i).getWorldTranslation().mult(-1));
+                Vector3f force = droneServer.getNode().getChild("ThrusterNode"+i).getWorldRotation().getRotationColumn(2).normalize().mult(droneServer.getMotors_speeds().get(i));
                 body.applyForce(force, thrusterPos);
             }
 
