@@ -44,7 +44,6 @@ public class AuthenticationResource {
         AuthenticatedUser user = AuthChecker.checkAuth(authHeader);
         AuthUserDTO userDto = new AuthUserDTO(user.getUsername(), user.isPilot(),
                 user.isGameMaster(), user.isObserver(), user.isAdmin());
-        log.info("DEBUG : SENDING USER: " + userDto.toString());
         return userDto;
     }
 
@@ -104,7 +103,6 @@ public class AuthenticationResource {
                     this.passwd.put(username, password);
                     this.users.put(username, user.build());
                     lineNumber++;
-                    log.info("DEBUG : Loaded user: " + user);
                 }
             } catch (Exception e) {
                 log.error("Error reading '{}': {}", usersJsonPath, e.getMessage());
@@ -117,11 +115,6 @@ public class AuthenticationResource {
                 md.update(StandardCharsets.UTF_8.encode(password));
                 final var actualDigest = md.digest();
                 final var expectedDigest = passwd.get(username);
-                log.info("DEBUG : Authenticating user: " + username, " with password: " + password,
-                        " expected digest: "
-                                + (expectedDigest != null ? Base64.getEncoder().encodeToString(expectedDigest)
-                                        : "null"),
-                        " actual digest: " + Base64.getEncoder().encodeToString(actualDigest));
                 return java.util.Arrays.equals(actualDigest, expectedDigest);
             } catch (java.security.NoSuchAlgorithmException e) {
                 throw new RuntimeException("Could not get hash function");
@@ -140,7 +133,6 @@ public class AuthenticationResource {
 
         @Override
         public AuthenticatedUser authenticate(String token) throws AuthenticationException {
-            log.info("DEBUG : autehnticate : " + sessions.get(token).toString());
             return sessions.get(token);
         }
 
@@ -148,7 +140,6 @@ public class AuthenticationResource {
             rand.nextBytes(buf);
             var token = java.util.Base64.getEncoder().encodeToString(buf);
             var user = passwd.lookup(username);
-            log.info("DEBUG : session.put " + user.toString());
             sessions.put(token, user);
             return token;
         }

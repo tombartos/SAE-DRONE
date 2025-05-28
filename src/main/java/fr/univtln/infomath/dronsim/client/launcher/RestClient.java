@@ -5,12 +5,16 @@ import java.net.NetworkInterface;
 import java.util.Enumeration;
 import java.net.Inet4Address;
 import java.util.List;
+import java.util.Vector;
 
 import org.glassfish.jersey.jackson.JacksonFeature;
+
+import com.jme3.math.Vector3f;
 
 import fr.univtln.infomath.dronsim.server.auth.AuthenticationService.AuthenticatedUser;
 import fr.univtln.infomath.dronsim.server.simulation.evenements.EvenementDTO;
 import fr.univtln.infomath.dronsim.shared.DroneAssociation;
+import fr.univtln.infomath.dronsim.shared.EventCreateRequest;
 import fr.univtln.infomath.dronsim.shared.PilotInitResp;
 import fr.univtln.infomath.dronsim.shared.User;
 import fr.univtln.infomath.dronsim.shared.auth.AuthUserDTO;
@@ -280,6 +284,29 @@ public class RestClient {
             response.close();
             log.info("Response received: " + events);
             return events;
+        } catch (WebApplicationException e) {
+            log.error("WebApplicationException: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    public static String createEvent(String type, Vector3f center, Vector3f size, float speed, Vector3f direction) {
+        EventCreateRequest eventReq = new EventCreateRequest(type, center, size, speed, direction);
+        try {
+            Response response = baseTarget.path("events")
+                    .request(MediaType.APPLICATION_JSON)
+                    .header("Authorization", authHeader)
+                    .post(Entity.entity(eventReq, MediaType.APPLICATION_JSON));
+            if (response.getStatus() >= 400) {
+                String errorMsg = response.readEntity(String.class);
+                log.error("HTTP {}: {}", response.getStatus(), errorMsg);
+                response.close();
+                return null;
+            }
+            String result = response.readEntity(String.class);
+            response.close();
+            log.info("Response received: " + result);
+            return result;
         } catch (WebApplicationException e) {
             log.error("WebApplicationException: {}", e.getMessage());
             return null;

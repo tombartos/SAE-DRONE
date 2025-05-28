@@ -580,9 +580,6 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
                     event.getDirection(),
                     event instanceof Courant ? ((Courant) event).getIntensite() : 1f,
                     event instanceof AjoutEntiteMarineEvent ? ((AjoutEntiteMarineEvent) event).getEntite().getType()
-                            : null,
-                    event instanceof AjoutEntiteMarineEvent
-                            ? ((AjoutEntiteMarineEvent) event).getEntite().getModelPath()
                             : null));
         }
         server.broadcast(new EvenementDTOMessage(eventDTOs));
@@ -598,9 +595,6 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
                     event.getDirection(),
                     event instanceof Courant ? ((Courant) event).getIntensite() : 1f,
                     event instanceof AjoutEntiteMarineEvent ? ((AjoutEntiteMarineEvent) event).getEntite().getType()
-                            : null,
-                    event instanceof AjoutEntiteMarineEvent
-                            ? ((AjoutEntiteMarineEvent) event).getEntite().getModelPath()
                             : null));
         }
         return eventDTOs;

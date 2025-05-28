@@ -485,44 +485,4 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
         return scene;
     }
 
-    public void ajouterEvenementTest() {
-
-        // Exemple : ajouter un courant
-        EvenementDTO courant = EvenementDTO.createEvenementDTO(
-                999, // ID unique arbitraire
-                new Vector3f(0, 2, 0), // zoneCenter
-                new Vector3f(10, 10, 10),
-                "Courant", // type
-                new Vector3f(0, 0, 1), // direction
-                1000f, // intensité
-                null, // pas de modèle pour un courant
-                null); // pas de type d’entité pour un courant);
-        client.send(new AjoutEvenementMessage(courant));
-
-        // Exemple : ajouter une entité marine (bateau)
-        EvenementDTO entite = EvenementDTO.createEvenementDTO(
-                1000, // ID unique
-                new Vector3f(-25, 3, 5), // position = zoneCenter
-                new Vector3f(10, 10, 100), // zoneSize
-                "EntiteMarine", // type
-                Vector3f.UNIT_Z, // direction
-                1f, // intensité = vitesse
-                "Bateau", // type d’entité
-                "bateau/speedboat_n2.j3o" // modèle
-        );
-        client.send(new AjoutEvenementMessage(entite));
-
-    }
-
-    public void retirerEvenement(int id) {
-        Evenement event = Evenement.getEvenements().stream()
-                .filter(e -> e != null && e.getId() == id)
-                .findFirst()
-                .orElse(null);
-        if (event != null) {
-            event.retirer();
-            client.send(new RetirerEvenementMessage(id));
-        }
-    }
-
 }
