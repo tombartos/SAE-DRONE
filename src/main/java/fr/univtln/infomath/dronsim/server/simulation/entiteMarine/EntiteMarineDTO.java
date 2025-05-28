@@ -7,6 +7,15 @@ import com.jme3.math.Vector3f;
 import com.jme3.network.serializing.Serializable;
 import lombok.*;
 
+/**
+ * Data Transfer Object (DTO) representing a marine entity.
+ * This class is used to transfer simplified entity data (ID, type, position,
+ * and direction)
+ * between client and server in a networked simulation context.
+ *
+ * @author Ba gubair
+ * @version 1.0
+ */
 @Serializable
 @Getter
 @Setter

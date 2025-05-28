@@ -8,8 +8,15 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Message pour retirer un événement de la simulation.
- * Il contient l'identifiant de l'événement à retirer.
+ * Network message used to request the removal of a simulation event.
+ * <p>
+ * This message is sent from the client to the server (or vice versa)
+ * to indicate that an event, such as a current or marine entity,
+ * should be removed from the simulation space.
+ * </p>
+ *
+ * @author Ba gubair
+ * @version 1.0
  */
 @Serializable
 @Getter

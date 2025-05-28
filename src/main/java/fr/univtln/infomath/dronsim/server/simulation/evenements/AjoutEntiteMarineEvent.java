@@ -10,9 +10,14 @@ import fr.univtln.infomath.dronsim.server.simulation.entiteMarine.EntiteMarineSe
 import lombok.Getter;
 
 /**
- * Classe représentant un événement d'ajout d'une entité marine dans la
- * simulation.
- * Elle hérite de la classe Evenement.
+ * Represents an event that adds a marine entity into the simulation.
+ *
+ * This class extends {@link Evenement} and manages the creation of a
+ * marine entity (either with or without physics) depending on whether
+ * it runs on the server or client side.
+ *
+ * @author Ba gubair
+ * @version 1.0
  */
 @Getter
 public class AjoutEntiteMarineEvent extends Evenement {

@@ -516,6 +516,12 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
 
     }
 
+    /**
+     * Adds an event to the simulation.
+     * The event can be a current or a marine entity.
+     *
+     * @param dto The DTO containing the event data.
+     */
     public void ajoutEvenement(EvenementDTO dto) {
         if ("Courant".equals(dto.getType())) {
             Courant courant = new Courant(
@@ -545,6 +551,11 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         broadcastEvenements();
     }
 
+    /**
+     * Removes an event from the simulation by its ID.
+     *
+     * @param id The ID of the event to remove.
+     */
     public void retirerEvenement(int id) {
         Evenement toRemove = null;
         for (Evenement ev : Evenement.getEvenements()) {
@@ -570,6 +581,11 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         return Evenement.getEvenements();
     }
 
+    /**
+     * Broadcasts the list of current active events to all connected clients.
+     * Each event is converted to a DTO and included in a
+     * {@link EvenementDTOMessage}.
+     */
     private void broadcastEvenements() {
         List<EvenementDTO> eventDTOs = new ArrayList<>();
         for (Evenement event : Evenement.getEvenements()) {
@@ -588,6 +604,12 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         server.broadcast(new EvenementDTOMessage(eventDTOs));
     }
 
+    /**
+     * Sends the current positions and directions of all marine entities to the
+     * clients.
+     * This includes base marine entities and those added via
+     * {@link AjoutEntiteMarineEvent}.
+     */
     public void sendEntiteMarinePositions() {
         List<EntiteMarineDTO> dtos = new ArrayList<>();
 

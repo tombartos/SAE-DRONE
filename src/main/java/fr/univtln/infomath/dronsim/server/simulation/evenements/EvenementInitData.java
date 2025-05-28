@@ -8,8 +8,13 @@ import lombok.Setter;
 import com.jme3.math.Vector3f;
 
 /**
- * Classe représentant les données d'initialisation d'un événement.
- * Utilisée pour la communication entre le serveur et le client.
+ * Represents initialization data for a physical event in the simulation.
+ *
+ * This data structure is used to transmit event information between the server
+ * and client, especially during the initialization or synchronization phase.
+ *
+ * @author Ba gubair
+ * @version 1.0
  */
 @Serializable
 @AllArgsConstructor

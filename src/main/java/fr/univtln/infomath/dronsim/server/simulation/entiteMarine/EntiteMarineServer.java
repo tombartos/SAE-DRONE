@@ -13,7 +13,15 @@ import org.slf4j.Logger;
 
 import org.slf4j.LoggerFactory;
 
-
+/**
+ * Server-side marine entity with physics simulation.
+ * This class extends {@link EntiteMarine} by integrating physics via
+ * {@link RigidBodyControl},
+ * and defines a bounding zone for the entity's allowed movement space.
+ *
+ * @author Ba gubair
+ * @version 1.0
+ */
 @Getter
 public class EntiteMarineServer extends EntiteMarine {
     private static final Logger log = LoggerFactory.getLogger(EntiteMarineServer.class);
@@ -59,6 +67,13 @@ public class EntiteMarineServer extends EntiteMarine {
         return entiteMarine;
     }
 
+    /**
+     * Updates the entity's physics and position.
+     * If the entity leaves the allowed movement zone, it resets to its initial
+     * position.
+     *
+     * @param tpf Time per frame
+     */
     public void update(float tpf) {
         Vector3f currentPos = control.getPhysicsLocation();
         this.positionCourante = currentPos.clone();
@@ -71,6 +86,12 @@ public class EntiteMarineServer extends EntiteMarine {
 
     }
 
+    /**
+     * Checks whether the given position is outside the allowed movement zone.
+     *
+     * @param pos Position to check
+     * @return {@code true} if outside zone, {@code false} otherwise
+     */
     private boolean isOutOfZone(Vector3f pos) {
         return pos.x < zoneMin.x || pos.x > zoneMax.x ||
                 pos.z < zoneMin.z || pos.z > zoneMax.z;

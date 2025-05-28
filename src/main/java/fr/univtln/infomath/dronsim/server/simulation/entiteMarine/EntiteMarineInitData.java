@@ -8,8 +8,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Classe représentant les données d'initialisation d'une entité marine.
- * Utilisée pour la communication entre le serveur et le client.
+ * Initialization data for a marine entity.
+ * This class is used to transfer all the necessary information
+ * to create a marine entity on the server or client during the initial
+ * handshake.
+ *
+ * @author Ba gubair
+ * @version 1.0
  */
 @Serializable
 @AllArgsConstructor

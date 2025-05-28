@@ -9,8 +9,17 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Message pour ajouter un événement à la simulation.
- * Il contient un objet EvenementDTO qui représente l'événement à ajouter.
+ * Network message used to request the addition of an event into the simulation.
+ *
+ * This message wraps an {@link EvenementDTO} that contains all necessary data
+ * to recreate the event on the receiving side (typically from client to
+ * server).
+ *
+ * It is a part of the communication protocol based on jMonkeyEngine's
+ * networking system.
+ *
+ * @author Ba gubair
+ * @version 1.0
  */
 @Serializable
 @Getter
