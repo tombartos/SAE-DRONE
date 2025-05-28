@@ -309,7 +309,7 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
         for (Evenement event : Evenement.getEvenements()) {
             if (event != null) {
                 if (event instanceof Courant courant) {
-                    courant.apply(tpf);
+                    continue;
                 } else if (event instanceof AjoutEntiteMarineEvent marineEvent) {
                     EntiteMarine entiteEvent = marineEvent.getEntite();
                     Node nodemarine = entiteEvent.getModelNode();
