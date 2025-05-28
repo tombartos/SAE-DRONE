@@ -224,7 +224,11 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
                     droneinit.getDroneModel(),
                     droneinit.getPosition(),
                     droneinit.getBatteryLevel());
-            scene.attachChild(tmpDrone.getNode());
+            final Drone finalTmpDrone = tmpDrone; // Pour éviter les problèmes de capture dans la lambda
+            enqueue(() -> {
+                scene.attachChild(finalTmpDrone.getNode());
+                return null;
+            });
             if (tmpDrone.getId() == handshake2.getYourDroneId()) {
                 yourDrone = tmpDrone;
             }
@@ -259,7 +263,10 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
                     marineInit.getDirection(),
                     marineInit.getSpeed(),
                     assetManager);
-            scene.attachChild(entite.getModelNode());
+            enqueue(() -> {
+                scene.attachChild(entite.getModelNode());
+                return null;
+            });
         }
 
         // Ajout des événements initiaux
@@ -352,9 +359,7 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
 
         for (Evenement event : Evenement.getEvenements()) {
             if (event != null) {
-                if (event instanceof Courant courant) {
-                    courant.apply(tpf);
-                } else if (event instanceof AjoutEntiteMarineEvent marineEvent) {
+                if (event instanceof AjoutEntiteMarineEvent marineEvent) {
                     EntiteMarine entiteEvent = marineEvent.getEntite();
                     Node nodemarine = entiteEvent.getModelNode();
 
