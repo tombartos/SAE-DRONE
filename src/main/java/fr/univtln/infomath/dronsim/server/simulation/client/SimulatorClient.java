@@ -196,7 +196,11 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
                     droneinit.getDroneModel(),
                     droneinit.getPosition(),
                     droneinit.getBatteryLevel());
-            scene.attachChild(tmpDrone.getNode());
+            final Drone finalTmpDrone = tmpDrone; // Pour la lambda
+            enqueue(() -> {
+                scene.attachChild(finalTmpDrone.getNode());
+                return null;
+            });
             if (tmpDrone.getId() == handshake2.getYourDroneId()) {
                 yourDrone = tmpDrone;
             }
