@@ -556,7 +556,7 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
      *
      * @param id The ID of the event to remove.
      */
-    public void retirerEvenement(int id) {
+    public boolean retirerEvenement(int id) {
         Evenement toRemove = null;
         for (Evenement ev : Evenement.getEvenements()) {
             if (ev.getId() == id) {
@@ -603,8 +603,6 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         server.broadcast(new EvenementDTOMessage(eventDTOs));
     }
 
-    <<<<<<<HEAD
-
     public static List<EvenementDTO> getEvenementDTOs() {
         List<EvenementDTO> eventDTOs = new ArrayList<>();
         for (Evenement event : Evenement.getEvenements()) {
@@ -620,13 +618,12 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         return eventDTOs;
     }
 
-    =======/**
-            * Sends the current positions and directions of all marine entities to the
-            * clients.
-            * This includes base marine entities and those added via
-            * {@link AjoutEntiteMarineEvent}.
-            */
-    >>>>>>>origin/Emad-REST
+    /**
+     * Sends the current positions and directions of all marine entities to the
+     * clients.
+     * This includes base marine entities and those added via
+     * {@link AjoutEntiteMarineEvent}.
+     */
 
     /**
      * Sends the current positions and directions of all marine entities to the

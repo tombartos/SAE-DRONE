@@ -86,7 +86,7 @@ import org.slf4j.LoggerFactory;
  * @author Emad BA GUBAIR
  * @author Julien Seinturier
  */
-public class SimulatorClient extends SimpleApplication implements PhysicsCollisionListener {
+public class SimulatorClient extends SimpleApplication implements PhysicsCollisionListener, ActionListener {
     private static final Logger log = LoggerFactory.getLogger(SimulatorClient.class);
 
     private Client client;
@@ -549,7 +549,6 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
                 "Courant", // type
                 new Vector3f(0, 0, 1), // direction
                 1000f, // intensité
-                null, // pas de modèle pour un courant
                 null); // pas de type d’entité pour un courant);
         client.send(new AjoutEvenementMessage(courant));
 
