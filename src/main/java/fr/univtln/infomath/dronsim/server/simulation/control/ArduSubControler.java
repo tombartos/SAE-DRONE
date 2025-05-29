@@ -20,7 +20,16 @@ import lombok.Getter;
 import lombok.Setter;
 
 //TODO: JAVADOC
-
+/**
+ * ArduSubControler is a controller for the ArduSub drone simulation.
+ * It handles communication with the drone via MAVLink protocol,
+ * processes incoming servo output messages, and sends GPS position updates.
+ * It implements the Controler interface, providing methods to get motor throttle
+ * values and set sensor values.
+ * <p>
+ * @author Yann ROBLIN
+ * @author André MARCAIS
+ */
 @Getter
 @Setter
 public class ArduSubControler implements Controler {
@@ -31,6 +40,12 @@ public class ArduSubControler implements Controler {
     int[] gpsPos;
     MavlinkConnection connection;
 
+    /*
+     * Constructor for ArduSubControler.
+     * Initializes the socket connection to the drone at the specified IP address.
+     * Sets up the MAVLink connection and starts the receiving and sending threads.
+     * @param ip The IP address of the drone to connect to.
+     */
     public ArduSubControler(String ip) throws UnknownHostException, IOException {
         this.socket = new Socket(ip, 5762);
         this.motorThrottle = new int[8];
@@ -44,6 +59,11 @@ public class ArduSubControler implements Controler {
         Thread.ofVirtual().start(this::sendLoop);
     }
 
+    /**
+     * Receives MAVLink messages in a loop and processes them.
+     * Handles ServoOutputRaw messages to update motor throttle values.
+     * Logs any IO exceptions that occur during message reception.
+     */
     private void recvLoop() {
         log.info("Starting receiving thread");
         MavlinkMessage<?> message = null;
@@ -61,6 +81,12 @@ public class ArduSubControler implements Controler {
         log.info("Terminating receiving thread");
     }
 
+    /**
+     * Sends GPS position updates in a loop.
+     * Sleeps for 200 milliseconds between sends.
+     * Logs any IO exceptions that occur during sending.
+     * Handles InterruptedException to gracefully terminate the thread.
+     */
     private void sendLoop() {
         log.info("Starting sending thread");
         try {
@@ -76,6 +102,11 @@ public class ArduSubControler implements Controler {
         log.info("Terminating sending thread");
     }
 
+    /**
+     * Handles ServoOutputRaw messages to update motor throttle values.
+     * Logs the receipt of the message and updates the motorThrottle array.
+     * @param payload The ServoOutputRaw payload containing raw servo values.
+     */
     private void handleServoOutputRaw(ServoOutputRaw payload) {
         log.debug("Got servo output packet");
         final ServoOutputRaw servoOutputRaw = payload;
@@ -89,6 +120,11 @@ public class ArduSubControler implements Controler {
         motorThrottle[7] = servoOutputRaw.servo8Raw();
     }
 
+    /**
+     * Sends the current GPS position of the simulated drone.
+     * Constructs a GpsInput message with the current GPS position and sends it
+     * via the MAVLink connection.
+     */
     private void sendPosition() throws IOException {
         log.debug("Sending position");
         GpsInput gpsInput = GpsInput.builder()
@@ -117,6 +153,9 @@ public class ArduSubControler implements Controler {
         connection.send2(255, 0, gpsInput);
     }
 
+    /*
+     * Main method to run the ArduSubControler.
+     */
     public static void main(String[] args) throws IOException {
         String ip = "127.0.0.1"; // Default IP
         if (args.length > 0) {
@@ -139,11 +178,25 @@ public class ArduSubControler implements Controler {
         }
     }
 
+    /**
+     * Gets the throttle value for a specific motor.
+     * The throttle is calculated as a float value between -1.0 and 1.0,
+     * based on the raw servo value.
+     * @param motorIndex The index of the motor (0-7).
+     * @return The throttle value for the specified motor.
+     */
     @Override
     public float getMotorThrottle(int motorIndex) {
         return ((float) motorThrottle[motorIndex] - 1500f) / 400f;
     }
 
+    /**
+     * Sets a sensor value for a specific captor index.
+     * Currently, only the GPS position (index 0) is supported.
+     * The GPS position is updated with the provided integer values.
+     * @param captorIndex The index of the captor (0 for GPS).
+     * @param values The integer values to set for the GPS position.
+     */
     @Override
     public void setSensorValue(int captorIndex, int[] values) {
         switch (captorIndex) {
@@ -159,6 +212,13 @@ public class ArduSubControler implements Controler {
         }
     }
 
+    /**
+     * Sets a sensor value for a specific captor index.
+     * Currently, only the GPS position (index 0) is supported.
+     * The GPS position is updated with the provided float values.
+     * @param captorIndex The index of the captor (0 for GPS).
+     * @param values The float values to set for the GPS position.
+     */
     @Override
     public void setSensorValue(int captorIndex, float[] values) {
         switch (captorIndex) {
@@ -178,6 +238,13 @@ public class ArduSubControler implements Controler {
         throw new UnsupportedOperationException("Unimplemented method 'setSensorValue'");
     }
 
+    /**
+     * Sets a sensor value for a specific captor index.
+     * Currently, no sensors with long type are supported.
+     * Logs a warning message indicating that no sensors with long type are available.
+     * @param captorIndex The index of the captor (not used).
+     * @param values The long values to set (not used).
+     */
     @Override
     public void setSensorValue(int captorIndex, long[] values) {
         log.warn("No sensors with long type");
