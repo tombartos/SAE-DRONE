@@ -3,20 +3,20 @@ package fr.univtln.infomath.dronsim.server.simulation.drones;
 import com.jme3.math.Vector3f;
 import com.jme3.math.Quaternion;
 import com.jme3.network.serializing.Serializable;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.util.ArrayList;
 import java.util.List;
 
-/*
+/**
  * This class is used to send drone informations to the clients.
  * The server will send a list of all DroneDTO to all the clients every tick so
  * it needs to be lightweight.
  * The client will then update its local simulation with the new positions.
+ *
+ * @author Tom BARTIER
  */
 @AllArgsConstructor
 @NoArgsConstructor
@@ -31,6 +31,14 @@ public class DroneDTO {
     public Quaternion angular;
     public int batteryLevel;
 
+    /**
+     * Constructor for DroneDTO.
+     *
+     * @param id           Unique identifier for the drone.
+     * @param position     Position of the drone in the simulation.
+     * @param angular      Orientation of the drone in the simulation.
+     * @param batteryLevel Current battery level of the drone.
+     */
     public static DroneDTO createDroneDTO(Drone drone) {
         DroneDTO droneDTO = new DroneDTO(drone.getId(), drone.getPosition(), drone.getNode().getLocalRotation(),
                 drone.getBatteryLevel());

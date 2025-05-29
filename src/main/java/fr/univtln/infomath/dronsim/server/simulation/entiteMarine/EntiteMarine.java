@@ -14,7 +14,7 @@ import java.util.List;
  * Each entity has a 3D model, a position, a direction, and a speed.
  * Entities are stored in a static list for global access and synchronization.
  *
- * @author Ba gubair
+ * @author Emad BA GUBAIR
  * @version 1.0
  */
 @Getter

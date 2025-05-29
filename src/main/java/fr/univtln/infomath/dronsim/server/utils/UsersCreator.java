@@ -6,6 +6,14 @@ import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.univtln.infomath.dronsim.shared.User;
 
+/**
+ * This class is a utility class to serialize a list of User objects to a JSON
+ * file that will be read by the server at each startup. You can launch this
+ * class directly. This is likely to disappear in the future when admins will be
+ * implemented
+ *
+ * @author Tom BARTIER
+ */
 public class UsersCreator {
     public static void saveUsers(List<User> users, String filePath) {
         ObjectMapper mapper = new ObjectMapper();
@@ -17,7 +25,14 @@ public class UsersCreator {
         }
     }
 
+    /**
+     * Main method to create and save users.
+     * This method initializes a list of User objects and saves them to a JSON file.
+     *
+     * @param args Command line arguments (not used).
+     */
     public static void main(String[] args) {
+        // Passwords are hashed with the script hashpasswd at the root of the project
         User.createUser("Bob35", 0,
                 "pOHiWcOoDG3idQBr0ZAWKZUs0qvYmjQUa+e4Pdwaa7pihB8OzFw6k4hw95X+cfKolau8rWO+osoRQxfDn0LU9Q==");
         User.createUser("Alice42", 0,

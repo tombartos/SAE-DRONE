@@ -22,7 +22,7 @@ import lombok.Getter;
  * {@code apply}
  * method to apply forces on drones.
  *
- * @author Ba gubair
+ * @author Emad BA GUBAIR
  * @version 1.0
  */
 @Getter

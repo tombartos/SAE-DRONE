@@ -10,6 +10,8 @@ import org.freedesktop.gstreamer.elements.AppSrc;
  * It uses the GStreamer library to create a pipeline that encodes video frames
  * in H.264 format and sends them to a specified IP address.
  * GStreamer needs to be installed on the system for this class to work.
+ *
+ * @author Tom BARTIER
  */
 public class GStreamerSender {
     private final Pipeline pipeline;

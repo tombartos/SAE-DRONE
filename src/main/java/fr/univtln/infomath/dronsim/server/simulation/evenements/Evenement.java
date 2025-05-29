@@ -15,7 +15,7 @@ import java.util.List;
  * Subclasses must implement the {@code apply(float tpf)} method
  * which describes how the event influences entities per simulation frame.
  *
- * @author Ba gubair
+ * @author Emad BA GUABAIR
  * @version 1.0
  */
 @Getter

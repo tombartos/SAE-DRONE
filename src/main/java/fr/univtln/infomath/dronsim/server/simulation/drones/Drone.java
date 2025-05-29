@@ -12,11 +12,29 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * Represents a drone in the simulation environment.
+ * <p>
+ * Each drone has a unique identifier, is associated with a client, and is based
+ * on a specific {@link DroneModel}.
+ * The drone maintains its position, orientation, battery level, and a list of
+ * modules and motor speeds.
+ * The 3D model of the drone is loaded and attached to a scene graph node for
+ * visualization and simulation.
+ * </p>
+ * <p>
+ * Drones are managed in a static list, and can be created using the
+ * {@link #createDrone(int, int, AssetManager, PhysicsSpace, DroneModel, Vector3f, int)}
+ * method.
+ * </p>
+ *
+ * @author Tom BARTIER
+ */
 @ToString
 @Getter
 public class Drone {
     protected static List<Drone> drones = new ArrayList<>();
-    protected final int id; // Autoincrement (to be implemented) or gm choice (to be implemented)
+    protected final int id;
     protected final int clientId;
     protected final DroneModel droneModel;
     @Setter
@@ -33,6 +51,17 @@ public class Drone {
     protected Node node;
     protected Spatial model;
 
+    /**
+     * Constructs a new Drone instance.
+     *
+     * @param id           Unique identifier for the drone.
+     * @param clientId     Identifier of the client associated with the drone.
+     * @param assetManager Asset manager for loading 3D models.
+     * @param space        Physics space for the drone's physics simulation.
+     * @param droneModel   The model defining the drone's characteristics.
+     * @param position     Initial position of the drone in the simulation.
+     * @param batteryLevel Initial battery level of the drone.
+     */
     protected Drone(int id, int clientId, AssetManager assetManager, PhysicsSpace space, DroneModel droneModel,
             Vector3f position, int batteryLevel) {
         this.id = id;
@@ -59,6 +88,18 @@ public class Drone {
 
     }
 
+    /**
+     * Creates a new drone and adds it to the static list of drones.
+     *
+     * @param id           Unique identifier for the drone.
+     * @param clientId     Identifier of the client associated with the drone.
+     * @param assetManager Asset manager for loading 3D models.
+     * @param space        Physics space for the drone's physics simulation.
+     * @param droneModel   The model defining the drone's characteristics.
+     * @param position     Initial position of the drone in the simulation.
+     * @param batteryLevel Initial battery level of the drone.
+     * @return The created Drone instance.
+     */
     public static Drone createDrone(int id, int clientId, AssetManager assetManager, PhysicsSpace space,
             DroneModel droneModel, Vector3f position, int batteryLevel) {
         Drone drone = new Drone(id, clientId, assetManager, space, droneModel, position, batteryLevel);
@@ -66,6 +107,11 @@ public class Drone {
         return drone;
     }
 
+    /**
+     * Returns the list of all drones in the simulation.
+     *
+     * @return List of Drone instances.
+     */
     public static List<Drone> getDrones() {
         return drones;
     }

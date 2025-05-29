@@ -12,10 +12,19 @@ import java.util.List;
 
 /**
  * This class is a utility class to serialize a list of DroneModel objects to a
- * JSON file that will be read by the jME server at each startup.
+ * JSON file that will be read by the jME server at each startup. You can launch
+ * this class directly.
+ *
+ * @author Tom BARTIER
  */
 public class DroneModelCreator {
 
+    /**
+     * Saves a list of DroneModel objects to a specified JSON file.
+     *
+     * @param models   The list of DroneModel objects to save.
+     * @param filePath The path to the JSON file where the models will be saved.
+     */
     public void saveDroneModels(List<DroneModel> models, String filePath) {
         ObjectMapper mapper = new ObjectMapper();
         try {
@@ -26,6 +35,13 @@ public class DroneModelCreator {
         }
     }
 
+    /**
+     * Main method to create and save drone models.
+     * This method initializes a list of DroneModel objects and saves them to a JSON
+     * file.
+     *
+     * @param args Command line arguments (not used).
+     */
     public static void main(String[] args) {
         DroneModelCreator creator = new DroneModelCreator();
         ArrayList<DroneModel> models = new ArrayList<>();

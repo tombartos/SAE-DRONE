@@ -16,7 +16,7 @@ import lombok.Getter;
  * marine entity (either with or without physics) depending on whether
  * it runs on the server or client side.
  *
- * @author Ba gubair
+ * @author Emad BA GUBAIR
  * @version 1.0
  */
 @Getter

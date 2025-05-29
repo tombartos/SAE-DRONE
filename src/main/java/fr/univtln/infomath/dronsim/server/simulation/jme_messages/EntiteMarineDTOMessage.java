@@ -17,7 +17,7 @@ import fr.univtln.infomath.dronsim.server.simulation.entiteMarine.EntiteMarineDT
  * It allows the client to display or update marine entities based on
  * the state maintained on the server side.
  *
- * @author Ba gubair
+ * @author Emad BA GUABAIR
  * @version 1.0
  */
 @Serializable

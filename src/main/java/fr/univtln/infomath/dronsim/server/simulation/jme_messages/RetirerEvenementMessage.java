@@ -15,7 +15,7 @@ import lombok.Setter;
  * should be removed from the simulation space.
  * </p>
  *
- * @author Ba gubair
+ * @author Emad BA GUBAIR
  * @version 1.0
  */
 @Serializable

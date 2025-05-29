@@ -18,7 +18,7 @@ import lombok.Setter;
  * It is a part of the communication protocol based on jMonkeyEngine's
  * networking system.
  *
- * @author Ba gubair
+ * @author Emad BA GUABAIR
  * @version 1.0
  */
 @Serializable

@@ -15,7 +15,7 @@ import fr.univtln.infomath.dronsim.server.simulation.evenements.EvenementDTO;
  * It allows the client to visualize or react to the same events that occur
  * in the server's simulation space.
  *
- * @author Ba gubair
+ * @author Emad BA GUBAIR
  * @version 1.0
  */
 @Serializable

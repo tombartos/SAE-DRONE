@@ -11,6 +11,8 @@ import lombok.Setter;
 /**
  * This class is used to send a handshake message from the client to the server.
  * It contains the client ID.
+ *
+ * @author Tom BARTIER
  */
 @AllArgsConstructor
 @NoArgsConstructor

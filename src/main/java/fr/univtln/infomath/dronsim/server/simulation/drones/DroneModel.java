@@ -1,9 +1,7 @@
 package fr.univtln.infomath.dronsim.server.simulation.drones;
 
 import java.util.List;
-
 import com.jme3.network.serializing.Serializable;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +14,8 @@ import com.jme3.math.Vector3f;
 /**
  * * This class represents a drone model. It contains all the the informations
  * about the drone model. It is used to create a drone in the simulation.
+ *
+ * @author Tom BARTIER
  */
 public class DroneModel {
     private String name;

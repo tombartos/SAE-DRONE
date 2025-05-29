@@ -20,7 +20,7 @@ import lombok.*;
  * carrying all relevant data to reconstruct the event on either side
  * of the network.
  *
- * @author Ba gubair
+ * @author Emad BA GUBAIR
  * @version 1.0
  */
 @Serializable

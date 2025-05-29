@@ -6,6 +6,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * Data Transfer Object (DTO) representing an authenticated user.
+ * This class is used to transfer user authentication details
+ * between the server and client.
+ *
+ * @author André MARÇAIS
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

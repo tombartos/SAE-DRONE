@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
  * {@link RigidBodyControl},
  * and defines a bounding zone for the entity's allowed movement space.
  *
- * @author Ba gubair
+ * @author Emad BA GUBAIR
  * @version 1.0
  */
 @Getter

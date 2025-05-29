@@ -13,7 +13,7 @@ import lombok.*;
  * and direction)
  * between client and server in a networked simulation context.
  *
- * @author Ba gubair
+ * @author Emad BA GUBAIR
  * @version 1.0
  */
 @Serializable

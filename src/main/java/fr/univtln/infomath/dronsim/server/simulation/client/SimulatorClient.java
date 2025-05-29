@@ -36,9 +36,7 @@ import fr.univtln.infomath.dronsim.server.simulation.evenements.AjoutEntiteMarin
 import fr.univtln.infomath.dronsim.server.simulation.evenements.Courant;
 import fr.univtln.infomath.dronsim.server.simulation.evenements.Evenement;
 import fr.univtln.infomath.dronsim.server.simulation.evenements.EvenementDTO;
-import fr.univtln.infomath.dronsim.server.simulation.jme_messages.AjoutEvenementMessage;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.DroneDTOMessage;
-import fr.univtln.infomath.dronsim.server.simulation.jme_messages.DroneMovementRequestMessage;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.EntiteMarineDTOMessage;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.EvenementDTOMessage;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.Handshake1;
@@ -220,7 +218,6 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
         Serializer.registerClass(DroneInitData.class);
         Serializer.registerClass(DroneDTO.class);
         Serializer.registerClass(DroneDTOMessage.class);
-        Serializer.registerClass(DroneMovementRequestMessage.class);
         Serializer.registerClass(EvenementDTO.class);
         Serializer.registerClass(EvenementDTOMessage.class);
         Serializer.registerClass(EntiteMarineDTO.class);

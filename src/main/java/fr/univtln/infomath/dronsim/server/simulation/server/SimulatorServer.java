@@ -11,7 +11,6 @@ import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
-import com.jme3.font.BitmapText;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.network.Network;
@@ -21,10 +20,8 @@ import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.system.JmeContext;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import fr.univtln.infomath.dronsim.server.simulation.control.ArduSubControler;
 import fr.univtln.infomath.dronsim.server.simulation.control.Controler;
 import fr.univtln.infomath.dronsim.server.simulation.drones.Drone;
@@ -42,13 +39,11 @@ import fr.univtln.infomath.dronsim.server.simulation.evenements.AjoutEntiteMarin
 import fr.univtln.infomath.dronsim.server.simulation.evenements.Courant;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.AjoutEvenementMessage;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.DroneDTOMessage;
-import fr.univtln.infomath.dronsim.server.simulation.jme_messages.DroneMovementRequestMessage;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.EntiteMarineDTOMessage;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.EvenementDTOMessage;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.Handshake1;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.Handshake2;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.RetirerEvenementMessage;
-
 import fr.univtln.infomath.dronsim.shared.DroneAssociation;
 import lombok.Getter;
 import com.jme3.network.Filters;
@@ -60,6 +55,19 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.File;
 import java.lang.ProcessBuilder;
 
+/**
+ * The SimulatorServer class is the main entry point for the JME server
+ * application. It initializes the server, sets up the physics space, loads
+ * assets, and manages drone and marine entity interactions.
+ * <p>
+ * This class extends SimpleApplication to leverage JME's application lifecycle
+ * and physics capabilities. It also implements PhysicsCollisionListener to
+ * handle collision events in the simulation.
+ *
+ * @author Tom BARTIER
+ * @author Yann ROBLIN
+ * @author Emad BA GUBAIR
+ */
 public class SimulatorServer extends SimpleApplication implements PhysicsCollisionListener {
     private static final int SERVER_PORT = 6143; // Default JME server port
     private static final Logger log = LoggerFactory.getLogger(SimulatorServer.class);
@@ -82,6 +90,13 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
     // WARNING: we assume that the drone associations are already initialized from
     // the manager
 
+    /**
+     * Main method to start the SimulatorServer application.
+     * It checks if an instance is already running and starts the server in headless
+     * mode.
+     *
+     * @param args Command line arguments (not used).
+     */
     public static void main(String[] args) {
         if (instance != null) {
             log.error("SimulatorServer already running, aborting");
@@ -102,7 +117,6 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         Serializer.registerClass(DroneInitData.class);
         Serializer.registerClass(DroneDTO.class);
         Serializer.registerClass(DroneDTOMessage.class);
-        Serializer.registerClass(DroneMovementRequestMessage.class);
         Serializer.registerClass(EvenementDTO.class);
         Serializer.registerClass(EvenementDTOMessage.class);
         Serializer.registerClass(AjoutEvenementMessage.class);
@@ -113,6 +127,12 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
 
     }
 
+    /**
+     * Initializes the application. This method is called by the JME framework
+     * when the application starts.
+     * It sets up the server, initializes the physics space, loads assets, and
+     * creates the main scene.
+     */
     @Override
     public void simpleInitApp() {
         instance = this; // Singleton instance
@@ -122,7 +142,6 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
             serverListener = new ServerListener(this);
             server.addMessageListener(serverListener, Handshake1.class);
             server.addMessageListener(serverListener, Handshake2.class);
-            server.addMessageListener(serverListener, DroneMovementRequestMessage.class);
             server.addMessageListener(serverListener, DroneDTOMessage.class);
             server.addMessageListener(serverListener, AjoutEvenementMessage.class);
             server.addMessageListener(serverListener, RetirerEvenementMessage.class);
@@ -158,40 +177,6 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         models = loadDroneModelsFromJson(
                 "JsonData/DronesModels.json");
 
-        // // Init Ardusub controler
-        // Controler controler;
-        // try {
-        // controler = new ArduSubControler(Controler_IP_LIST.get(0));
-        // // Ajout du drone
-        // DroneServer droneA = DroneServer.createDrone(
-        // 0,
-        // 0,
-        // assetManager,
-        // space,
-        // ModelB,
-        // new Vector3f(0.0f, 2.0f, 0.0f),
-        // 100,
-        // controler);
-        // scene.attachChild(droneA.getNode());
-
-        // DroneDTO.createDroneDTO(droneA);
-        // } catch (IOException e) {
-        // e.printStackTrace();
-        // log.error("Error while connecting to the controler, skipping drone
-        // creation");
-
-        // }
-
-        // DroneServer droneB = DroneServer.createDrone(
-        // 1,
-        // 1,
-        // assetManager,
-        // space,
-        // ModelB,
-        // new Vector3f(3.0f, 0.0f, 0.0f),
-        // 100);
-        // scene.attachChild(droneB.getNode());
-        // DroneDTO.createDroneDTO(droneB);
         // Initialisation des entités marines de base
         EntiteMarineServer bateau = EntiteMarineServer.createEntite(
                 3,
@@ -305,6 +290,12 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         }
     }
 
+    /**
+     * Loads the map of the simulation and attach it to the parent node.
+     *
+     * @param parent The parent node to which the terrain will be attached, usually
+     *               rootnode.
+     */
     private void attachTerrain(Node parent) {
         Node terrainNode = new Node("Terrain");
         terrainNode.setLocalTranslation(new Vector3f(3.0f, -15.0f, 0.0f));
@@ -318,6 +309,21 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         space.add(terrainPhysics);
     }
 
+    /**
+     * Called once per frame by the JME framework to update the simulation state.
+     * <p>
+     * This method is responsible for:
+     * <ul>
+     * <li>Updating the positions and states of all drones in the simulation.</li>
+     * <li>Applying the effects of all active events (such as currents) to the
+     * simulation.</li>
+     * <li>Updating the state of all marine entities present in the simulation.</li>
+     * <li>Sending updated drone positions, marine entity positions, and active
+     * events to all connected clients.</li>
+     * </ul>
+     *
+     * @param tpf Time per frame in seconds, used for time-based updates.
+     */
     @Override
     public void simpleUpdate(float tpf) {
         // time += tpf;
@@ -346,6 +352,14 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         // Handle collision events here if needed
     }
 
+    /**
+     * Sends the initial handshake message to the client with the list of drones and
+     * their initial data.
+     * This method is called when a client connects to the server.
+     *
+     * @param clientId The id of the client, -1 if observer
+     * @param source   The connection source
+     */
     public void sendHandshake2(int clientId, HostedConnection source) {
         int droneId = -2; // The id of the drone that belongs to the client, -2 if no drone, -1 if
                           // observer
@@ -408,6 +422,10 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         server.broadcast(Filters.in(source), handshake2);
     }
 
+    /**
+     * Sends the updated positions of all drones to all connected clients each
+     * frame.
+     */
     public void sendDronePositions() {
         // Direct access to attributes for performance reasons
         for (int i = 0; i < nbDrones; i++) {
@@ -421,25 +439,16 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         server.broadcast(new DroneDTOMessage(DroneDTO.dronesDTOs));
     }
 
-    // Test method, outdated
-    // public void processDroneMovementRequest(DroneMovementRequestMessage message)
-    // {
-    // for (Drone drone : Drone.getDrones()) {
-    // if (drone.getId() == message.getDroneId()) {
-    // drone.setDirections(message.getDirections());
-    // drone.setMotors_speeds(message.getMotorsSpeeds());
-    // return;
-    // }
-    // }
-    // }
-
+    /**
+     * Calculates the drone positions based on their thruster vectors and
+     * applies the forces to the physics bodies.
+     */
     public void updateDronePositions() {
         for (DroneServer droneServer : DroneServer.getDroneServerList()) {
             // Update the thruster vectors
             // Rotate each initial thruster vector by the drone's local rotation
             DroneModel droneModel = droneServer.getDroneModel();
             RigidBodyControl body = droneServer.getBody();
-
 
             List<Float> motorsSpeeds = droneServer.getMotors_speeds();
             motorsSpeeds.clear(); // Clear the list to update it with new values
@@ -462,8 +471,10 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
             // Apply forces to the drone based on the thruster vectors and speeds
             for (int i = 0; i < droneModel.getNbMotors(); i++) {
 
-                Vector3f thrusterPos = droneServer.getNode().getWorldTranslation().add(droneServer.getNode().getChild("ThrusterNode"+i).getWorldTranslation().mult(-1));
-                Vector3f force = droneServer.getNode().getChild("ThrusterNode"+i).getWorldRotation().getRotationColumn(2).normalize().mult(droneServer.getMotors_speeds().get(i));
+                Vector3f thrusterPos = droneServer.getNode().getWorldTranslation()
+                        .add(droneServer.getNode().getChild("ThrusterNode" + i).getWorldTranslation().mult(-1));
+                Vector3f force = droneServer.getNode().getChild("ThrusterNode" + i).getWorldRotation()
+                        .getRotationColumn(2).normalize().mult(droneServer.getMotors_speeds().get(i));
                 body.applyForce(force, thrusterPos);
             }
 
@@ -583,6 +594,12 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         server.broadcast(new EvenementDTOMessage(eventDTOs));
     }
 
+    /**
+     * Returns a list of DTOs representing the current events in the simulation.
+     * This method is used to retrieve the events for the client-side display.
+     *
+     * @return List of EvenementDTO objects.
+     */
     public static List<EvenementDTO> getEvenementDTOs() {
         List<EvenementDTO> eventDTOs = new ArrayList<>();
         for (Evenement event : Evenement.getEvenements()) {
@@ -597,13 +614,6 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         }
         return eventDTOs;
     }
-
-    /**
-     * Sends the current positions and directions of all marine entities to the
-     * clients.
-     * This includes base marine entities and those added via
-     * {@link AjoutEntiteMarineEvent}.
-     */
 
     /**
      * Sends the current positions and directions of all marine entities to the
@@ -693,6 +703,4 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
             return List.of();
         }
     }
-    // geotools WSG84
-    // Choisir zone UTM
 }

@@ -13,7 +13,7 @@ import lombok.Setter;
  * to create a marine entity on the server or client during the initial
  * handshake.
  *
- * @author Ba gubair
+ * @author Emad BA GUBAIR
  * @version 1.0
  */
 @Serializable
