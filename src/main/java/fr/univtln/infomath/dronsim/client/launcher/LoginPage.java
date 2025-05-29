@@ -3,8 +3,6 @@ package fr.univtln.infomath.dronsim.client.launcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.univtln.infomath.dronsim.server.auth.AuthenticationService.AuthenticatedUser;
-import fr.univtln.infomath.dronsim.server.simulation.client.SimulatorClient;
 import fr.univtln.infomath.dronsim.shared.auth.AuthUserDTO;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

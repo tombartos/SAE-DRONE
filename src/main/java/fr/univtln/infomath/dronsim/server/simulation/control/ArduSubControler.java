@@ -159,7 +159,6 @@ public class ArduSubControler implements Controler {
 
     @Override
     public void setSensorValue(int captorIndex, float[] values) {
-        // TODO convertir coordonnées euclidiennes en coordonnées polaires
         switch (captorIndex) {
             case 0:
                 for (int i = 0; i < 3 && i < values.length; i++) {

@@ -11,7 +11,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jme3.math.Vector3f;
 import com.jme3.network.serializing.Serializable;
 
-import fr.univtln.infomath.dronsim.server.simulation.client.SimulatorClient;
 import lombok.*;
 
 /**

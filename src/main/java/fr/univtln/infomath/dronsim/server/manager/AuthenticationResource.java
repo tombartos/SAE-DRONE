@@ -1,7 +1,5 @@
 package fr.univtln.infomath.dronsim.server.manager;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;

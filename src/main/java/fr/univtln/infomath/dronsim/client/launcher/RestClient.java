@@ -5,13 +5,10 @@ import java.net.NetworkInterface;
 import java.util.Enumeration;
 import java.net.Inet4Address;
 import java.util.List;
-import java.util.Vector;
-
 import org.glassfish.jersey.jackson.JacksonFeature;
 
 import com.jme3.math.Vector3f;
 
-import fr.univtln.infomath.dronsim.server.auth.AuthenticationService.AuthenticatedUser;
 import fr.univtln.infomath.dronsim.server.simulation.evenements.EvenementDTO;
 import fr.univtln.infomath.dronsim.shared.DroneAssociation;
 import fr.univtln.infomath.dronsim.shared.EventCreateRequest;
@@ -39,7 +36,6 @@ public class RestClient {
     @Setter
     @Getter
     private static String authHeader = "Bearer TEST_TOKEN";
-    // TODO: Replace with a real token when we will have the true
     // authentication system
 
     public RestClient(String baseUrl) {

@@ -18,7 +18,6 @@ import com.jme3.network.serializing.Serializer;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.*;
-import com.jme3.scene.control.CameraControl;
 import com.jme3.system.AppSettings;
 import com.jme3.util.SkyFactory;
 import com.jme3.water.WaterFilter;
@@ -53,7 +52,6 @@ import fr.univtln.infomath.dronsim.server.utils.GStreamerSender;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -251,35 +249,37 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
             }
         }
 
-        if (yourDrone == null) {
+        if (handshake2.getYourDroneId() == -1) {
             // On est donc un observateur
             if (!Drone.getDrones().isEmpty()) {
                 setDroneObservationCamera(Drone.getDrones().get(currentObservedIndex));
             }
-            // log.error("Your drone is not found in the list of drones");
-            // log.error("Available drones: " + Drone.getDrones().toString());
-            // log.error("Your client ID: " + handshake2.getYourDroneId());
-            // System.exit(1);
         } else {
-            // ChaseCamera
-            // TODO : A remplacer par la first person camera
-            Spatial droneSpatial = yourDrone.getNode();
-            chaseCam = new ChaseCamera(cam, droneSpatial, inputManager);
-            chaseCam.setDefaultDistance(10f); // distance par défaut entre la caméra et le drone
-            chaseCam.setMaxDistance(20f); // distance max (molette)
-            chaseCam.setMinDistance(3f); // distance min (molette)
-            // chaseCam.setSmoothMotion(true); // mouvement fluide
-            chaseCam.setTrailingEnabled(true); // caméra suit le mouvement
-            // 2. FPV CameraNode attachée au drone
-            fpvCamNode = new CameraNode("FPVCam", cam);
-            fpvCamNode.setLocalTranslation(new Vector3f(0, 0.2f, 1f));
-            ((Node) droneSpatial).attachChild(fpvCamNode);
-            // activer la FPV au début
-            fpvCamNode.setEnabled(true);
-            // Desactiver la ChaseCam au début
-            chaseCam.setEnabled(false);
-            // Contrôle clavier du drone
-            controlerA = new LocalTestingControler(inputManager, client, yourDrone.getId());
+            if (yourDrone == null) {
+                log.error("Your drone can not be found in the list of drones");
+                log.error("Available drones: " + Drone.getDrones().toString());
+                log.error("Your client ID: " + handshake2.getYourDroneId());
+                System.exit(1);
+            } else {
+                Spatial droneSpatial = yourDrone.getNode();
+                chaseCam = new ChaseCamera(cam, droneSpatial, inputManager);
+                chaseCam.setDefaultDistance(10f); // distance par défaut entre la caméra et le drone
+                chaseCam.setMaxDistance(20f); // distance max (molette)
+                chaseCam.setMinDistance(3f); // distance min (molette)
+                // chaseCam.setSmoothMotion(true); // mouvement fluide
+                chaseCam.setTrailingEnabled(true); // caméra suit le mouvement
+                // 2. FPV CameraNode attachée au drone
+                fpvCamNode = new CameraNode("FPVCam", cam);
+                fpvCamNode.setLocalTranslation(new Vector3f(0, 0.2f, 1f));
+                ((Node) droneSpatial).attachChild(fpvCamNode);
+                // activer la FPV au début
+                fpvCamNode.setEnabled(true);
+                // Desactiver la ChaseCam au début
+                chaseCam.setEnabled(false);
+                // Contrôle clavier du drone
+                controlerA = new LocalTestingControler(inputManager, client, yourDrone.getId());
+            }
+
         }
 
         // Ajout des entités marines

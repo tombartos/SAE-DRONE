@@ -1,7 +1,5 @@
 package fr.univtln.infomath.dronsim.server.auth;
 
-import org.checkerframework.checker.units.qual.A;
-
 import fr.univtln.infomath.dronsim.server.auth.AuthenticationService.AuthenticatedUser;
 import fr.univtln.infomath.dronsim.server.manager.AuthenticationResource;
 import jakarta.ws.rs.NotAuthorizedException;
