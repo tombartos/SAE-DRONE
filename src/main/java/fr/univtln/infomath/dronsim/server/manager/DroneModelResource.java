@@ -3,9 +3,9 @@ package fr.univtln.infomath.dronsim.server.manager;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.univtln.infomath.dronsim.server.auth.AuthChecker;
 import fr.univtln.infomath.dronsim.server.auth.AuthenticationService.AuthenticatedUser;
 import fr.univtln.infomath.dronsim.server.simulation.drones.DroneModel;
-import fr.univtln.infomath.dronsim.server.utils.AuthChecker;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.HeaderParam;
@@ -13,6 +13,20 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
+/**
+ * REST resource for accessing available drone models.
+ * <p>
+ * Provides an endpoint for game masters (GM) to retrieve the list of all drone
+ * model names.
+ * Access is restricted to authenticated users with GM privileges.
+ * <ul>
+ * <li>GET: Returns a list of drone model names.</li>
+ * </ul>
+ * <p>
+ * All endpoints require an "Authorization" header for authentication.
+ *
+ * @author Tom
+ */
 @Path("/dronemodels")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)

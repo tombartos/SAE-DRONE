@@ -3,7 +3,7 @@ package fr.univtln.infomath.dronsim.server.manager;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.univtln.infomath.dronsim.server.utils.AuthChecker;
+import fr.univtln.infomath.dronsim.server.auth.AuthChecker;
 import fr.univtln.infomath.dronsim.server.auth.AuthenticationService.AuthenticatedUser;
 import fr.univtln.infomath.dronsim.shared.User;
 import jakarta.ws.rs.Consumes;
@@ -43,8 +43,8 @@ public class UserResource {
         AuthenticatedUser authUser = AuthChecker.checkAuth(authHeader);
 
         // Check if the user is a GM
-        if (!authUser.isGameMaster()) {
-            throw new ForbiddenException("User is not a GM");
+        if (!authUser.isGameMaster() && !authUser.isAdmin() && !authUser.isObserver()) {
+            throw new ForbiddenException("User is not authorized");
         }
 
         List<User> pilots = new ArrayList<>();

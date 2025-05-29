@@ -1,0 +1,11 @@
+#!/bin/sh
+
+while read line
+do
+    user_info=$(echo "$line" | cut -d: -f1,2)
+    password=$(echo "$line" | cut -d: -f3-)
+    hash=$(echo -n "$password" |
+        cksum --base64 --algorithm=sha512 --untagged |
+        awk '{print $1}')
+    echo "$user_info:$hash"
+done

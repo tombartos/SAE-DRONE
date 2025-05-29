@@ -16,18 +16,18 @@ import lombok.*;
  * This class represents a user. It contains all the informations about the
  * user.
  * role = 0 : Pilot
- * role = 1 : Observator
+ * role = 1 : Observer
  * role = 2 : Game Master
  * role = 3 : Administrator
  */
 public class User {
     private static List<User> users = new ArrayList<>();
-    private int id;
     private String login;
     private int role; // 0 = Pilote, 1 = Observateur, 2 = Maitre de jeu, 3 = Administrateur
+    private String hashedPasswd;
 
-    public static User createUser(int id, String login, int role) {
-        User user = new User(id, login, role);
+    public static User createUser(String login, int role, String hashedPasswd) {
+        User user = new User(login, role, hashedPasswd);
         users.add(user);
         return user;
     }

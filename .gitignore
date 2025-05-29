@@ -11,13 +11,14 @@ bin/
 out/
 data/
 *.zip
+*.tar
 *.log
 *.tmp
 *.bak
 *.swp
 *.swo
 *.DS_Store
-
 /ardupilot
 /venv
 /qgc
+/passwd

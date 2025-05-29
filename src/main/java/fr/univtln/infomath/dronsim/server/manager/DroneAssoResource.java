@@ -2,9 +2,9 @@ package fr.univtln.infomath.dronsim.server.manager;
 
 import java.util.List;
 
+import fr.univtln.infomath.dronsim.server.auth.AuthChecker;
 import fr.univtln.infomath.dronsim.server.auth.AuthenticationService.AuthenticatedUser;
 import fr.univtln.infomath.dronsim.server.simulation.drones.DroneModel;
-import fr.univtln.infomath.dronsim.server.utils.AuthChecker;
 import fr.univtln.infomath.dronsim.shared.DroneAssociation;
 import fr.univtln.infomath.dronsim.shared.User;
 import jakarta.ws.rs.Consumes;
@@ -15,6 +15,22 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
+/**
+ * REST resource for managing drone associations.
+ * <p>
+ * Provides endpoints for game masters (GM) to create and retrieve associations
+ * between pilots and drone models. Access is restricted to authenticated users
+ * with GM privileges.
+ * <ul>
+ * <li>POST: Create a new drone association if the pilot and drone model are
+ * valid and not already associated.</li>
+ * <li>GET: Retrieve the list of all drone associations.</li>
+ * </ul>
+ * <p>
+ * All endpoints require an "Authorization" header for authentication.
+ *
+ * @author Tom BARTIER
+ */
 @Path("/droneassociations")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)

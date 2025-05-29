@@ -11,6 +11,7 @@ import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
+import com.jme3.font.BitmapText;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.network.Network;
@@ -24,7 +25,6 @@ import com.jme3.system.JmeContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.univtln.infomath.dronsim.server.simulation.client.SimulatorClient;
 import fr.univtln.infomath.dronsim.server.simulation.control.ArduSubControler;
 import fr.univtln.infomath.dronsim.server.simulation.control.Controler;
 import fr.univtln.infomath.dronsim.server.simulation.drones.Drone;
@@ -32,10 +32,23 @@ import fr.univtln.infomath.dronsim.server.simulation.drones.DroneDTO;
 import fr.univtln.infomath.dronsim.server.simulation.drones.DroneInitData;
 import fr.univtln.infomath.dronsim.server.simulation.drones.DroneModel;
 import fr.univtln.infomath.dronsim.server.simulation.drones.DroneServer;
+import fr.univtln.infomath.dronsim.server.simulation.entiteMarine.EntiteMarine;
+import fr.univtln.infomath.dronsim.server.simulation.entiteMarine.EntiteMarineDTO;
+import fr.univtln.infomath.dronsim.server.simulation.entiteMarine.EntiteMarineInitData;
+import fr.univtln.infomath.dronsim.server.simulation.entiteMarine.EntiteMarineServer;
+import fr.univtln.infomath.dronsim.server.simulation.evenements.Evenement;
+import fr.univtln.infomath.dronsim.server.simulation.evenements.EvenementDTO;
+import fr.univtln.infomath.dronsim.server.simulation.evenements.AjoutEntiteMarineEvent;
+import fr.univtln.infomath.dronsim.server.simulation.evenements.Courant;
+import fr.univtln.infomath.dronsim.server.simulation.jme_messages.AjoutEvenementMessage;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.DroneDTOMessage;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.DroneMovementRequestMessage;
+import fr.univtln.infomath.dronsim.server.simulation.jme_messages.EntiteMarineDTOMessage;
+import fr.univtln.infomath.dronsim.server.simulation.jme_messages.EvenementDTOMessage;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.Handshake1;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.Handshake2;
+import fr.univtln.infomath.dronsim.server.simulation.jme_messages.RetirerEvenementMessage;
+
 import fr.univtln.infomath.dronsim.shared.DroneAssociation;
 import lombok.Getter;
 import com.jme3.network.Filters;
@@ -47,7 +60,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.File;
 import java.lang.ProcessBuilder;
 
-//TODO: Fix Jmonkey Serialization problem with server and client in same jvm (idea : put a launch param to tell the client to not do the serialization)
 public class SimulatorServer extends SimpleApplication implements PhysicsCollisionListener {
     private static final int SERVER_PORT = 6143; // Default JME server port
     private static final Logger log = LoggerFactory.getLogger(SimulatorServer.class);
@@ -91,6 +103,14 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         Serializer.registerClass(DroneDTO.class);
         Serializer.registerClass(DroneDTOMessage.class);
         Serializer.registerClass(DroneMovementRequestMessage.class);
+        Serializer.registerClass(EvenementDTO.class);
+        Serializer.registerClass(EvenementDTOMessage.class);
+        Serializer.registerClass(AjoutEvenementMessage.class);
+        Serializer.registerClass(RetirerEvenementMessage.class);
+        Serializer.registerClass(EntiteMarineDTO.class);
+        Serializer.registerClass(EntiteMarineDTOMessage.class);
+        Serializer.registerClass(EntiteMarineInitData.class);
+
     }
 
     @Override
@@ -104,6 +124,9 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
             server.addMessageListener(serverListener, Handshake2.class);
             server.addMessageListener(serverListener, DroneMovementRequestMessage.class);
             server.addMessageListener(serverListener, DroneDTOMessage.class);
+            server.addMessageListener(serverListener, AjoutEvenementMessage.class);
+            server.addMessageListener(serverListener, RetirerEvenementMessage.class);
+
             server.start();
             log.info("Server starting on port " + SERVER_PORT);
         } catch (IOException e) {
@@ -169,7 +192,29 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         // 100);
         // scene.attachChild(droneB.getNode());
         // DroneDTO.createDroneDTO(droneB);
-
+        // Initialisation des entités marines de base
+        EntiteMarineServer bateau = EntiteMarineServer.createEntite(
+                3,
+                "Bateau",
+                assetManager,
+                space,
+                "bateau/speedboat_n2.j3o",
+                new Vector3f(-15, 3.5f, -40),
+                Vector3f.UNIT_Z,
+                1.0f);
+        scene.attachChild(bateau.getModelNode());
+        EntiteMarineDTO.createEntiteMarineDTO(bateau);
+        EntiteMarineServer poisson1 = EntiteMarineServer.createEntite(
+                0,
+                "Poisson",
+                assetManager,
+                space,
+                "poisson/school_of_fish.j3o",
+                new Vector3f(-28, -8, -3),
+                new Vector3f(1, 0, 0),
+                0.5f);
+        scene.attachChild(poisson1.getModelNode());
+        EntiteMarineDTO.createEntiteMarineDTO(poisson1);
         if (droneAssociations.size() == 0) {
             log.error("No drone associations found, aborting server initialization");
             throw new IllegalStateException("No drone associations found, aborting server initialization");
@@ -263,7 +308,7 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
     private void attachTerrain(Node parent) {
         Node terrainNode = new Node("Terrain");
         terrainNode.setLocalTranslation(new Vector3f(3.0f, -15.0f, 0.0f));
-        Spatial terrain = assetManager.loadModel("Models/manta_point_version_6_superseded.glb");
+        Spatial terrain = assetManager.loadModel("Models/manta_point_version_6_superseded.j3o");
         terrainNode.attachChild(terrain);
         parent.attachChild(terrainNode);
 
@@ -279,7 +324,20 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         // if (time > 0.1f) {
         // time = 0.0f;
         updateDronePositions();
+        // Appliquer les forces de courant AVANT d’envoyer les positions
+
+        for (Evenement event : Evenement.getEvenements()) {
+            event.apply(tpf);
+        }
+        for (EntiteMarine entite : EntiteMarine.getEntites()) {
+            if (entite instanceof EntiteMarineServer entiteServer) {
+                entiteServer.update(tpf);
+            }
+        }
         sendDronePositions();
+        sendEntiteMarinePositions();
+        broadcastEvenements();
+
         // }
     }
 
@@ -289,7 +347,13 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
     }
 
     public void sendHandshake2(int clientId, HostedConnection source) {
-        int droneId = -1; // The id of the drone that belongs to the client, -1 if no drone
+        int droneId = -2; // The id of the drone that belongs to the client, -2 if no drone, -1 if
+                          // observer
+        if (clientId == -1) {
+            log.info("Client with id " + clientId + " is an observer");
+            droneId = -1; // Observer
+        }
+
         ArrayList<DroneInitData> dronesInitData = new ArrayList<>();
         for (Drone drone : DroneServer.getDroneServerList()) {
             dronesInitData
@@ -300,11 +364,47 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
                 droneId = drone.getId();
             }
         }
-        if (droneId == -1) {
+        List<EntiteMarineInitData> marineInitData = new ArrayList<>();
+        for (EntiteMarine entite : EntiteMarine.getEntites()) {
+            marineInitData.add(new EntiteMarineInitData(
+                    entite.getId(),
+                    entite.getType(),
+                    entite.getModelPath(),
+                    entite.getPositionInitiale(),
+                    entite.getDirection(),
+                    entite.getSpeed()));
+        }
+        List<EvenementDTO> evenementsInitData = new ArrayList<>();
+        for (Evenement evenement : Evenement.getEvenements()) {
+
+            float intensite = 1f;
+            String entiteType = null;
+            String modelPath = null;
+
+            if (evenement instanceof Courant courant) {
+                intensite = courant.getIntensite();
+            } else if (evenement instanceof AjoutEntiteMarineEvent e) {
+                intensite = e.getEntite().getSpeed();
+                entiteType = e.getEntite().getType();
+                modelPath = e.getEntite().getModelPath();
+            }
+            evenementsInitData.add(new EvenementDTO(
+                    evenement.getId(),
+                    evenement.getZoneCenter(),
+                    evenement.getZoneSize(),
+                    evenement.getType(),
+                    evenement.getDirection(),
+                    intensite,
+                    entiteType,
+                    modelPath));
+        }
+
+        Handshake2 handshake2 = new Handshake2(dronesInitData, droneId, marineInitData, evenementsInitData);
+        if (droneId == -2) {
             log.error("No drone found for clientId " + clientId + ", aborting handshake");
             throw new IllegalStateException("No drone found for clientId " + clientId + ", aborting handshake");
         }
-        Handshake2 handshake2 = new Handshake2(dronesInitData, droneId);
+
         server.broadcast(Filters.in(source), handshake2);
     }
 
@@ -339,23 +439,7 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
             // Rotate each initial thruster vector by the drone's local rotation
             DroneModel droneModel = droneServer.getDroneModel();
             RigidBodyControl body = droneServer.getBody();
-            List<Vector3f> rotatedThrusterVecs = new ArrayList<>();
-            Quaternion rotation = body.getPhysicsRotation();
-            for (Vector3f vec : droneModel.getInitialThrusterVecs()) {
-                rotatedThrusterVecs.add(rotation.mult(vec));
-            }
-            droneServer.setThrusterVecs(rotatedThrusterVecs);
 
-            // Update the thruster global positions based on the drone's position and
-            // rotation
-            List<Vector3f> updatedThrusterPositions = new ArrayList<>();
-            Quaternion droneRotation = droneServer.getNode().getLocalRotation();
-            Vector3f droneTranslation = droneServer.getNode().getLocalTranslation();
-            for (Vector3f initialPos : droneModel.getInitialThrusterLocalPosition()) {
-                Vector3f rotatedPos = droneRotation.mult(initialPos);
-                updatedThrusterPositions.add(rotatedPos.add(droneTranslation));
-            }
-            droneServer.setThrusterGlobalPositions(updatedThrusterPositions);
 
             List<Float> motorsSpeeds = droneServer.getMotors_speeds();
             motorsSpeeds.clear(); // Clear the list to update it with new values
@@ -367,9 +451,6 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
                     // log.info("Motor " + i + " speed: " + motorspeed + " x " +
                     // droneModel.getMotorsMaxSpeed());
                 }
-                // log.info("DEBUG: Motors speeds for drone " + droneServer.getId() + ": "
-                // + motorsSpeeds.toString() + " Drone motorspeeds: " +
-                // droneServer.getMotors_speeds().toString());
             }
             // If the controler is null, we set the motors speeds to 0
             else {
@@ -380,12 +461,9 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
 
             // Apply forces to the drone based on the thruster vectors and speeds
             for (int i = 0; i < droneModel.getNbMotors(); i++) {
-                Vector3f force = droneServer.getThrusterVecs().get(i).mult(droneServer.getMotors_speeds().get(i));
-                // log.info("DEBUG: Trhuster " + i + " force: " + force.toString() + "Thruster
-                // vec: "
-                // + droneServer.getThrusterVecs().get(i).toString() + " Speed: "
-                // + droneServer.getMotors_speeds().get(i));
-                Vector3f thrusterPos = droneServer.getThrusterGlobalPositions().get(i);
+
+                Vector3f thrusterPos = droneServer.getNode().getWorldTranslation().add(droneServer.getNode().getChild("ThrusterNode"+i).getWorldTranslation().mult(-1));
+                Vector3f force = droneServer.getNode().getChild("ThrusterNode"+i).getWorldRotation().getRotationColumn(2).normalize().mult(droneServer.getMotors_speeds().get(i));
                 body.applyForce(force, thrusterPos);
             }
 
@@ -415,6 +493,151 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
             // "Drone body position = " + body.getPhysicsLocation());
 
         }
+
+    }
+
+    /**
+     * Adds an event to the simulation.
+     * The event can be a current or a marine entity.
+     *
+     * @param dto The DTO containing the event data.
+     */
+    public void ajoutEvenement(EvenementDTO dto) {
+        if ("Courant".equals(dto.getType())) {
+            Courant courant = new Courant(
+                    dto.getId(),
+                    dto.getZoneCenter(),
+                    dto.getZoneSize(),
+                    dto.getDirection(),
+                    dto.getIntensite(),
+                    space, assetManager);
+        } else if ("EntiteMarine".equals(dto.getType())) {
+            EntiteMarineInitData initData = new EntiteMarineInitData(
+                    dto.getId(),
+                    dto.getEntiteType(),
+                    dto.getModelPath(),
+                    dto.getZoneCenter(), // Utilisé comme position
+                    dto.getDirection(), // Direction initiale
+                    dto.getIntensite() // Vitesse
+            );
+
+            AjoutEntiteMarineEvent event = new AjoutEntiteMarineEvent(
+                    initData,
+                    assetManager,
+                    space);
+            scene.attachChild(event.getModelNode());
+        }
+
+        broadcastEvenements();
+    }
+
+    /**
+     * Removes an event from the simulation by its ID.
+     *
+     * @param id The ID of the event to remove.
+     */
+    public boolean retirerEvenement(int id) {
+        Evenement toRemove = null;
+        for (Evenement ev : Evenement.getEvenements()) {
+            if (ev.getId() == id) {
+                toRemove = ev;
+                break;
+            }
+        }
+        if (toRemove != null) {
+            toRemove.retirer();
+            broadcastEvenements();
+            return true; // Event found and removed
+        }
+        return false; // Event not found
+    }
+
+    /**
+     * Returns the list of all events currently in
+     * the simulation.
+     *
+     * @return List of Evenement objects.
+     */
+
+    public List<Evenement> getEvenements() {
+        return Evenement.getEvenements();
+    }
+
+    /**
+     * Broadcasts the list of current active events to all connected clients.
+     * Each event is converted to a DTO and included in a
+     * {@link EvenementDTOMessage}.
+     */
+    private void broadcastEvenements() {
+        List<EvenementDTO> eventDTOs = new ArrayList<>();
+        for (Evenement event : Evenement.getEvenements()) {
+            eventDTOs.add(EvenementDTO.createEvenementDTO(event.getId(),
+                    event.getZoneCenter(),
+                    event.getZoneSize(),
+                    event.getType(),
+                    event.getDirection(),
+                    event instanceof Courant ? ((Courant) event).getIntensite() : 1f,
+                    event instanceof AjoutEntiteMarineEvent ? ((AjoutEntiteMarineEvent) event).getEntite().getType()
+                            : null));
+        }
+        server.broadcast(new EvenementDTOMessage(eventDTOs));
+    }
+
+    public static List<EvenementDTO> getEvenementDTOs() {
+        List<EvenementDTO> eventDTOs = new ArrayList<>();
+        for (Evenement event : Evenement.getEvenements()) {
+            eventDTOs.add(EvenementDTO.createEvenementDTO(event.getId(),
+                    event.getZoneCenter(),
+                    event.getZoneSize(),
+                    event.getType(),
+                    event.getDirection(),
+                    event instanceof Courant ? ((Courant) event).getIntensite() : 1f,
+                    event instanceof AjoutEntiteMarineEvent ? ((AjoutEntiteMarineEvent) event).getEntite().getType()
+                            : null));
+        }
+        return eventDTOs;
+    }
+
+    /**
+     * Sends the current positions and directions of all marine entities to the
+     * clients.
+     * This includes base marine entities and those added via
+     * {@link AjoutEntiteMarineEvent}.
+     */
+
+    /**
+     * Sends the current positions and directions of all marine entities to the
+     * clients.
+     * This includes base marine entities and those added via
+     * {@link AjoutEntiteMarineEvent}.
+     */
+    public void sendEntiteMarinePositions() {
+        List<EntiteMarineDTO> dtos = new ArrayList<>();
+
+        // 1. Entités marines "de base"
+        for (EntiteMarine entite : EntiteMarine.getEntites()) {
+            dtos.add(new EntiteMarineDTO(
+                    entite.getId(),
+                    entite.getType(),
+                    entite.getPositionCourante(),
+                    entite.getDirection() // Direction actuelle
+            ));
+        }
+
+        // 2. Entités marines créées via Evenement
+        for (Evenement event : Evenement.getEvenements()) {
+            if (event instanceof AjoutEntiteMarineEvent marineEvent) {
+                EntiteMarine entite = marineEvent.getEntite();
+                dtos.add(new EntiteMarineDTO(
+                        entite.getId(),
+                        entite.getType(),
+                        entite.getPositionCourante(),
+                        entite.getDirection()));
+            }
+        }
+
+        // Envoi réseau
+        server.broadcast(new EntiteMarineDTOMessage(dtos));
 
     }
 
@@ -470,7 +693,6 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
             return List.of();
         }
     }
-
     // geotools WSG84
     // Choisir zone UTM
 }

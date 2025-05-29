@@ -4,6 +4,8 @@ import com.jme3.network.Message;
 import com.jme3.network.MessageListener;
 
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.DroneDTOMessage;
+import fr.univtln.infomath.dronsim.server.simulation.jme_messages.EntiteMarineDTOMessage;
+import fr.univtln.infomath.dronsim.server.simulation.jme_messages.EvenementDTOMessage;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.Handshake2;
 import lombok.AllArgsConstructor;
 
@@ -32,6 +34,15 @@ public class ClientListener implements MessageListener<Client> {
             // log.info("Client #" + source.getId() + " received DronePosition : "
             // + DronePosMessage.getDronesInfos().toString());
             simulatorClient.updateDronesInfo(DronePosMessage.getDronesInfos());
+            return;
+        }
+        if (message instanceof EvenementDTOMessage msg) {
+            simulatorClient.updateEvenements(msg.getEvenements());
+            return;
+        }
+        if (message instanceof EntiteMarineDTOMessage msg) {
+            simulatorClient.updateEntitesMarine(msg.getEntites());
+
             return;
         }
 

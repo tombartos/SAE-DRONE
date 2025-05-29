@@ -17,8 +17,24 @@ import java.nio.file.Paths;
 import java.util.List;
 
 /**
- * Main class.
+ * Manager is the main entry point for the server-side application.
+ * <p>
+ * It is responsible for:
+ * <ul>
+ * <li>Starting the Grizzly HTTP server and exposing JAX-RS REST endpoints</li>
+ * <li>Loading and providing access to user and drone model data from JSON
+ * files</li>
+ * <li>Initializing drone associations and user lists</li>
+ * <li>Providing utility methods for accessing server configuration</li>
+ * </ul>
+ * <p>
+ * The server listens on {@link #BASE_URI} and loads configuration from the
+ * <code>JsonData/users.json</code> and <code>JsonData/DronesModels.json</code>
+ * files.
+ * <p>
+ * Usage: Run the main method to start the server.
  *
+ * @author Tom BARTIER
  */
 public class Manager {
     private static final Logger log = LoggerFactory.getLogger(Manager.class);
@@ -42,14 +58,29 @@ public class Manager {
         return GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
     }
 
+    /**
+     * Returns the list of users loaded from the JSON file.
+     *
+     * @return List of users
+     */
     public static List<User> getUsers() {
         return users;
     }
 
+    /**
+     * Returns the list of drone models loaded from the JSON file.
+     *
+     * @return List of drone models
+     */
     public static List<DroneModel> getDroneModels() {
         return droneModels;
     }
 
+    /**
+     * Returns the base host of the server.
+     *
+     * @return Base host as a String
+     */
     public static String getBaseHost() {
         try {
             URI uri = new URI(BASE_URI);

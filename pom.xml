@@ -4,6 +4,84 @@
   <artifactId>png</artifactId>
   <version>0.0.1-SNAPSHOT</version>
 
+  <name>SDF Simulateur de Drone Francais</name>
+	<description>A multi-environment drone simulator</description>
+
+
+	<licenses>
+		<license>
+			<name>The GNU Lesser General Public License, Version 3.0</name>
+			<url>http://www.gnu.org/licenses/lgpl-3.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+<developers>
+		<developer>
+			<id>tombartos</id>
+			<name>Tom BARTIER</name>
+			<email>tom-bartier@etud.univ-tln.fr</email>
+			<organization>University of Toulon</organization>
+			<organizationUrl>http://www.univ-tln.fr</organizationUrl>
+			<roles>
+				<role>student</role>
+			</roles>
+			<timezone>France/Paris</timezone>
+			<properties><!-- <picUrl>http://www.example.com/jdoe/pic</picUrl> --></properties>
+		</developer>
+    <developer>
+			<id>grifire</id>
+			<name>Yann ROBLIN</name>
+			<email>yann-roblin@etud.univ-tln.fr</email>
+			<organization>University of Toulon</organization>
+			<organizationUrl>http://www.univ-tln.fr</organizationUrl>
+			<roles>
+				<role>student</role>
+			</roles>
+			<timezone>France/Paris</timezone>
+			<properties><!-- <picUrl>http://www.example.com/jdoe/pic</picUrl> --></properties>
+		</developer>
+    <developer>
+			<id>BAGUBAIR</id>
+			<name>Emad BA GUBAIR</name>
+			<email>emad-ba-gubair@etud.univ-tln.fr</email>
+			<organization>University of Toulon</organization>
+			<organizationUrl>http://www.univ-tln.fr</organizationUrl>
+			<roles>
+				<role>student</role>
+			</roles>
+			<timezone>France/Paris</timezone>
+			<properties><!-- <picUrl>http://www.example.com/jdoe/pic</picUrl> --></properties>
+		</developer>
+    <developer>
+			<id>andremarcais</id>
+			<name>André Marçais</name>
+			<email>andre-marcais@etud.univ-tln.fr</email>
+			<organization>University of Toulon</organization>
+			<organizationUrl>http://www.univ-tln.fr</organizationUrl>
+			<roles>
+				<role>student</role>
+			</roles>
+			<timezone>France/Paris</timezone>
+			<properties><!-- <picUrl>http://www.example.com/jdoe/pic</picUrl> --></properties>
+		</developer>
+  <developer>
+			<id>jseinturier</id>
+			<name>Julien Seinturier</name>
+			<email>julien.seinturier@univ-tln.fr</email>
+			<url>http://www.seinturier.fr</url>
+			<organization>University of Toulon</organization>
+			<organizationUrl>http://www.univ-tln.fr</organizationUrl>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+			<timezone>France/Paris</timezone>
+			<properties><!-- <picUrl>http://www.example.com/jdoe/pic</picUrl> --></properties>
+		</developer>
+  </developers>
+
+
   <properties>
     <jersey.version>3.1.10</jersey.version>
     <javafx.version>21</javafx.version>
@@ -20,19 +98,31 @@
     <jme3_v>3.7.0-stable</jme3_v>
 
     <junit.version>5.12.1</junit.version>
+
+    <!-- Geotools -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <geotools.version>33.1</geotools.version>
+    <maven.deploy.skip>true</maven.deploy.skip>
   </properties>
 
   <dependencyManagement>
     <dependencies>
-        <dependency>
-            <groupId>org.glassfish.jersey</groupId>
-            <artifactId>jersey-bom</artifactId>
-            <version>${jersey.version}</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency>
+      <dependency>
+        <groupId>org.glassfish.jersey</groupId>
+        <artifactId>jersey-bom</artifactId>
+        <version>${jersey.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson</groupId>
+        <artifactId>jackson-bom</artifactId>
+        <version>2.19.0</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
     </dependencies>
-</dependencyManagement>
+  </dependencyManagement>
 
 
   <dependencies>
@@ -44,6 +134,7 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- Test dependencies -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
@@ -75,67 +166,56 @@
       <artifactId>jme3-core</artifactId>
       <version>${jme3_v}</version>
     </dependency>
-
     <dependency>
       <groupId>${jme3_g}</groupId>
       <artifactId>jme3-desktop</artifactId>
       <version>${jme3_v}</version>
     </dependency>
-
     <dependency>
       <groupId>${jme3_g}</groupId>
       <artifactId>jme3-effects</artifactId>
       <version>${jme3_v}</version>
     </dependency>
-
     <dependency>
       <groupId>${jme3_g}</groupId>
       <artifactId>jme3-jbullet</artifactId>
       <version>${jme3_v}</version>
     </dependency>
-
     <dependency>
       <groupId>${jme3_g}</groupId>
       <artifactId>jme3-jogg</artifactId>
       <version>${jme3_v}</version>
     </dependency>
-
     <dependency>
       <groupId>${jme3_g}</groupId>
       <artifactId>jme3-lwjgl3</artifactId>
       <version>${jme3_v}</version>
     </dependency>
-
     <dependency>
       <groupId>${jme3_g}</groupId>
       <artifactId>jme3-networking</artifactId>
       <version>${jme3_v}</version>
     </dependency>
-
     <dependency>
       <groupId>${jme3_g}</groupId>
       <artifactId>jme3-niftygui</artifactId>
       <version>${jme3_v}</version>
     </dependency>
-
     <dependency>
       <groupId>${jme3_g}</groupId>
       <artifactId>jme3-plugins</artifactId>
       <version>${jme3_v}</version>
     </dependency>
-
     <dependency>
       <groupId>${jme3_g}</groupId>
       <artifactId>jme3-terrain</artifactId>
       <version>${jme3_v}</version>
     </dependency>
-
     <dependency>
       <groupId>${jme3_g}</groupId>
       <artifactId>jme3-testdata</artifactId>
       <version>${jme3_v}</version>
     </dependency>
-
     <dependency>
       <groupId>${jme3_g}</groupId>
       <artifactId>jme3-vr</artifactId>
@@ -166,13 +246,11 @@
 			<artifactId>gst1-java-core</artifactId>
 			<version>1.4.0</version>
 		</dependency>
-
 		<dependency>
 			<groupId>net.java.dev.jna</groupId>
 			<artifactId>jna</artifactId>
 			<version>5.17.0</version>
 		</dependency>
-
 		<dependency>
 			<groupId>net.java.dev.jna</groupId>
 			<artifactId>jna-platform</artifactId>
@@ -185,7 +263,6 @@
       <artifactId>slf4j-api</artifactId>
       <version>2.0.17</version>
     </dependency>
-
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
@@ -193,8 +270,7 @@
       <scope>compile</scope>
     </dependency>
 
-    <!-- Jersey dependencies-->
-
+    <!-- Jersey dependencies (for REST API) -->
     <dependency>
         <groupId>org.glassfish.jersey.containers</groupId>
         <artifactId>jersey-container-grizzly2-http</artifactId>
@@ -203,12 +279,10 @@
         <groupId>org.glassfish.jersey.inject</groupId>
         <artifactId>jersey-hk2</artifactId>
     </dependency>
-
     <dependency>
         <groupId>org.glassfish.jersey.media</groupId>
         <artifactId>jersey-media-json-binding</artifactId>
     </dependency>
-
     <dependency>
         <groupId>org.glassfish.jersey.media</groupId>
         <artifactId>jersey-media-json-jackson</artifactId>
@@ -233,22 +307,65 @@
       <version>9.0.10</version>
     </dependency>
 
-
-    <!-- Test dependencies -->
+    <!-- Json serialization (for REST API) -->
     <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-api</artifactId>
-      <version>${junit.version}</version>
-      <scope>compile</scope>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
     </dependency>
     <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <version>1.5.18</version>
-      <scope>compile</scope>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+    </dependency>
+
+    <!-- Geotools dependencies -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13.2</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-shapefile</artifactId>
+      <version>${geotools.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-swing</artifactId>
+      <version>${geotools.version}</version>
+    </dependency>
+
+    <dependency>
+  <groupId>org.geotools</groupId>
+  <artifactId>gt-epsg-hsql</artifactId>
+  <version>${geotools.version}</version>
+</dependency>
+
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-referencing</artifactId>
+      <version>3.20-geoapi-3.0</version>
     </dependency>
 
   </dependencies>
+
+    <repositories>
+    <repository>
+    <id>osgeo</id>
+    <name>OSGeo Release Repository</name>
+    <url>https://repo.osgeo.org/repository/release/</url>
+    <snapshots><enabled>false</enabled></snapshots>
+    <releases><enabled>true</enabled></releases>
+    </repository>
+    <repository>
+    <id>osgeo-snapshot</id>
+    <name>OSGeo Snapshot Repository</name>
+    <url>https://repo.osgeo.org/repository/snapshot/</url>
+    <snapshots><enabled>true</enabled></snapshots>
+    <releases><enabled>false</enabled></releases>
+    </repository>
+  </repositories>
 
   <build>
     <plugins>
