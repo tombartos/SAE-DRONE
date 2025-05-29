@@ -30,6 +30,50 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * JavaFX GUI class representing the main interface of the drone simulation
+ * client.
+ * This interface dynamically adapts according to the user's role (pilot,
+ * observer, game master, administrator).
+ *
+ * <p>
+ * Main functionalities include:
+ * </p>
+ * <ul>
+ * <li>Displaying connected drones and their assigned pilots.</li>
+ * <li>Adding a new drone through a user-friendly form.</li>
+ * <li>Creating and managing dynamic simulation events (current, fish,
+ * boat).</li>
+ * <li>Managing the user list (display, delete, add).</li>
+ * <li>Launching the simulator depending on the user's role (server or
+ * client).</li>
+ * </ul>
+ *
+ * <p>
+ * The UI is structured around a central VBox (`centerBox`) which updates its
+ * content
+ * depending on user interaction.
+ * </p>
+ *
+ * <p>
+ * The `test_username` parameter is used to simulate different user roles:
+ * </p>
+ * <ul>
+ * <li>1: Observer</li>
+ * <li>2: Game Master</li>
+ * <li>3: Pilot</li>
+ * <li>4: Administrator</li>
+ * </ul>
+ *
+ * <p>
+ * This class integrates GUI logic, dynamic component generation, and REST
+ * interactions via {@code RestClient}.
+ * </p>
+ *
+ * @authors Ba gubair , Tom BARTIER
+ * @version 1.0
+ */
+
 public class Gui {
     private static final Logger log = LoggerFactory.getLogger(Gui.class);
 
@@ -531,6 +575,16 @@ public class Gui {
         comboBox.setButtonCell(comboBox.getCellFactory().call(null));
     }
 
+    /**
+     * Dynamically fills the user management list with all users.
+     * <p>
+     * Displays each user with their role and a delete button.
+     * </p>
+     * Adds a button at the bottom to create a new user.
+     *
+     * @param listeBox the VBox container where the user rows will be added.
+     */
+
     private void remplirListeUtilisateurs(VBox listeBox) {
         listeBox.getChildren().clear();
 
@@ -597,7 +651,18 @@ public class Gui {
     }
 
     /**
-     * Lance le simulateur dans un nouveau thread.
+     * Launches the simulator in a new thread.
+     * <p>
+     * Depending on the role of the user, the behavior varies:
+     * </p>
+     * <ul>
+     * <li><strong>Game Master</strong>: Starts the jME server.</li>
+     * <li><strong>Pilot</strong>: Launches ArduSub, QGroundControl, and the JME
+     * client.</li>
+     * <li><strong>Observer</strong>: Only launches the JME client in observer
+     * mode.</li>
+     * </ul>
+     * Displays confirmation or error alerts based on each step's result.
      */
 
     private void lancerSimulateur() {
