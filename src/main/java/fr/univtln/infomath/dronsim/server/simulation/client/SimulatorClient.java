@@ -107,7 +107,7 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
         FPV, CHASE, FREE
     }
 
-    private CamMode currentCamMode = CamMode.FPV; // Default camera mode is FPV (First Person View)
+    private CamMode currentCamMode = CamMode.CHASE;
     private ChaseCamera chaseCam;
     private CameraNode fpvCamNode;
     private int currentObservedIndex = 0;
@@ -261,6 +261,8 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
             // log.error("Your client ID: " + handshake2.getYourDroneId());
             // System.exit(1);
         } else {
+            // ChaseCamera
+            // TODO : A remplacer par la first person camera
             Spatial droneSpatial = yourDrone.getNode();
             chaseCam = new ChaseCamera(cam, droneSpatial, inputManager);
             chaseCam.setDefaultDistance(10f); // distance par défaut entre la caméra et le drone
@@ -272,8 +274,10 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
             fpvCamNode = new CameraNode("FPVCam", cam);
             fpvCamNode.setLocalTranslation(new Vector3f(0, 0.2f, 1f));
             ((Node) droneSpatial).attachChild(fpvCamNode);
-            // désactiver la FPV au début
-            fpvCamNode.setEnabled(false);
+            // activer la FPV au début
+            fpvCamNode.setEnabled(true);
+            // Desactiver la ChaseCam au début
+            chaseCam.setEnabled(false);
             // Contrôle clavier du drone
             controlerA = new LocalTestingControler(inputManager, client, yourDrone.getId());
         }
