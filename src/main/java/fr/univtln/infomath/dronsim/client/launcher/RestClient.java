@@ -331,4 +331,17 @@ public class RestClient {
         }
     }
 
+    // Add this utility method to your RestClient class
+
+    public static String getBaseIp() {
+        try {
+            String url = baseTarget.getUri().toString();
+            java.net.URI uri = new java.net.URI(url);
+            return uri.getHost(); // returns the host part (IP or domain)
+        } catch (Exception e) {
+            log.error("Could not extract IP from baseTarget: {}", e.getMessage());
+            return null;
+        }
+    }
+
 }

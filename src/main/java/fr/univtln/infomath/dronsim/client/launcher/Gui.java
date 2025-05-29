@@ -23,6 +23,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ScrollPane;
 import com.jme3.math.Vector3f;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -600,7 +601,7 @@ public class Gui {
      */
 
     private void lancerSimulateur() {
-        if (test_username == 2) {
+        if (test_username == 2) { // GM : launch the jME server
             String serverStarted = RestClient.startSimulation();
             if (serverStarted != null) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION, serverStarted);
@@ -611,7 +612,7 @@ public class Gui {
             }
         }
 
-        if (test_username == 3) {
+        if (test_username == 3) { // Pilot : connect to the jME server and start Ardupilot and QGroundControl
             PilotInitResp connReq = RestClient.connectPilot();
             // The first boolean indicates if the connection is successful, the second
             // indicates the connection mode
@@ -665,6 +666,19 @@ public class Gui {
                 Alert alert = new Alert(Alert.AlertType.ERROR, "Erreur lors de la connexion au simulateur.");
                 alert.showAndWait();
             }
+
+        }
+
+        if (test_username == 1) {
+            // TODO: Check if the jME server is running before starting the client
+            String serverIP = RestClient.getBaseIp();
+
+            new Thread(() -> {
+                SimulatorClient.main(new String[] {
+                        "127.0.0.1", serverIP, "-1"
+                });
+                log.info("SimulatorClient started for observer at " + serverIP);
+            }).start();
 
         }
 

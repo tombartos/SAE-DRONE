@@ -346,7 +346,13 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
     }
 
     public void sendHandshake2(int clientId, HostedConnection source) {
-        int droneId = -1; // The id of the drone that belongs to the client, -1 if no drone
+        int droneId = -2; // The id of the drone that belongs to the client, -2 if no drone, -1 if
+                          // observer
+        if (clientId == -1) {
+            log.info("Client with id " + clientId + " is an observer");
+            droneId = -1; // Observer
+        }
+
         ArrayList<DroneInitData> dronesInitData = new ArrayList<>();
         for (Drone drone : DroneServer.getDroneServerList()) {
             dronesInitData
@@ -393,7 +399,7 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         }
 
         Handshake2 handshake2 = new Handshake2(dronesInitData, droneId, marineInitData, evenementsInitData);
-        if (droneId == -1) {
+        if (droneId == -2) {
             log.error("No drone found for clientId " + clientId + ", aborting handshake");
             throw new IllegalStateException("No drone found for clientId " + clientId + ", aborting handshake");
         }
