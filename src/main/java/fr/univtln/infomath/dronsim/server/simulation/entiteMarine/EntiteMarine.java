@@ -9,6 +9,14 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a marine entity in the simulation, such as a fish or a boat.
+ * Each entity has a 3D model, a position, a direction, and a speed.
+ * Entities are stored in a static list for global access and synchronization.
+ *
+ * @author Ba gubair
+ * @version 1.0
+ */
 @Getter
 public class EntiteMarine {
     public static final List<EntiteMarine> entites = new ArrayList<>();

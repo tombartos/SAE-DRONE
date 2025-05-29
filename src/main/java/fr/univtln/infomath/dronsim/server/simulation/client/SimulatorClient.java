@@ -18,11 +18,15 @@ import com.jme3.network.serializing.Serializer;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.*;
+import com.jme3.scene.control.CameraControl;
 import com.jme3.system.AppSettings;
 import com.jme3.util.SkyFactory;
 import com.jme3.water.WaterFilter;
 
 import com.jme3.input.ChaseCamera;
+import com.jme3.input.KeyInput;
+import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.KeyTrigger;
 
 import fr.univtln.infomath.dronsim.server.simulation.control.LocalTestingControler;
 import fr.univtln.infomath.dronsim.server.simulation.drones.Drone;
@@ -98,6 +102,15 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
     private static int height = 768;
     private String server_ip;
     private static int server_port = 6143; // Default JME server port
+
+    private enum CamMode {
+        FPV, CHASE, FREE
+    }
+
+    private CamMode currentCamMode = CamMode.CHASE;
+    private ChaseCamera chaseCam;
+    private CameraNode fpvCamNode;
+    private int currentObservedIndex = 0;
 
     public static void main(String[] args) {
         if (args.length != 3) {
@@ -178,7 +191,11 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
                 assetManager,
                 "Textures/Sky/Bright/BrightSky.dds",
                 SkyFactory.EnvMapType.CubeMap));
-
+        inputManager.addMapping("SwitchCam", new KeyTrigger(KeyInput.KEY_T));
+        inputManager.addMapping("FreeCam", new KeyTrigger(KeyInput.KEY_F));
+        inputManager.addMapping("NextDrone", new KeyTrigger(KeyInput.KEY_RIGHT));
+        inputManager.addMapping("PrevDrone", new KeyTrigger(KeyInput.KEY_LEFT));
+        inputManager.addListener(this, "SwitchCam", "FreeCam", "NextDrone", "PrevDrone");
         viewPort.addProcessor(frameCaptureProcessor); // Ajout du processeur de capture d'images
         // ajouterEvenementTest();
         // retirerEvenement(999);
@@ -235,20 +252,30 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
         }
 
         if (yourDrone == null) {
-            log.error("Your drone is not found in the list of drones");
-            log.error("Available drones: " + Drone.getDrones().toString());
-            log.error("Your client ID: " + handshake2.getYourDroneId());
-            System.exit(1);
+            // On est donc un observateur
+            if (!Drone.getDrones().isEmpty()) {
+                setDroneObservationCamera(Drone.getDrones().get(currentObservedIndex));
+            }
+            // log.error("Your drone is not found in the list of drones");
+            // log.error("Available drones: " + Drone.getDrones().toString());
+            // log.error("Your client ID: " + handshake2.getYourDroneId());
+            // System.exit(1);
         } else {
             // ChaseCamera
             // TODO : A remplacer par la first person camera
             Spatial droneSpatial = yourDrone.getNode();
-            ChaseCamera chaseCam = new ChaseCamera(cam, droneSpatial, inputManager);
+            chaseCam = new ChaseCamera(cam, droneSpatial, inputManager);
             chaseCam.setDefaultDistance(10f); // distance par défaut entre la caméra et le drone
             chaseCam.setMaxDistance(20f); // distance max (molette)
             chaseCam.setMinDistance(3f); // distance min (molette)
             // chaseCam.setSmoothMotion(true); // mouvement fluide
             chaseCam.setTrailingEnabled(true); // caméra suit le mouvement
+            // 2. FPV CameraNode attachée au drone
+            fpvCamNode = new CameraNode("FPVCam", cam);
+            fpvCamNode.setLocalTranslation(new Vector3f(0, 0.2f, 1f));
+            ((Node) droneSpatial).attachChild(fpvCamNode);
+            // désactiver la FPV au début
+            fpvCamNode.setEnabled(false);
             // Contrôle clavier du drone
             controlerA = new LocalTestingControler(inputManager, client, yourDrone.getId());
         }
@@ -397,6 +424,13 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
 
     }
 
+    /**
+     * Updates the state (position and direction) of marine entities based on the
+     * received list of DTOs.
+     * This includes both base entities and those created via events.
+     *
+     * @param dtos List of {@link EntiteMarineDTO} received from the server.
+     */
     public void updateEntitesMarine(List<EntiteMarineDTO> dtos) {
         // 1. Mise à jour des entités de base
         for (EntiteMarine entite : EntiteMarine.getEntites()) {
@@ -421,6 +455,15 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
         }
     }
 
+    /**
+     * Creates an instance of {@link Evenement} from a DTO.
+     * Used by the client to reconstruct the event scene.
+     *
+     * @param dto          The DTO describing the event.
+     * @param assetManager AssetManager for loading models and visuals.
+     * @param space        The physics space to which the event should be attached.
+     * @return The corresponding {@link Evenement}, or null if type is unknown.
+     */
     public static Evenement createEvenementFromDTO(EvenementDTO dto, AssetManager assetManager, PhysicsSpace space) {
         if (dto.getType().equals("Courant")) {
             return new Courant(dto.getId(), dto.getZoneCenter(), dto.getZoneSize(), dto.getDirection(),
@@ -442,6 +485,12 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
 
     }
 
+    /**
+     * Updates the list of active events on the client.
+     * Adds new events and removes those that no longer exist on the server.
+     *
+     * @param eventDTOs List of event DTOs received from the server.
+     */
     public void updateEvenements(List<EvenementDTO> eventDTOs) {
         // 1. Retirer les événements qui ne sont plus présents
         List<Integer> idsRecus = eventDTOs.stream().map(EvenementDTO::getId).toList();
@@ -488,6 +537,131 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
 
     public Node getScene() {
         return scene;
+    }
+
+    public void ajouterEvenementTest() {
+
+        // Exemple : ajouter un courant
+        EvenementDTO courant = EvenementDTO.createEvenementDTO(
+                999, // ID unique arbitraire
+                new Vector3f(0, 2, -2), // zoneCenter
+                new Vector3f(10, 10, 10),
+                "Courant", // type
+                new Vector3f(0, 0, 1), // direction
+                1000f, // intensité
+                null, // pas de modèle pour un courant
+                null); // pas de type d’entité pour un courant);
+        client.send(new AjoutEvenementMessage(courant));
+
+    }
+
+    public void retirerEvenement(int id) {
+        Evenement event = Evenement.getEvenements().stream()
+                .filter(e -> e != null && e.getId() == id)
+                .findFirst()
+                .orElse(null);
+        if (event != null) {
+            event.retirer();
+            client.send(new RetirerEvenementMessage(id));
+        }
+    }
+
+    /**
+     * Sets the camera for observing the specified drone.
+     * Initializes both the chase camera and the FPV camera for this drone.
+     *
+     * @param drone The drone to observe.
+     */
+    private void setDroneObservationCamera(Drone drone) {
+        Spatial droneSpatial = drone.getNode();
+        if (chaseCam != null)
+            chaseCam.setEnabled(false);
+
+        if (fpvCamNode != null)
+            fpvCamNode.removeFromParent(); // supprimer l'ancienne si existante
+
+        chaseCam = new ChaseCamera(cam, droneSpatial, inputManager);
+        chaseCam.setDefaultDistance(10f); // distance par défaut entre la caméra et le drone
+        chaseCam.setMaxDistance(20f); // distance max (molette)
+        chaseCam.setMinDistance(3f); // distance min (molette)
+        chaseCam.setTrailingEnabled(true);
+
+        fpvCamNode = new CameraNode("FPVCam", cam);
+        fpvCamNode.setLocalTranslation(new Vector3f(0, 0.2f, 1f));
+        ((Node) droneSpatial).attachChild(fpvCamNode);
+        fpvCamNode.setEnabled(false); // on commence en mode CHASE
+        currentCamMode = CamMode.CHASE;
+    }
+
+    /**
+     * Handles camera control and observation logic based on input actions.
+     * Allows switching between FPV, Chase, and Free cameras, and navigating between
+     * drones.
+     *
+     * @param name      The action name.
+     * @param isPressed Whether the key is pressed.
+     * @param tpf       Time per frame.
+     */
+    @Override
+    public void onAction(String name, boolean isPressed, float tpf) {
+        if (!isPressed)
+            return;
+
+        switch (name) {
+            case "SwitchCam" -> {
+                // Si on était en FREE, désactiver flyCam d'abord
+                if (currentCamMode == CamMode.FREE) {
+                    flyCam.setEnabled(false);
+                }
+
+                // Bascule entre CHASE <-> FPV
+                if (currentCamMode == CamMode.CHASE) {
+                    if (chaseCam != null)
+                        chaseCam.setEnabled(false);
+                    if (fpvCamNode != null)
+                        fpvCamNode.setEnabled(true);
+                    currentCamMode = CamMode.FPV;
+                    log.info("Switched to FPV camera");
+                } else {
+                    if (fpvCamNode != null)
+                        fpvCamNode.setEnabled(false);
+                    if (chaseCam != null)
+                        chaseCam.setEnabled(true);
+                    currentCamMode = CamMode.CHASE;
+                    log.info("Switched to Chase camera");
+                }
+            }
+
+            case "FreeCam" -> {
+                // Active FreeCam et désactive les autres
+                if (chaseCam != null)
+                    chaseCam.setEnabled(false);
+                if (fpvCamNode != null)
+                    fpvCamNode.setEnabled(false);
+
+                flyCam.setEnabled(true);
+                flyCam.setMoveSpeed(10f);
+                currentCamMode = CamMode.FREE;
+                log.info("Switched to Free camera");
+            }
+
+            case "NextDrone" -> {
+                if (!Drone.getDrones().isEmpty()) {
+                    currentObservedIndex = (currentObservedIndex + 1) % Drone.getDrones().size();
+                    setDroneObservationCamera(Drone.getDrones().get(currentObservedIndex));
+                    log.info("Switched to next drone for observation.");
+                }
+            }
+            case "PrevDrone" -> {
+                if (!Drone.getDrones().isEmpty()) {
+                    currentObservedIndex = (currentObservedIndex - 1 + Drone.getDrones().size())
+                            % Drone.getDrones().size();
+                    setDroneObservationCamera(Drone.getDrones().get(currentObservedIndex));
+                    log.info("Switched to previous drone for observation.");
+                }
+            }
+
+        }
     }
 
 }

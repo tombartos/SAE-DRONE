@@ -10,8 +10,15 @@ import java.util.List;
 import fr.univtln.infomath.dronsim.server.simulation.entiteMarine.EntiteMarineDTO;
 
 /**
- * Message contenant une liste d'entités marines.
- * Utilisé pour la communication entre le serveur et le client.
+ * Network message containing a list of marine entity data transfer objects.
+ *
+ * This message is typically used to synchronize the marine entities
+ * between the server and the client in the simulation environment.
+ * It allows the client to display or update marine entities based on
+ * the state maintained on the server side.
+ *
+ * @author Ba gubair
+ * @version 1.0
  */
 @Serializable
 @Getter

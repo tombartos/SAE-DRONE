@@ -8,33 +8,34 @@ import com.jme3.effect.ParticleEmitter;
 import com.jme3.effect.ParticleMesh;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
-import fr.univtln.infomath.dronsim.server.simulation.drones.Drone;
 import fr.univtln.infomath.dronsim.server.simulation.drones.DroneServer;
 import lombok.Getter;
-import java.util.function.BiConsumer;
 
 /**
- * Cette classe représente un événement de type courant dans la simulation.
- * Elle hérite de la classe Evenement et applique une force à un drone dans une
- * direction donnée.
+ * Represents a current ("Courant") event in the simulation.
+ *
+ * A current applies a constant directional force to any drone located
+ * within its influence zone. It also includes a visual representation
+ * using a particle system.
+ *
+ * Inherits from the {@link Evenement} base class and overrides the
+ * {@code apply}
+ * method to apply forces on drones.
+ *
+ * @author Ba gubair
+ * @version 1.0
  */
 @Getter
 public class Courant extends Evenement {
     ParticleEmitter visuel;
-    private final BiConsumer<Drone, Float> effet;
+    Vector3f force;
 
     public Courant(int id, Vector3f zoneCenter, Vector3f zoneSize, Vector3f direction, float intensite,
             PhysicsSpace physicsSpace, AssetManager assetManager) {
         super(id, zoneCenter, zoneSize, direction, intensite, physicsSpace);
 
         this.type = "Courant";
-        Vector3f force = this.direction.mult(intensite);
-
-        this.effet = (drone, tpf) -> {
-            if (drone instanceof DroneServer ds) {
-                ds.getBody().applyCentralForce(force);
-            }
-        };
+        force = this.direction.mult(intensite);
 
         visuel = new ParticleEmitter("CourantVisuel", ParticleMesh.Type.Triangle, 100);
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Particle.j3md");
@@ -59,9 +60,9 @@ public class Courant extends Evenement {
 
     @Override
     public void apply(float tpf) {
-        for (Drone d : Drone.getDrones()) {
+        for (DroneServer d : DroneServer.getDroneServerList()) {
             if (isInZone(d.getNode().getWorldTranslation())) {
-                effet.accept(d, tpf);
+                d.getBody().applyCentralForce(force);
             }
         }
     }

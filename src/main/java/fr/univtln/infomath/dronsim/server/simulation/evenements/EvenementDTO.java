@@ -14,6 +14,16 @@ import com.jme3.network.serializing.Serializable;
 import fr.univtln.infomath.dronsim.server.simulation.client.SimulatorClient;
 import lombok.*;
 
+/**
+ * Data Transfer Object (DTO) representing an event in the simulation.
+ *
+ * This class is used for communication between the server and client,
+ * carrying all relevant data to reconstruct the event on either side
+ * of the network.
+ *
+ * @author Ba gubair
+ * @version 1.0
+ */
 @Serializable
 @Getter
 @Setter
