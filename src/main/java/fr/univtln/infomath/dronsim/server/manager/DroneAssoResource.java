@@ -36,6 +36,17 @@ import jakarta.ws.rs.core.MediaType;
 @Consumes(MediaType.APPLICATION_JSON)
 public class DroneAssoResource {
 
+    /**
+     * Creates a new drone association.
+     * <p>
+     * This endpoint allows game masters to create an association between a pilot
+     * and a drone model. It checks if the user is authenticated, if they are a GM,
+     * if the drone model exists, and if the pilot is valid.
+     *
+     * @param authHeader       The authorization header containing the user's token.
+     * @param droneAssociation The drone association to be created.
+     * @return true if the association was created successfully.
+     */
     @POST
     public boolean createDroneAsso(@HeaderParam("Authorization") String authHeader,
             DroneAssociation droneAssociation) {
@@ -87,6 +98,16 @@ public class DroneAssoResource {
         return true;
     }
 
+    /**
+     * Retrieves the list of all drone associations.
+     * <p>
+     * This endpoint allows game masters to retrieve all existing drone
+     * associations.
+     * It checks if the user is authenticated and if they are a GM.
+     *
+     * @param authHeader The authorization header containing the user's token.
+     * @return A list of all drone associations.
+     */
     @GET
     public List<DroneAssociation> getDroneAsso(@HeaderParam("Authorization") String authHeader) {
         // Check if the user is authenticated

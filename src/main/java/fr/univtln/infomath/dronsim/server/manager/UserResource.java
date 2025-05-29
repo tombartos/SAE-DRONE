@@ -15,26 +15,33 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.HeaderParam;
 
 /**
- * Root resource (exposed at "myresource" path)
+ * REST resource for managing users in the simulation.
+ * <p>
+ * Provides an endpoint for game masters (GM) to retrieve a list of all pilots.
+ * Access is restricted to authenticated users with GM privileges.
+ * <ul>
+ * <li>GET: Returns a list of all pilots.</li>
+ * </ul>
+ * <p>
+ * All endpoints require an "Authorization" header for authentication.
+ *
+ * @author Tom BARTIER
  */
 @Path("/users")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 
-// TEST CLASS, TO BE REMOVED
 public class UserResource {
 
-    @GET
-    @Path("/test")
-    public String getIt() {
-        return "Got it!";
-    }
-
     /**
-     * Method handling HTTP GET requests. The returned object will be sent
-     * to the client as "text/plain" media type.
+     * Retrieves the list of all pilots.
+     * <p>
+     * This endpoint allows game masters to access the list of all users with the
+     * pilot role. It checks if the user is authenticated and if they are a GM or
+     * observer.
      *
-     * @return String that will be returned as a text/plain response.
+     * @param authHeader The authorization header containing the user's token.
+     * @return A list of users with the pilot role.
      */
     @GET
     @Path("pilots")

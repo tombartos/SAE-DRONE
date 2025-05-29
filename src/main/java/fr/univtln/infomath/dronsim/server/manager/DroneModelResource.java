@@ -25,12 +25,21 @@ import jakarta.ws.rs.core.MediaType;
  * <p>
  * All endpoints require an "Authorization" header for authentication.
  *
- * @author Tom
+ * @author Tom BARTIER
  */
 @Path("/dronemodels")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class DroneModelResource {
+    /**
+     * Retrieves the list of all drone model names.
+     * <p>
+     * This endpoint allows game masters to access the names of all available
+     * drone models. It checks if the user is authenticated and if they are a GM.
+     *
+     * @param authHeader The authorization header containing the user's token.
+     * @return A list of drone model names.
+     */
     @GET
     public List<String> getDroneModels(@HeaderParam("Authorization") String authHeader) {
         // Check if the user is authenticated

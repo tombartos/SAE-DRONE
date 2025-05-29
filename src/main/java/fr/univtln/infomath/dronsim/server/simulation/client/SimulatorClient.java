@@ -21,13 +21,10 @@ import com.jme3.scene.*;
 import com.jme3.system.AppSettings;
 import com.jme3.util.SkyFactory;
 import com.jme3.water.WaterFilter;
-
 import com.jme3.input.ChaseCamera;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
-
-import fr.univtln.infomath.dronsim.server.simulation.control.LocalTestingControler;
 import fr.univtln.infomath.dronsim.server.simulation.drones.Drone;
 import fr.univtln.infomath.dronsim.server.simulation.drones.DroneDTO;
 import fr.univtln.infomath.dronsim.server.simulation.drones.DroneInitData;
@@ -47,9 +44,7 @@ import fr.univtln.infomath.dronsim.server.simulation.jme_messages.EvenementDTOMe
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.Handshake1;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.Handshake2;
 import fr.univtln.infomath.dronsim.server.simulation.jme_messages.RetirerEvenementMessage;
-//import fr.univtln.infomath.dronsim.server.viewer.primitives.ReferentialNode;
 import fr.univtln.infomath.dronsim.server.utils.GStreamerSender;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -93,7 +88,6 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
     private PhysicsSpace space;
     private FilterPostProcessor fpp;
     private Node scene;
-    private LocalTestingControler controlerA;
     private String ipDestVideo;
     private static int portDestVideo = 5600; // Default port for QGroundControl video stream
     private static int width = 1024; // Default window and video resolution
@@ -110,6 +104,15 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
     private CameraNode fpvCamNode;
     private int currentObservedIndex = 0;
 
+    /**
+     * The main entry point of the client.
+     * <p>
+     * It initializes the application settings and starts the JMonkeyEngine
+     * application.
+     *
+     * @param args Command-line arguments: <video_destination_ip> <server_ip>
+     *             <client_id>
+     */
     public static void main(String[] args) {
         if (args.length != 3) {
             log.info("Launch arguments :  <video_destination_ip> <server_ip> <client_id>");
@@ -132,6 +135,13 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
         this.clientId = Integer.parseInt(args[2]);
     }
 
+    /**
+     * Initializes the application.
+     * <p>
+     * This method sets up the application, connects to the server, initializes
+     * GStreamer for video streaming, sets up the physics space, and creates the
+     * main scene.
+     */
     @Override
     public void simpleInitApp() {
         setPauseOnLostFocus(false);
@@ -276,8 +286,6 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
                 fpvCamNode.setEnabled(true);
                 // Desactiver la ChaseCam au début
                 chaseCam.setEnabled(false);
-                // Contrôle clavier du drone
-                controlerA = new LocalTestingControler(inputManager, client, yourDrone.getId());
             }
 
         }
@@ -364,11 +372,12 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
         rootNode.addLight(sun);
     }
 
+    /**
+     * Handles the update of the scene each frame. It updates the positions of
+     * drones, marine entities, and events based on their current state.
+     */
     @Override
     public void simpleUpdate(float tpf) {
-        if (controlerA != null) {
-            controlerA.update(tpf);
-        }
         for (Drone drone : Drone.getDrones()) {
             // log.info("Drone " + drone.getId() + " position: " + drone.getPosition());
             Node node = drone.getNode();
@@ -537,25 +546,23 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
 
     }
 
+    /**
+     * Returns the main scene node of the client.
+     * <p>
+     * This method is used to access the scene for further modifications or
+     * additions.
+     *
+     * @return The main scene node.
+     */
     public Node getScene() {
         return scene;
     }
 
-    public void ajouterEvenementTest() {
-
-        // Exemple : ajouter un courant
-        EvenementDTO courant = EvenementDTO.createEvenementDTO(
-                999, // ID unique arbitraire
-                new Vector3f(0, 2, -2), // zoneCenter
-                new Vector3f(10, 10, 10),
-                "Courant", // type
-                new Vector3f(0, 0, 1), // direction
-                1000f, // intensité
-                null); // pas de type d’entité pour un courant);
-        client.send(new AjoutEvenementMessage(courant));
-
-    }
-
+    /**
+     * Removes an event from the simulation by its id.
+     *
+     * @param id
+     */
     public void retirerEvenement(int id) {
         Evenement event = Evenement.getEvenements().stream()
                 .filter(e -> e != null && e.getId() == id)

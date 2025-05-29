@@ -7,6 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Main application class for launching the JavaFX application.
  * Initializes the login page and manages the lifecycle of the application.
+ *
+ * @author Emad BA GUBAIR
+ * @author Tom BARTIER
  */
 @Slf4j
 public final class App extends Application {
@@ -47,11 +50,3 @@ public final class App extends Application {
         System.exit(0);
     }
 }
-
-// Pour executer cette classe,
-//
-// mvn exec:java
-//
-// ce qui revient à
-//
-// mvn exec:java "-Dexec.mainClass=fr.univtln.m1im.png.App"

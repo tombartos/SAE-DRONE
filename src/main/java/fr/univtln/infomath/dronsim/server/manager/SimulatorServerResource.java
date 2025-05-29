@@ -17,12 +17,37 @@ import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Context;
 
+/**
+ * REST resource for managing the simulation server.
+ * <p>
+ * Provides endpoints for game masters (GM) to start the simulation server and
+ * for pilots to connect to it. Access is restricted to authenticated users with
+ * GM or Pilot privileges.
+ * <ul>
+ * <li>POST /start: Start the simulation server.</li>
+ * <li>POST /connect/pilot: Connect a pilot to the simulation server.</li>
+ * </ul>
+ * <p>
+ * All endpoints require an "Authorization" header for authentication.
+ *
+ * @author Tom BARTIER
+ */
 @Path("/SimulatorServer")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class SimulatorServerResource {
     private static final Logger log = LoggerFactory.getLogger(SimulatorServerResource.class);
 
+    /**
+     * Starts the simulation server.
+     * <p>
+     * This endpoint allows game masters to start the simulation server. You need to
+     * create drone associations first. It checks
+     * if the user is authenticated and if they are a GM.
+     *
+     * @param authHeader The authorization header containing the user's token.
+     * @return A message indicating that the simulation server has been started.
+     */
     @POST
     @Path("/start")
     public String startSimulationServer(@HeaderParam("Authorization") String authHeader) {

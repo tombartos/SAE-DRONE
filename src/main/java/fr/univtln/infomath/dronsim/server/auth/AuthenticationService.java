@@ -6,7 +6,12 @@ import lombok.Builder;
 
 /**
  * Interface for interaction with authentication service.
+ *
+ * @author André MARÇAIS
  */
+
+// TODO: Javadoc
+
 public interface AuthenticationService {
     public AuthenticatedUser authenticate(String token) throws AuthenticationException;
 

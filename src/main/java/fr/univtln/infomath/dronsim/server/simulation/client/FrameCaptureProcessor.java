@@ -1,7 +1,6 @@
 package fr.univtln.infomath.dronsim.server.simulation.client;
 
 import java.nio.ByteBuffer;
-
 import com.jme3.post.SceneProcessor;
 import com.jme3.profile.AppProfiler;
 import com.jme3.renderer.Camera;
@@ -10,17 +9,17 @@ import com.jme3.renderer.Renderer;
 import com.jme3.renderer.ViewPort;
 import com.jme3.texture.FrameBuffer;
 import com.jme3.util.BufferUtils;
-
 import fr.univtln.infomath.dronsim.server.utils.GStreamerSender;
-
 import com.jme3.renderer.queue.RenderQueue;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * A custom processor to capture frames from the render output for JMonkey and
  * send them on the network with a GStreamer library.
+ * WARNING : GStreamer needs to be installed on the system
+ *
+ * @author Tom BARTIER
  */
 public class FrameCaptureProcessor implements SceneProcessor {
 
@@ -28,7 +27,6 @@ public class FrameCaptureProcessor implements SceneProcessor {
 
     private AppProfiler profiler;
     private ByteBuffer byteBuffer;
-
     private RenderManager renderManager;
     private Renderer renderer;
     private GStreamerSender gstreamerSender;

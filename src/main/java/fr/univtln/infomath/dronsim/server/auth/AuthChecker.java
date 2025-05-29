@@ -4,6 +4,14 @@ import fr.univtln.infomath.dronsim.server.auth.AuthenticationService.Authenticat
 import fr.univtln.infomath.dronsim.server.manager.AuthenticationResource;
 import jakarta.ws.rs.NotAuthorizedException;
 
+/**
+ * AuthChecker is a utility class that checks the authentication of users
+ * based on the provided authorization header.
+ * It extracts the token from the header and uses the AuthenticationService
+ * to authenticate the user.
+ *
+ * @author Tom BARTIER
+ */
 public class AuthChecker {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AuthChecker.class);
     private static AuthenticationService authService = AuthenticationResource.getAuthService();

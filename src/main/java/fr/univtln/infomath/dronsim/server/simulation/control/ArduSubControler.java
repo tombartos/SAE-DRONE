@@ -19,6 +19,8 @@ import io.dronefleet.mavlink.util.EnumValue;
 import lombok.Getter;
 import lombok.Setter;
 
+//TODO: JAVADOC
+
 @Getter
 @Setter
 public class ArduSubControler implements Controler {

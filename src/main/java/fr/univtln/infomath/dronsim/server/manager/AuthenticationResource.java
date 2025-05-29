@@ -6,10 +6,8 @@ import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.FormParam;
@@ -21,7 +19,6 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import fr.univtln.infomath.dronsim.server.auth.AuthChecker;
 import fr.univtln.infomath.dronsim.server.auth.AuthenticationService;
 import fr.univtln.infomath.dronsim.server.auth.AuthenticationService.AuthenticatedUser;
@@ -30,6 +27,8 @@ import fr.univtln.infomath.dronsim.shared.auth.AuthUserDTO;
 import fr.univtln.infomath.dronsim.shared.auth.TokenResponse;
 
 //TODO : revoir le chargement des utilisateurs (actuellement on les charge une fois dans manager et une fois ici)
+
+//TODO: JAVADOC
 
 @Path("auth")
 public class AuthenticationResource {

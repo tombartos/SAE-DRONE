@@ -16,6 +16,8 @@ import javafx.stage.Stage;
  * GUI class for the login page.
  * Allows users to authenticate and redirects them to the appropriate interface
  * based on their role (student, professor, or administrator).
+ *
+ * @author Emad BA GUBAIR
  */
 public class LoginPage {
     private static final Logger log = LoggerFactory.getLogger(LoginPage.class);
@@ -82,79 +84,6 @@ public class LoginPage {
                 message.setText(response);
                 message.setStyle("-fx-text-fill: red;");
             }
-
-            // if (username.equals("obs") && password.equals("1234")) {
-            // // MaitreDeJeu mdj = new MaitreDeJeu(username, password);
-            // Group root = new Group();
-            // Scene scene = new Scene(root, width, height);
-            // new Gui(null, root, width, height, stage, scene, 1);
-
-            // } else if (username.equals("mdj") && password.equals("1234")) {
-            // Group root = new Group();
-            // Scene scene = new Scene(root, width, height);
-            // new Gui(null, root, width, height, stage, scene, 2);
-
-            // } else if (username.equals("Bob35") && password.equals("1234")) {
-            // Group root = new Group();
-            // Scene scene = new Scene(root, width, height);
-            // RestClient.setAuthHeader("Bearer " + username);
-            // new Gui(null, root, width, height, stage, scene, 3);
-
-            // } else if (username.equals("admin") && password.equals("1234")) {
-            // Group root = new Group();
-            // Scene scene = new Scene(root, width, height);
-            // new Gui(null, root, width, height, stage, scene, 4);
-            // } else {
-            // message.setText("Identifiants incorrects.");
-            // message.setStyle("-fx-text-fill: red;");
-            // }
-
-            /*
-             * try {
-             * Utils.initconnection(username, password);
-             * // Here we want to know if we are an etudiant or a professeur
-             * try {
-             * EtudiantRepository etudiantRepository = new EtudiantRepository(
-             * Utils.getEntityManagerFactory().createEntityManager());
-             * Etudiant etudiant = etudiantRepository.getByLogin(username);
-             * Group root = new Group();
-             * Scene scene = new Scene(root, width, height);
-             * new Gui(etudiant, root, width, height,
-             * Utils.getEntityManagerFactory().createEntityManager(), stage,
-             * scene);
-             * } catch (Exception ex_et) {
-             * log.info("Not an etudiant");
-             * try {
-             * ProfesseurRepository professeurRepository = new ProfesseurRepository(
-             * Utils.getEntityManagerFactory().createEntityManager());
-             * Professeur professeur = professeurRepository.getByLogin(username);
-             * Group root = new Group();
-             * Scene scene = new Scene(root, width, height);
-             * new Gui(professeur, root, width, height,
-             * Utils.getEntityManagerFactory().createEntityManager(),
-             * stage, scene);
-             * } catch (Exception ex_pr) {
-             * log.info("Not a professeur");
-             * try {
-             * ResponsableRepository responsableRepository = new ResponsableRepository(
-             * Utils.getEntityManagerFactory().createEntityManager());
-             * Responsable responsable = responsableRepository.getByLogin(username);
-             * Group root = new Group();
-             * Scene scene = new Scene(root, width, height);
-             * new Gui(responsable, root, width, height,
-             * Utils.getEntityManagerFactory().createEntityManager(), stage, scene);
-             * } catch (Exception ex_res) {
-             * log.info("Not a responsable, problem in the database ?");
-             * // log.error(ex_res.getMessage());
-             * ex_res.printStackTrace();
-             * }
-             * }
-             * }
-             * } catch (Exception ex) {
-             * message.setText(" Erreur de connexion à la base de données !");
-             * message.setStyle("-fx-text-fill: red;");
-             * }
-             */
         });
 
         // Création et affichage de la scène
@@ -163,10 +92,6 @@ public class LoginPage {
         stage.setScene(scene);
         stage.show();
     }
-
-    // public static void main(String[] args) {
-    // launch(args);
-    // }
 
     // TODO: Disconnect button
 }
