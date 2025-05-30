@@ -53,7 +53,14 @@ Requirements:
    ```
    If you are using another Linux distribution, you can look at the script and install the required packages manually.
 
-4. Once the install is done and ardupilot launch, use those commands that will let ardupilot read the gps position from the server :
+4. Launch Ardupilot with the following command (you'll only need to do this once to configure it):
+   ```bash
+   source ./venv/bin/activate
+   cd ardupilot
+   ./Tools/autotest/sim_vehicle.py -v ArduSub --out=udp:127.0.0.1:14550 --console --map
+   ```
+
+5. Once the install is done and Ardupilot launch, use those commands in the Ardupilot terminal, that will let ardupilot read the gps position from the server :
     - Change the gps type to mavlink
     ```
     param set GPS1_TYPE 14
@@ -63,14 +70,14 @@ Requirements:
     param set EK3_SRC1_POSZ 3
     ```
 
-5. If it's not already done, put the `data` directory at the root of the project (the directory where the `pom.xml` file is located).
+6. If it's not already done, put the `data` directory at the root of the project (the directory where the `pom.xml` file is located).
 
-6. Compile the project with the following command:
+7. Compile the project with the following command:
    ```bash
    mvn clean install
    ```
 
-7. Launch the client with the following command:
+8. Launch the client with the following command:
    ```bash
    mvn exec:java -Dexec.mainClass="fr.univtln.infomath.dronsim.client.launcher.App" -Dexec.args="http://SERVER_IP:8080/api/v1/"
    ```
