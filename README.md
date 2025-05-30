@@ -55,7 +55,12 @@ Requirements:
 
 4. If it's not already done, put the `data` directory at the root of the project (the directory where the `pom.xml` file is located).
 
-5. Launch the client with the following command:
+5. Compile the project with the following command:
+   ```bash
+   mvn clean install
+   ```
+
+6. Launch the client with the following command:
    ```bash
    mvn exec:java -Dexec.mainClass="fr.univtln.infomath.dronsim.client.launcher.App" -Dexec.args="http://SERVER_IP:8080/api/v1/"
    ```
