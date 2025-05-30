@@ -10,44 +10,40 @@ actor MDJ
 MDJ -left-|> Observateur
 
 rectangle "Machine Client" {
-    component Launcher
+    component "Launcher" as Launcher
     component "Video Decoder" as VideoDecoder
     component QGroundControl
-    component MAVProxy
-    component ArduSub
     component "MAVSec proxy" as SecProxy1
+    component ArduPilot
 
     Pilote -- QGroundControl : IHM
     Pilote -- Launcher : Lancer le client
     note right of Launcher
         Permet de démarrer les différents composants du client.
     end note
-    QGroundControl -left- MAVProxy : MAVLink
-    MAVProxy -- ArduSub : MAVLink
-    ArduSub -- SecProxy1 : MAVLink
+    QGroundControl -- ArduPilot : MAVLink
+    ArduPilot -- SecProxy1 : MAVLink
 }
 
-interface "MDJ / Observateur API" as MDJAPI
-interface "Admin API" as AdminClient
 
 rectangle "Machine Serveur" {
-    component "MAVSec proxy" as SecProxy2
+    component "Controleur" as Controller
     component "Video Decoder" as JmeRenderer
     component "Jme Renderer" as JmeRenderer
     component "Jme Server" as JmeServer
+    component "MAVSec proxy" as SecProxy2
     component "Manager" as Manager
 
-    SecProxy2 -left- JmeServer : MAVLink
+    Controller -- JmeServer
     JmeRenderer -- JmeServer : UDP Custom
-    MDJAPI -- JmeServer : Control
-    AdminClient -- JmeServer : Configuration
-    Manager -- JmeServer : Démarre
+    Manager -- JmeServer : Intéragit
     Manager -- JmeRenderer : Démarre
-    Manager -- SecProxy2 : Démarre
-    Launcher -- Manager
+    Launcher -- Manager : REST
+    Controller -- SecProxy2
 
 
     note left of Manager
+        API REST
         Permet de démarrer les différents composants du serveur et de gérer
         l'authentification.
     end note
@@ -56,8 +52,8 @@ rectangle "Machine Serveur" {
 SecProxy1 -- SecProxy2 : MAVSec
 QGroundControl -- VideoDecoder : H.264 clair
 VideoDecoder -- JmeRenderer : H.264 chiffré
-Admin --( AdminClient
-Observateur --( MDJAPI
-MDJ --( MDJAPI
+Admin -- Launcher
+Observateur -- Launcher
+MDJ -- Launcher
 
 @enduml

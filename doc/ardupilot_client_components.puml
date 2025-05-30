@@ -12,7 +12,6 @@ MDJ -right-|> Observateur
 rectangle "Machine Client" {
     component Launcher
     component QGroundControl
-    component MAVProxy
     component ArduSub
     component "Jme Renderer" as JmeRenderer
     component "MAVSec proxy" as SecProxy1
@@ -22,37 +21,39 @@ rectangle "Machine Client" {
     note right of Launcher
         Permet de démarrer les différents composants du client.
     end note
-    QGroundControl -left- MAVProxy : MAVLink
-    MAVProxy -- ArduSub : MAVLink
+    QGroundControl -- ArduSub : MAVLink
     ArduSub -- SecProxy1 : MAVLink
     QGroundControl -down- JmeRenderer : H.264 video
+    note right of JmeRenderer
+        C'est le launcher qui lance Jme Renderer.
+    end note
 }
 
-interface "MDJ / Observateur API" as MDJAPI
-interface "Admin API" as AdminClient
+
 
 
 rectangle "Machine Serveur" {
     component "Jme Server" as JmeServer
     component "MAVSec proxy" as SecProxy2
+    component "Controleur" as Controller
     component "Manager" as Manager
 
     note left of Manager
+        API REST
         Permet de démarrer les différents composants du serveur et de gérer
         l'authentification.
     end note
 
     JmeRenderer - JmeServer : UDP Custom Chiffré
-    MDJAPI -- JmeServer : Control
-    AdminClient -- JmeServer : Configuration
-    SecProxy2 -left- JmeServer : MAVLink
+    Controller -- JmeServer
+    Controller -- SecProxy2
     SecProxy1 -- SecProxy2 : MAVSec
     Launcher -- Manager
-    Manager -- JmeServer : Control
+    Manager -- JmeServer : Intéragit
 }
 
-MDJ --( MDJAPI
-Admin --( AdminClient
-Observateur --( MDJAPI
+Admin -- Launcher
+Observateur -- Launcher
+MDJ -- Launcher
 
 @enduml
