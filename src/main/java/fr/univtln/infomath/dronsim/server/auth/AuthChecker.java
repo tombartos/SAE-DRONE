@@ -16,6 +16,16 @@ public class AuthChecker {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AuthChecker.class);
     private static AuthenticationService authService = AuthenticationResource.getAuthService();
 
+    /**
+     * Authenticate using the bearer token from the "Authorization" header.
+     *
+     * If authentication fails, throw an exception causing a 403 status code to be
+     * sent in response.
+     *
+     * @param authHeader The value of the "Authorization" HTTP header.
+     * @throws NotAuthorizedException If authentication fails.
+     * @return An authenticated user. See {@link AuthenticationService}.
+     */
     public static AuthenticatedUser checkAuth(String authHeader) {
         // Extract token from header
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
