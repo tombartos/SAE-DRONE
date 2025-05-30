@@ -269,15 +269,13 @@ public class SimulatorServer extends SimpleApplication implements PhysicsCollisi
         // We start the jME client if the connection mode is cloud (0) in a new JVM
         int connMode = droneAsso.getConnexionMode();
         if (connMode == 0) {
-            // new Thread(() -> {
-            // SimulatorClient
-            // .main(new String[] { pilotIP, "127.0.0.1", String.valueOf(droneAsso.getId()),
-            // String.valueOf(connMode) });
-            // }).start();
+            // Build classpath: target/classes + all jars in target/dependency
+            String separator = System.getProperty("os.name").toLowerCase().contains("win") ? ";" : ":";
+            String classpath = "target/classes" + separator + "target/dependency/*";
             ProcessBuilder pb = new ProcessBuilder(
                     "java",
                     "-cp",
-                    System.getProperty("java.class.path"),
+                    classpath,
                     "fr.univtln.infomath.dronsim.server.simulation.client.SimulatorClient",
                     pilotIP, "127.0.0.1", String.valueOf(droneAsso.getId()) // Optional arguments
             );
