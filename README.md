@@ -16,7 +16,12 @@ Note : The server can run on both Linux and Windows, but the client with Ardupil
 
 3. Put the `data` directory at the root of the project (the directory where the `pom.xml` file is located).
 
-4. Launch the server with the following command:
+4. Compile the project with the following command:
+   ```bash
+   mvn clean install
+   ```
+
+5. Launch the server with the following command:
 
 Linux:
    ```bash
