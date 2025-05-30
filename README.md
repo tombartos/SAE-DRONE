@@ -53,14 +53,24 @@ Requirements:
    ```
    If you are using another Linux distribution, you can look at the script and install the required packages manually.
 
-4. If it's not already done, put the `data` directory at the root of the project (the directory where the `pom.xml` file is located).
+4. Once the install is done and ardupilot launch, use those commands that will let ardupilot read the gps position from the server :
+    - Change the gps type to mavlink
+    ```
+    param set GPS1_TYPE 14
+    ```
+    - Change the captor for altitude reading to gps
+    ```
+    param set EK3_SRC1_POSZ 3
+    ```
 
-5. Compile the project with the following command:
+5. If it's not already done, put the `data` directory at the root of the project (the directory where the `pom.xml` file is located).
+
+6. Compile the project with the following command:
    ```bash
    mvn clean install
    ```
 
-6. Launch the client with the following command:
+7. Launch the client with the following command:
    ```bash
    mvn exec:java -Dexec.mainClass="fr.univtln.infomath.dronsim.client.launcher.App" -Dexec.args="http://SERVER_IP:8080/api/v1/"
    ```
