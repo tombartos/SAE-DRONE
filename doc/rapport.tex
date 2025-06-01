@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass{scrartcl}
 
 \usepackage{fancyvrb}
 \usepackage{appendix}
@@ -32,28 +32,71 @@
 \author{BA GUBAIR Emad \and BARTIER Tom \and MARÇAIS André \and ROBLIN Yann}
 
 \begin{document}
+
 \maketitle{}
 
-Le Maitre du Jeu (MDJ) gère les drones virtuelles et peut modifier leurs environnement.
-Le \emph{Système de Pilotage} (figure \ref{fig:uc})
-est implanter dans les figures
-\ref{fig:fwclient} et \ref{fig:fwserveur}.
-%
+\begin{abstract}
+    Ce document est un rapport qui présente le projet SAE du master 1 informatique et mathématique 2024 - 2025
+    de l'Université de Toulon. Il est encadré Julien Seinturier et Emmanuel Bruno, professeurs à l'Université de Toukon.
+    Le projet consiste à développer un simulateur de drone sous-marin en Java, pour cela les étudiants
+    ont utilisé les connaissances acquises tout au long de l'année, notemment en programmation, en gestion de projet et
+    en modélisation.
+\end{abstract}
+
+\section{Problématique}
+Les fonds marins sont un milieu que nous connaissons peu et qui sont difficiles d'accès.
+Afin de mieux les étudier, nous pouvons utiliser des drones sous-marins pilotés à distance
+afin de mener différentes missions comme la prise de photos ou la collecte de données.
+Cependant, les drones sous-marins sont coûteux et demandent un minimum d'entrainement au pilotage.
+Pour des missions très délicates on pourrait imaginer qu'une IA pourrait réaliser ces missions, mais cela
+nécessite de pouvoir entrainer l'IA, notemment dans un environnement virtuel. L'idée de faire un simualteur
+est donc vraiment pertinente car il permettrait d'entrainer à la fois des pilotes humains et des IA.
+
+\section {Description générale du projet et fonctionnalités}
+
+Le simulateur a été écrit en Java, il contient plusieurs composantes (voir figure \ref{fig:fwclient} et \ref{fig:fwserveur}).
+Tout d'abord, on peut identifier 4 acteurs principaux :
+\begin{itemize}
+    \item Le pilote, qui pilote le drone virtuel.
+    \item Le maître du jeu (MDJ), qui gère les drones virtuels et peut modifier leurs environnement.
+    \item L'observateur, qui peut observer l'environnement de la simulation
+    \item L'administrateur, qui gère les utilisateurs
+\end{itemize}
+
+Pour en savoir plus sur les acteurs, vous pouvez consulter le diagramme de cas d'usage (voir figure \ref{fig:uc}).
+La simulation tourne autours d'une application serveur REST appelé ici "Manager".
+Le Manager gère principalement l'authentification des utilisateurs, la création des drones virtuels, le lancement du serveur de simulation
+et l'ajout/suppression en temps réel d'évènements dans l'environnement, et dans le futur l'ajout en temps réel de nouveaux drones virtuels.
+Les utilisateurs disposent d'un logiciel avec une interface graphique appelé ici "launcher" qui leur permet de se connecter et d'interagir avec la simualtion
+en fonction de leur rôle. Concernant les pilotes, le launcher est aussi responsable du lancement des différents composants de l'interface de pilotage.
+
+
+\begin{figure}
+    \makeincudegraphics[width=1.1\textwidth]{ardupilot_server_components.png}
+    \caption{Diagramme de composantes (rendu côté serveur)}
+    \label{fig:fwclient}
+\end{figure}
+
+\begin{figure}
+    \makeincudegraphics[width=1.1\textwidth]{ardupilot_client_components.png}
+    \caption{Diagramme de composantes (rendu côté client)}
+    \label{fig:fwserveur}
+\end{figure}
+
 \begin{figure}
     \makeincudegraphics[width=\textwidth]{simulateur_uc.png}
     \caption{Diagramme de cas d'usage}
     \label{fig:uc}
 \end{figure}
-\begin{figure}
-    \makeincudegraphics[width=\textwidth]{ardupilot_client_components.png}
-    \caption{Diagramme de composantes (micrologiciel coté client)}
-    \label{fig:fwclient}
-\end{figure}
-\begin{figure}
-    \makeincudegraphics[width=\textwidth]{ardupilot_server_components.png}
-    \caption{Diagramme de composantes (micrologiciel coté serveur)}
-    \label{fig:fwserveur}
-\end{figure}
+
+\section {Brouillon}
+Le Maitre du Jeu (MDJ) gère les drones virtuelles et peut modifier leurs environnement.
+Le \emph{Système de Pilotage} (figure \ref{fig:uc})
+est implanter dans les figures
+\ref{fig:fwclient} et \ref{fig:fwserveur}.
+
+
+
 
 Le serveur d'authentification, le simulateur, et le renderer (quand il est coté serveur)
 partagent les clés de chiffrement et l'adresse des flux vidéo comme nécessaire.
