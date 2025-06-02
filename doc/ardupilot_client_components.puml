@@ -2,12 +2,7 @@
 
 left to right direction
 
-actor Pilote
-actor MDJ
-actor Admin
-actor Observateur
 
-MDJ -right-|> Observateur
 
 rectangle "Machine Client" {
     component Launcher
@@ -16,8 +11,8 @@ rectangle "Machine Client" {
     component "Jme Renderer" as JmeRenderer
     component "MAVSec proxy" as SecProxy1
 
-    Pilote -- QGroundControl : IHM
-    Pilote -- Launcher : Lancer le client
+
+
     note right of Launcher
         Permet de démarrer les différents composants du client.
     end note
@@ -52,8 +47,5 @@ rectangle "Machine Serveur" {
     Manager -- JmeServer : Intéragit
 }
 
-Admin -- Launcher
-Observateur -- Launcher
-MDJ -- Launcher
 
 @enduml

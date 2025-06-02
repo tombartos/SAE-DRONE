@@ -2,12 +2,6 @@
 
 left to right direction
 
-actor Admin
-actor Pilote
-actor Observateur
-actor MDJ
-
-MDJ -left-|> Observateur
 
 rectangle "Machine Client" {
     component "Launcher" as Launcher
@@ -16,8 +10,6 @@ rectangle "Machine Client" {
     component "MAVSec proxy" as SecProxy1
     component ArduPilot
 
-    Pilote -- QGroundControl : IHM
-    Pilote -- Launcher : Lancer le client
     note right of Launcher
         Permet de démarrer les différents composants du client.
     end note
@@ -52,8 +44,6 @@ rectangle "Machine Serveur" {
 SecProxy1 -- SecProxy2 : MAVSec
 QGroundControl -- VideoDecoder : H.264 clair
 VideoDecoder -- JmeRenderer : H.264 chiffré
-Admin -- Launcher
-Observateur -- Launcher
-MDJ -- Launcher
+
 
 @enduml
