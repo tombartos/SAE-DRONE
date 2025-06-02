@@ -147,6 +147,7 @@ public class SimulatorClient extends SimpleApplication implements PhysicsCollisi
         // Network initialisation
         try {
             client = Network.connectToServer(server_ip, server_port);
+            initializeSerializables();
             ClientListener clientListener = new ClientListener(this);
             client.addMessageListener(clientListener, DroneDTOMessage.class);
             client.addMessageListener(clientListener, Handshake2.class);
