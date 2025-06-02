@@ -43,6 +43,8 @@
     en modélisation.
 \end{abstract}
 
+\tableofcontents
+
 \section{Problématique}
 Les fonds marins sont un milieu que nous connaissons peu et qui sont difficiles d'accès.
 Afin de mieux les étudier, nous pouvons utiliser des drones sous-marins pilotés à distance
@@ -52,16 +54,15 @@ Pour des missions très délicates on pourrait imaginer qu'une IA pourrait réal
 nécessite de pouvoir entrainer l'IA, notemment dans un environnement virtuel. L'idée de faire un simualteur
 est donc vraiment pertinente car il permettrait d'entrainer à la fois des pilotes humains et des IA.
 
-\section {Description générale du projet et fonctionnalités}
-
+\section{Description générale et Modélisation}
 Ardupilot est une interface de pilotage de drone open source utilisée par de nombreux passionnés et professionnels
 pour piloter tout type de drone (aérien, sous-marin ou terrestre). L'objectif de ce projet est de développer un simulateur
 de drone sous-marin que l'on pourrait connecter à Ardupilot un peu comme si c'était un vrai drone afin que des pilotes ayant de l'expérience
 avec Ardupilot puissent passer du drone virtuel au drone réel sans avoir à changer leurs habitudes. Afin d'aller un petit peu plus loin et de permettre
 un certaine flexibilité, le simulateur a été conçu pour pouvoir être facilement adapté à n'importe quelle interface de pilotage.
+\\
 
-Le simulateur a été écrit en Java, il contient plusieurs composantes (voir figure \ref{fig:fwclient} et \ref{fig:fwserveur}).
-Tout d'abord, on peut identifier 4 acteurs principaux :
+Tout d'abord, on peut identifier quatre acteurs principaux :
 \begin{itemize}
     \item Le pilote, qui pilote le drone virtuel.
     \item Le maître du jeu (MDJ), qui gère les drones virtuels et peut modifier leurs environnement.
@@ -69,31 +70,353 @@ Tout d'abord, on peut identifier 4 acteurs principaux :
     \item L'administrateur, qui gère les utilisateurs
 \end{itemize}
 
-Pour en savoir plus sur les acteurs, vous pouvez consulter le diagramme de cas d'usage (voir figure \ref{fig:uc}).
-La simulation tourne autours d'une application serveur REST appelé ici "Manager".
+Pour en savoir plus sur les acteurs, leur rôle dans le système et les différentes fonctionnalités qui leurs sont accessible, vous pouvez consulter le diagramme de cas d'usage (voir figure \ref{fig:uc}).
+Le simulateur a été écrit en Java, il contient plusieurs composantes (voir figure \ref{fig:fwclient} et \ref{fig:fwserveur}).
+La simulation tourne autour d'une application serveur REST appelé ici "Manager".
 Le Manager gère principalement l'authentification des utilisateurs, la création des drones virtuels, le lancement du serveur de simulation
 et l'ajout/suppression en temps réel d'évènements dans l'environnement, et dans le futur l'ajout en temps réel de nouveaux drones virtuels.
 Les utilisateurs disposent d'un logiciel avec une interface graphique appelé ici "launcher" qui leur permet de se connecter et d'interagir avec la simualtion
 en fonction de leur rôle. Concernant les pilotes, le launcher est aussi responsable du lancement des différents composants de l'interface de pilotage.
+\\
+Pour comprendre comment les différents composants interagissent entre eux, vous pouvez consulter le diagramme de séquence
+de l'UC "Le pilote se connecte au simulateur" (voir figure \ref{fig:conn_pilote_seq}).
+Un petit détail concernant ce diagramme de séquence, ce n'est en effet pas très logique que ce soit le serveur de la simulation qui ouvre la connexion à Ardusub, il faudrait en toute logique
+la section \ref{sec:problemes}.\\
+% TODO: Parler de ça dans les problèmes / perspectives (André/Yann)
+
+Nous avons aussi réalisé un diagramme de classes (voir figure \ref{fig:classes}) qui permet de visualiser certains aspects du projet. On peut voir notement
+que les drones possèdent des modules qui peuvent être des capteurs ou des actionneurs, si on veut rajouter un capteur à un drone nous n'avons qu'à
+qu'à créer un nouvel objet de la classe capteur, ceci permet une certaine modularité. Concernant les controleurs, afin que notre simulateur puisse
+être utilisé avec n'importe quelle interface de pilotage, nous avons créé une interface ControleurDrone qui doit être implémentée par les controleurs, ainsi si on veut
+rajouter un nouveau controleur pour une nouvelle interface de pilotage, il suffit de créer une nouvelle classe qui implémente l'interface ControleurDrone. Dans notre cas
+nous l'avons implémentée pour ArduSub, mais il est possible de l'implémenter pour n'importe quelle autre interface de pilotage.
 
 
-\begin{figure}
+\begin{figure}[p]
     \makeincudegraphics[width=1.1\textwidth]{ardupilot_server_components.png}
     \caption{Diagramme de composantes (rendu côté serveur)}
     \label{fig:fwclient}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[p]
     \makeincudegraphics[width=1.1\textwidth]{ardupilot_client_components.png}
     \caption{Diagramme de composantes (rendu côté client)}
     \label{fig:fwserveur}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[p]
     \makeincudegraphics[width=\textwidth]{simulateur_uc.png}
     \caption{Diagramme de cas d'usage}
     \label{fig:uc}
 \end{figure}
+
+\begin{figure}
+    \makeincudegraphics[width=\textwidth]{conn_pilote_seq.png}
+    \caption{Connexion d'un pilote avec rendu à distance.}
+    \label{fig:conn_pilote_seq}
+\end{figure}
+
+\section{Fonctionnalités et descriptif technique}
+\subsection{Manager}
+Le manager (\texttt{fr.univtln.infomath.dronsim.server.manager.Manager}) est un serveur REST qui gère
+les requêtes provenant du client REST du launcher \\(\texttt{fr.univtln.infomath.dronsim.client.launcher.RestClient}).
+Lors de mise en place du serveur nous nous sommes posé la question de savoir si nous allions utiliser le framework Quarkus
+comme vu en cours ou si il était possible de faire un serveur REST en Java sans framework. Nous avons vu qu'il était possible
+d'en faire un avec Jersey et Grizzly, ce qui est beaucoup plus léger comme solution et plus adapté à notre problème
+car la machine serveur a besoin de ressources pour faire tourner le simulateur et les éventuels rendus graphiques, étant donné que
+le coeur de notre application ne repose pas sur une API REST, nous avons donc choisi de ne pas utiliser Quarkus afin d'économiser des ressources
+et faciliter la gestion des packages (il aurait probablement fallu faire un repository à part pour le serveur REST utilisant Quarkus).
+
+% TODO: André parler de l'authentification ICI
+
+\subsection{Launcher}
+% TODO: Emad parler du GUI ici
+
+Le rôle du launcher est aussi comme son nom l'indique de lancer Ardupilot et QGroundControl correctement mais aussi le renderer lorsque
+on est en mode rendu local en renseignant automatiquement les paramètres de connexion au simulateur en fonction des réponses qu'il aura obtenu du Manager
+lors de la requête de connexion.
+
+\subsection{Serveur JMonkeyEngine}
+Le serveur JMonkeyEngine (\texttt{fr.univtln.infomath.dronsim.server.renderer.SimulatorServer}) est le coeur de la simulation.
+C'est lui s'occupe de calculer la physique des drones virtuels: à chaque tick serveur il va calculer la nouvelle position de tous les drones en fonction
+de la vitesse de chaque moteur, faire évoluer les évènements, gérer les collisions et envoyer les positions de chaque évènement et chaque drone à chaque client connecté
+(pilotes et observateurs).
+
+%TODO: Yann parler un peu de la physique ici
+
+\subsection{Client JMonkeyEngine}
+Le client JMonkeyEngine (\texttt{fr.univtln.infomath.dronsim.client.renderer.SimulatorClient}) est le composant qui permet de visualiser la simulation. Selon le mode choisi,
+il est soit sur la machine serveur (mode cloud) soit sur la machine du pilote (mode local). Il reçoit les positions de chaque drone et chaque évènement à chaque tick serveur
+et les mets à jour dans la scène 3D. Il s'occupe aussi de l'affichage de l'eau, de la lumière et des textures mais ne contient aucun élément de physique.
+Il va dans les deux modes (local et cloud) capturer chaque frame de la scène 3D et l'envoyer à QGroundControl via un logiciel standard d'encodage vidéo
+(Gstreamer) et son implémentation en Java (voir \texttt{fr.univtln.infomath.dronsim.server.simulation.client} et\\
+\texttt{fr.univtln.infomath.dronsim.server.utils.GstreamerSender}). À noter qu'il faut que Gstreamer soit installé sur la machine pour
+faire fonctionner le client JMonkeyEngine (c'est fait dans le script d'installation fourni).
+
+\section{Scénarios}
+
+\subsection{UC 1 : Recevoir flux vidéo}
+\textbf{Prérequis:} Le pilote est connecté au simulateur et la simulation est lancée.
+
+\subsubsection*{US 1 : Scénario nominal}
+\begin{enumerate}
+    \item Le simulateur envoie un flux vidéo au pilote
+    \item Le pilote reçoit et voit le flux vidéo en temps réel
+\end{enumerate}
+
+\subsection{UC 2 : Consulter les capteurs}
+\textbf{Prérequis:} Le pilote est connecté au simulateur et la simulation est lancée.
+
+\subsubsection*{US 1 : Scénario nominal}
+\begin{enumerate}
+    \item Le pilote clique sur le bouton "Consulter les capteurs"
+    \item Le pilote voit la liste des capteurs avec leurs valeurs en temps réel
+\end{enumerate}
+
+\subsubsection*{US 2 : Scénario alternatif : Capteur non disponible}
+\begin{enumerate}
+    \item[A.2] Le pilote voit la liste des capteurs avec leurs valeurs en temps réel sauf celle du capteur non disponible
+\end{enumerate}
+
+\subsection{UC 3 : Suivre un drone}
+\textbf{Prérequis:} L'observateur est connecté au simulateur et la simulation est lancée.
+
+\subsubsection*{US 1 : Scénario nominal}
+\begin{enumerate}
+    \item L'observateur clique sur le bouton "Liste des drones connectés"
+    \item L'application affiche la liste des drones connectés à la simulation
+    \item L'observateur clique sur le bouton "Suivre" du drone qu'il souhaite suivre
+    \item L'observateur voit le flux vidéo du drone qu'il suit
+\end{enumerate}
+
+\subsubsection*{US 2 : Scénario Exception : Aucun drone connecté}
+\begin{enumerate}
+    \item[A.1] L'observateur clique sur le bouton "Liste des drones connectés"
+    \item[A.2] L'application affiche un message d'erreur indiquant qu'aucun drone n'est connecté à la simulation
+\end{enumerate}
+
+\subsection{UC 4 : Changer mode première/troisième personne}
+\textbf{Prérequis:} L'observateur est connecté au simulateur, la simulation est lancée et l'observateur suit un drone.
+
+\subsubsection*{US 1 : Scénario nominal}
+\begin{enumerate}
+    \item L'observateur clique sur le bouton "Changer mode première/troisième personne"
+    \item L'application change le mode de vue de première personne à troisième personne
+\end{enumerate}
+
+\subsubsection*{US 2 : Scénario alternatif}
+\begin{enumerate}
+    \item[A.2] L'application change le mode de vue de troisième personne à première personne
+\end{enumerate}
+
+\subsection{UC 5 : Voir environnement}
+\textbf{Prérequis:} L'observateur est connecté au simulateur et la simulation est lancée.
+
+\subsubsection*{US 1 : Scénario nominal}
+\begin{enumerate}
+    \item L'observateur clique sur le bouton "Voir environnement"
+    \item L'application affiche l'environnement de la simulation en temps réel
+\end{enumerate}
+
+\subsubsection*{US 2 : Scénario alternatif}
+\begin{enumerate}
+    \item[3.A] L'observateur bouge sa souris pour faire pivoter la caméra
+    \item[4.A] L'application affiche l'environnement de la simulation en temps réel avec la nouvelle vue
+\end{enumerate}
+
+\subsection{UC 6 : Déplacer la caméra}
+\textbf{Prérequis:} L'observateur est connecté au simulateur, la simulation est lancée et l'observateur voit l'environnement.
+
+\subsubsection*{US 1 : Scénario nominal}
+\begin{enumerate}
+    \item L'observateur appuie sur les touches de déplacement pour déplacer la caméra
+    \item L'application affiche l'environnement de la simulation en temps réel avec la nouvelle vue
+\end{enumerate}
+
+\subsection{UC 7 : Ajouter un drone}
+\textbf{Prérequis:} Le maitre de jeu est connecté au simulateur.
+
+\subsubsection*{US 1 : Scénario nominal}
+\begin{enumerate}
+    \item Le maitre de jeu clique sur le bouton "Ajouter un pilote"
+    \item L'application demande au maitre de jeu de choisir le pilote
+    \item Le maitre de jeu choisit le pilote
+    \item L'application demande au maitre de jeu de choisir le mode de connexion
+    \item Le maitre de jeu choisit le mode de connexion "local"
+    \item L'application demande au maitre de jeu de choisir le drone attribué au pilote
+    \item Le maitre de jeu choisit le drone
+    \item L'application affiche un message de confirmation indiquant que le pilote a été ajouté avec succès
+\end{enumerate}
+
+\subsubsection*{US 2 : Scénario alternatif}
+\begin{enumerate}
+    \item[A.5] Le maitre de jeu choisit le mode de connexion "cloud"
+    \item[] Le scénario continue en 6.
+\end{enumerate}
+
+\subsection{UC 8 : Changer la carte}
+\textbf{Prérequis:} Le maitre de jeu est connecté au simulateur et la simulation est lancée.
+
+\subsubsection*{US 1 : Scénario nominal}
+\begin{enumerate}
+    \item Le maitre de jeu clique sur le bouton "Changer la carte"
+    \item L'application demande au maitre de jeu de choisir la nouvelle carte
+    \item Le maitre de jeu choisit la nouvelle carte
+    \item L'application redémarre la simulation avec la nouvelle carte
+\end{enumerate}
+
+\subsection{UC 9 : Gérer les utilisateurs}
+\textbf{Prérequis:} L'administrateur est connecté au simulateur.
+
+\subsubsection*{US 1 : Scénario nominal}
+\begin{enumerate}
+    \item L'administrateur clique sur le bouton "Gérer les utilisateurs"
+    \item L'application affiche la liste des utilisateurs
+    \item L'administrateur clique sur le bouton "Ajouter un utilisateur"
+    \item L'application demande à l'administrateur de choisir le type d'utilisateur
+    \item L'administrateur choisit le type d'utilisateur
+    \item L'application demande à l'administrateur de choisir le nom d'utilisateur
+    \item L'administrateur choisit le nom d'utilisateur
+    \item L'application affiche un message de confirmation indiquant que l'utilisateur a été ajouté avec succès
+\end{enumerate}
+
+\subsubsection*{US 2 : Scénario alternatif}
+\begin{enumerate}
+    \item[A.3] L'administrateur clique sur le bouton "Supprimer un utilisateur"
+    \item[A.4] L'application demande à l'administrateur de choisir l'utilisateur à supprimer
+    \item[A.5] L'administrateur choisit l'utilisateur à supprimer
+    \item[A.6] L'application affiche un message de confirmation indiquant que l'utilisateur a été supprimé avec succès
+\end{enumerate}
+
+\subsubsection*{US 3 : Scénario alternatif}
+\textbf{Prérequis :} la simulation est lancée
+
+\begin{enumerate}
+    \item[A.4] L'administrateur choisit le nom d'utilisateur
+    \item[A.5] L'application affiche les informations de l'utilisateur
+    \item[A.6] L'administrateur clique sur le bouton "Exclure l'utilisateur"
+    \item[A.7] L'application affiche un message de confirmation indiquant que l'utilisateur a été exclu avec succès
+\end{enumerate}
+
+\subsection{UC 10 : Gérer les conditions météo}
+\textbf{Prérequis:} Le maitre de jeu accède à l’interface de contrôle de simulation et la simulation est lancée.
+
+\subsubsection*{US 1 : Scénario nominal}
+\begin{enumerate}
+    \item Le maitre de jeu clique sur le bouton "Conditions météo"
+    \item Le système affiche les paramètres modifiables : vent, pluie, luminosité, etc.
+    \item Le maitre de jeu ajuste les valeurs via des curseurs ou des champs numériques.
+    \item Le maitre de jeu valide la configuration.
+    \item Le simulateur applique dynamiquement les nouvelles conditions.
+    \item Les drones actifs sont immédiatement soumis à ces contraintes physiques.
+\end{enumerate}
+
+\subsection{UC 11 : Gérer les évènements}
+\textbf{Prérequis:} Le maitre de jeu accède à l’interface de contrôle de simulation et la simulation est lancée.
+
+\subsubsection*{US 1 : Scénario nominal}
+\begin{enumerate}
+    \item Le maitre de jeu clique sur le bouton "consulter événements"
+    \item Le système affiche les événements disponibles : obstacle dynamique (comme un poisson, un bateau ou un filet), courant localisé imprévu, perturbation de signal, turbidité de l’eau.
+    \item Le maitre de jeu valide et déclenche l’événement.
+    \item Le simulateur applique immédiatement l’événement dans l’environnement 3D.
+    \item Le drone réagit selon ses algorithmes embarqués (autonomie, retour au point sûr, etc.).
+\end{enumerate}
+
+\subsection{UC 12 : Lancer une simulation}
+\textbf{Prérequis:}
+\begin{itemize}
+    \item Le MDJ doit être connecté au simulateur
+    \item Le MDJ doit avoir chargé une carte dans le simulateur
+\end{itemize}
+
+\subsubsection*{US 1 : Scénario nominal}
+\begin{enumerate}
+    \item Le MDJ clique sur le bouton démarrer la simulation
+    \item Le Système affiche une fenêtre avec tous les éléments de la simulation (pilote avec drone attitré, carte, liste d'évènements, ...)
+    \item Le Système demande d'appuyer sur le bouton "démarrer la simulation"
+    \item Le MDJ appuie sur le bouton "démarrer la simulation"
+    \item Le système ferme la fenêtre et lance la simulation
+\end{enumerate}
+
+\subsubsection*{US 2 : Scénario exception : Le MDJ ne lance pas la simulation}
+\begin{enumerate}
+    \item[E2.] Le MDJ appuie sur le bouton "Annuler"
+    \item[E3.] Le système ferme la fenêtre
+\end{enumerate}
+
+\subsection{UC 13 : Piloter Manuellement}
+\textbf{Prérequis:}
+\begin{itemize}
+    \item Le pilote doit posséder un contrôleur configuré
+    \item Le pilote doit être dans une simulation avec un drone attitré
+\end{itemize}
+
+\subsubsection*{US 1 : Scénario nominal}
+\begin{enumerate}
+    \item Le Pilote transmet des directives au drone via son contrôleur
+    \item Le Système simule le drone en fonction des directives reçues
+    \item Retour à l'étape 1
+\end{enumerate}
+
+\subsubsection*{US 2 : Scénario alternatif : Le contrôleur utilisé n'est pas reconnu}
+\begin{enumerate}
+    \item[A2.] Le Système indique au Pilote que l'action n'est pas reconnue
+    \item[A3.] Retour à l'étape 1
+\end{enumerate}
+
+\subsection{UC 14 : Un utilisateur se connecte}
+
+\subsubsection*{US 1 : Scénario nominal}
+\begin{enumerate}
+    \item L'utilisateur renseigne nom d'utilisateur/mot de passe
+    \item Le lanceur présente à l'utilisateur :
+        \begin{itemize}
+            \item une liste de drones qui lui appartiennent
+            \item les parties qu'il peut observer
+        \end{itemize}
+    \item L'utilisateur sélectionne un drone
+    \item Le lanceur lance l'interface de pilotage
+\end{enumerate}
+
+\subsubsection*{US 1 : Scénario alternatif : L'utilisateur observe}
+\begin{enumerate}
+    \item L'utilisateur renseigne nom d'utilisateur/mot de passe
+    \item Le lanceur présente à l'utilisateur :
+        \begin{itemize}
+            \item une liste de drones qui lui appartiennent
+            \item les parties qu'il peut observer
+        \end{itemize}
+    \item L'utilisateur sélectionne une partie
+    \item Le lanceur lance l'interface d'observation
+\end{enumerate}
+
+\subsubsection*{US 1 : Scénario alternatif : L'utilisateur peut être MDJ}
+\begin{enumerate}
+    \item L'utilisateur renseigne nom d'utilisateur/mot de passe
+    \item Le lanceur présente à l'utilisateur :
+        \begin{itemize}
+            \item une liste de drones qui lui appartiennent
+            \item les parties qu'il peut observer
+            \item un bouton "démarrer partie"
+        \end{itemize}
+    \item L'utilisateur démarre une partie
+    \item Le lanceur lance l'interface de gestion de partie avec une partie lancée
+\end{enumerate}
+
+\section{Organisation du projet}
+
+
+\section{Problèmes rencontrés}
+\label{sec:problemes}
+
+
+
+\section{Perspectives d'évolution}
+
+
+
+
 
 \section {Brouillon}
 Le Maitre du Jeu (MDJ) gère les drones virtuelles et peut modifier leurs environnement.
@@ -107,10 +430,7 @@ est implanter dans les figures
 Le serveur d'authentification, le simulateur, et le renderer (quand il est coté serveur)
 partagent les clés de chiffrement et l'adresse des flux vidéo comme nécessaire.
 %
-\begin{figure}
-    \makeincudegraphics[width=\textwidth]{conn_pilote_seq.png}
-    \caption{Connexion d'un pilote avec rendu à distance.}
-\end{figure}
+
 
 L'interface \verb|Controler| correspond au micro contrôleur du drone virtuelle.
 La classe \verb|ArduSubControler| gère les messages MAVLink envoyé par une instance du ArduSub SITL.

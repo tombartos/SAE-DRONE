@@ -7,55 +7,47 @@ skinparam BoxPadding 10
 actor Pilote
 
 box "Machine Client"
-    participant Lanceur
-    participant "MAVSec Proxy" as ProxyClient
-    participant "Renderer" as RendererLocal
-    participant "Proxy chiffrement\nde vidéo" as Décodeur
+    participant Launcher
+    participant "QGC" as QGC
+    participant "Ardupilot" as ArduPilot
 end box
 
 box "Machine Serveur"
-    participant "Serveur\nd'Authentification" as Auth
+    participant "Manager" as Manager
     participant "Renderer" as RendererRemote
     participant Simulateur
 end box
 
-Pilote -> Lanceur : Renseigne identifiants
-Lanceur -> Auth : Authentification
-Auth -> Lanceur : OK
-Auth -> Lanceur : Liste de drones avec flux vidéo et clés associé
-Lanceur -> Pilote : Menu de sélection de drone
-Pilote -> Lanceur : Sélectionne un drone
+Pilote -> Launcher : Renseigne identifiants
+Launcher -> Manager : Demande Authentification
+Manager -> Launcher : Authentification OK
+Launcher -> Pilote : Affiche interface pilote
+Pilote -> Launcher : Clique sur "Lancer la simulation"
+Launcher -> Manager : Demande connexion au simulateur
+Manager -> Simulateur : Prépare la Connexion du pilote
+Simulateur -> Manager : Connexion prête
+Manager -> RendererRemote : Démarre
+RendererRemote -> Simulateur : Se connecte
+Simulateur -> RendererRemote : Connexion établie
+RendererRemote -> Manager : Démarrage terminé
+Manager -> Launcher : Simulation prête à accueillir le pilote
 
 par
-
-Lanceur ->? : Lance ArduSub, QGroundControl, etc...\n(c.f., diagramme composantes)
-
+Launcher -> QGC : Démarre
+QGC -> ArduPilot : Se connecte
+ArduPilot -> QGC : Connexion établie
+RendererRemote -> QGC : Envoie le flux vidéo
+QGC -> Pilote : Affiche la vidéo
 else
+Launcher -> ArduPilot : Démarre
+ArduPilot <- Simulateur : Se connecte
+Simulateur <- ArduPilot : Connexion établie
 
-Lanceur -> ProxyClient ** : Configure connexion et clé de chiffrement
 
-ProxyClient -> Simulateur : Se connecte
-?<-> ProxyClient : échange des messages MAVLink\n(c.f., diagramme composantes)
-& ProxyClient <-> Simulateur : Forward les messages MAVLink (chiffré)
 
-else
 
-alt emode rendu locale
 
-    Lanceur -> RendererLocal ** : Configure connexion au serveur JMonkey
-    RendererLocal -> Simulateur : Se connecte
-    RendererLocal <-> Simulateur : Synchronise la scène (chiffré)
-    & ?<- RendererLocal : Envoie la vidéo à l'interface de pilotage\n(c.f., diagramme composantes)
 
-else mode rendu à distanc
 
-    Lanceur -> Décodeur ** : Configure source vidéo distante
-    Décodeur -> RendererRemote : Se connecte
-    Décodeur <- RendererRemote : Envoie vidéo (chiffré)
-    & ?<- Décodeur : Forward la vidéo à l'interface de pilotage\n(c.f., diagramme composantes)
-
-end
-
-end
 
 @enduml

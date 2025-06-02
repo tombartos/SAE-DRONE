@@ -59,11 +59,6 @@ package Simulation {
 }
 
 package Réseau {
-    class ControleurRéseau {
-        receiveData(): void
-        sendData(): void
-    }
-
     abstract ControleurDrone {
         +getMotorSpeed(index: int): float
         +getSensorReading(Sensor sensor): void
@@ -75,11 +70,6 @@ package Réseau {
 
 }
 
-package Testing{
-    class LocalTestingControler {
-    }
-
-}
 
 
 package Utilisateurs {
@@ -88,7 +78,10 @@ package Utilisateurs {
     }
 
     class MDJ {
-
+        +addDroneAssociation()
+        +addEvent()
+        +removeEvent()
+        +Simulateur.startSimulation()
     }
 
     class Observateur {
@@ -121,7 +114,6 @@ Simulateur "1" -- "1..n" Drone : gère
 Simulateur "1" -- "1" MDJ : gère
 Simulateur "1" -- "0..n" Observateur : observe
 Simulateur "1" -- "1..n" Pilote : gère
-Simulateur "1" -- "1" ControleurRéseau : communique
 Simulateur "1" -- "1" Admin : gère
 Simulateur "1" -- "0..n" Évènement : gère
 
@@ -129,7 +121,6 @@ Pilote "1" -- "1" ControleurDrone : pilote
 Drone "1..n" -- "1" Modele : est un type
 Drone "1" -- "1" ControleurDrone : Possède
 
-LocalTestingControler --|> ControleurDrone
 ArduSubRemoteControler --|> ControleurDrone
 
 Capteur --|> Module
