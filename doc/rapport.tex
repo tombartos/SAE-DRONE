@@ -443,27 +443,39 @@ Durant le quatrième sprint (noté sprint 2 dans le backlog), nous avons continu
 nous nous sommes mis d'accord sur l'interface Controleur qu'il allait falloir implémenter et commencé l'implémentation Controleur Ardupilot. La fin du sprint marquait la moitié du développement de l'application,
 le projet étant dans un état convenable, nous avons fait un premier merge sur la branche master et fait un premier tag appelé 0.0.1 .\\
 
-Le cinquième sprint (noté sprint 3 dans le backlog) a été consacré à msie en place de la bibliothèque Geotools dans le controleur Ardusub afin de gérer le GPS, la mise en place du serveur REST (Manager) ainsi que de son client
+Le cinquième sprint (noté sprint 3 dans le backlog) a été consacré à mise en place de la bibliothèque Geotools dans le controleur Ardusub afin de gérer le GPS, la mise en place du serveur REST (Manager) ainsi que de son client
 et de le mettre en lien avec le GUI du launcher, la mise en place de l'authentification des utilisateurs et la gestion des rôles (pilote, MDJ, observateur, administrateur) ainsi que la gestion des drones virtuels. On a aussi commencé
 à travailler sur la gestion des évènements dans le simulateur. Nous avons aussi à ce moment là mis en place un script d'installation afin de faciliter l'installation des
 différents composants qui était fastidieuse à faire à la main.\\
 
-
-
 Au début du cinquième sprint nous avions prévu pour le sixième de mettre en place les protocoles de crypto pour sécuriser les échanges entre Ardupilot et le simulateur ainsi qu'un
-chiffrement/déchiffrement des flux vidéo, mais nous avons rapidement réalisé que nous n'aurions pas le temps de le faire correctement et qu'il nous aurait fallu une à deux semaines de plus pour le faire.
+chiffrement/déchiffrement des flux vidéo, mais nous avons rapidement réalisé que nous n'aurions pas le temps de le faire correctement et qu'il nous aurait fallu une à deux semaines de plus pour le faire (voir la section \ref{sec:perspectives}).
 C'est pourquoi nous avons décidé de mettre cette aspect de côté pour se concentrer sur finir proprement tout ce qui avait été commencé comme la physique (voir la section \ref{sec:problemes}) et l'implémentation
-des évènements sur le serveur et de l'authentification. Nous avons aussi écrit la documentation du projet et préparé la présentation du projet pour la soutenance.
-
-
+des évènements sur le serveur et de l'authentification et bien évidemment faire de la correction de bugs générale et à la fin du sprint nous avons mis à jour la branche master et fait un tag 0.1.0 . Nous avons aussi écrit la documentation du projet et préparé la présentation du projet pour la soutenance.
 
 
 \section{Problèmes rencontrés}
 \label{sec:problemes}
+%Yann et André : parler de la physique et du controler Ardupilot et autres problèmes ici
 
 
 
-\section{Perspectives d'évolution}
+\section{Perspectives d'évolution et Conclusion}
+\label{sec:perspectives}
 
+% André Parler sécurité ici
+
+Pour conclure, le projet était très intéressant à mener, il nous a appris beaucoup de choses et nous a permis d'avoir un avant
+goût du travail d'équipe en entreprise. Le projet est plutôt réussi dans l'ensemble mais je pense qu'il faut plutôt le voir comme une base solide
+d'un simulateur qui pourrait être bien plus ambitieux. Si le projet devait être poursuivi, les premiers éléments à régler seraient
+l'utilisation des classes prévues pour les capteurs et autres modules car pour l'instant elles ne le sont pas, il faudrait aussi
+rajouter de la sécurité dans les échanges réseau et terminer l'implémentation de l'administrateur.\\
+Pour un cycle de vie à long terme avec des mises à jour régulières, on pourrait imaginer rajouter des modèles de drones,
+rajouter plusieurs environnements différents, ajouter des évènements plus complexes, rajouter des systèmes comme des bras robotisés,
+supporter les manettes de jeu pour le controleur Ardupilot, proposer différentes caméra différentes (grand angle, thermique, etc.) et bien sûr
+rajouter des fonctionnalités pour les pilotes et les MDJ comme la possibilité de créer des missions.
+Pour revenir sur la problématique initiale, une fois tout ceci mis en place le simulateur pourrait être utilisé afin d'entrainer des pilotes et des IA à effectuer
+des missions sous-marines dans un environnement virtuel avant de les envoyer sur le terrain, ce qui permettrait de réduire les coûts et
+d'augmenter la sécurité des missions. Il pourrait aussi être utilisé pour faire de la recherche sur les drones sous-marins et leur comportement dans différents environnements.
 
 \end{document}

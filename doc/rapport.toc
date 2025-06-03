@@ -23,5 +23,5 @@
 \contentsline {subsection}{\numberline {4.14}UC 14 : Un utilisateur se connecte}{10}{subsection.4.14}%
 \contentsline {section}{\numberline {5}Organisation du projet}{11}{section.5}%
 \contentsline {section}{\numberline {6}Problèmes rencontrés}{12}{section.6}%
-\contentsline {section}{\numberline {7}Perspectives d'évolution}{12}{section.7}%
+\contentsline {section}{\numberline {7}Perspectives d'évolution et Conclusion}{12}{section.7}%
 \providecommand \tocbasic@end@toc@file {}\tocbasic@end@toc@file 
