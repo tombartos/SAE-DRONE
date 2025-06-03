@@ -22,7 +22,6 @@
 \contentsline {subsection}{\numberline {4.13}UC 13 : Piloter Manuellement}{10}{subsection.4.13}%
 \contentsline {subsection}{\numberline {4.14}UC 14 : Un utilisateur se connecte}{10}{subsection.4.14}%
 \contentsline {section}{\numberline {5}Organisation du projet}{11}{section.5}%
-\contentsline {section}{\numberline {6}Problèmes rencontrés}{11}{section.6}%
-\contentsline {section}{\numberline {7}Perspectives d'évolution}{11}{section.7}%
-\contentsline {section}{\numberline {8}Brouillon}{11}{section.8}%
+\contentsline {section}{\numberline {6}Problèmes rencontrés}{12}{section.6}%
+\contentsline {section}{\numberline {7}Perspectives d'évolution}{12}{section.7}%
 \providecommand \tocbasic@end@toc@file {}\tocbasic@end@toc@file 

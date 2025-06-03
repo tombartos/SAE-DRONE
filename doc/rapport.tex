@@ -36,10 +36,10 @@
 \maketitle{}
 
 \begin{abstract}
-    Ce document est un rapport qui présente le projet SAE du master 1 informatique et mathématique 2024 - 2025
-    de l'Université de Toulon. Il est encadré Julien Seinturier et Emmanuel Bruno, professeurs à l'Université de Toukon.
+    Ce document est un rapport qui présente le projet SAE du master 1 informatique et mathématiques 2024 - 2025
+    de l'Université de Toulon. Il est encadré par Julien Seinturier et Emmanuel Bruno, professeurs à l'Université de Toulon.
     Le projet consiste à développer un simulateur de drone sous-marin en Java, pour cela les étudiants
-    ont utilisé les connaissances acquises tout au long de l'année, notemment en programmation, en gestion de projet et
+    ont utilisé les connaissances acquises tout au long de l'année, notamment en programmation, en gestion de projet et
     en modélisation.
 \end{abstract}
 
@@ -72,7 +72,7 @@ Tout d'abord, on peut identifier quatre acteurs principaux :
 
 Pour en savoir plus sur les acteurs, leur rôle dans le système et les différentes fonctionnalités qui leurs sont accessible, vous pouvez consulter le diagramme de cas d'usage (voir figure \ref{fig:uc}).
 Le simulateur a été écrit en Java, il contient plusieurs composantes (voir figure \ref{fig:fwclient} et \ref{fig:fwserveur}).
-La simulation tourne autour d'une application serveur REST appelé ici "Manager".
+La simulation tourne autour d'un serveur REST appelé ici "Manager".
 Le Manager gère principalement l'authentification des utilisateurs, la création des drones virtuels, le lancement du serveur de simulation
 et l'ajout/suppression en temps réel d'évènements dans l'environnement, et dans le futur l'ajout en temps réel de nouveaux drones virtuels.
 Les utilisateurs disposent d'un logiciel avec une interface graphique appelé ici "launcher" qui leur permet de se connecter et d'interagir avec la simualtion
@@ -80,14 +80,15 @@ en fonction de leur rôle. Concernant les pilotes, le launcher est aussi respons
 \\
 Pour comprendre comment les différents composants interagissent entre eux, vous pouvez consulter le diagramme de séquence
 de l'UC "Le pilote se connecte au simulateur" (voir figure \ref{fig:conn_pilote_seq}).
-Un petit détail concernant ce diagramme de séquence, ce n'est en effet pas très logique que ce soit le serveur de la simulation qui ouvre la connexion à Ardusub, il faudrait en toute logique
-la section \ref{sec:problemes}.\\
+Un petit détail concernant ce diagramme de séquence ce n'est en effet pas très logique que ce soit le serveur de la simulation qui ouvre la connexion à Ardusub, il faudrait en toute logique
+que ce soit l'inverse car Ardupilot et censé être un client qui se connecte à un serveur dans notre philosophie et pas l'inverse, mais
+nous avons du faire ainsi pour des raisons techniques, voir la section \ref{sec:problemes}.\\
 % TODO: Parler de ça dans les problèmes / perspectives (André/Yann)
 
-Nous avons aussi réalisé un diagramme de classes (voir figure \ref{fig:classes}) qui permet de visualiser certains aspects du projet. On peut voir notement
-que les drones possèdent des modules qui peuvent être des capteurs ou des actionneurs, si on veut rajouter un capteur à un drone nous n'avons qu'à
+Nous avons aussi réalisé un diagramme de classes (voir figure \ref{fig:classes}) qui permet de visualiser certains aspects du projet. On peut voir notament
+que les drones possèdent des modules qui peuvent être des capteurs ou des systèmes (bras robot par exemple), si on veut rajouter un capteur à un drone nous n'avons qu'à
 qu'à créer un nouvel objet de la classe capteur, ceci permet une certaine modularité. Concernant les controleurs, afin que notre simulateur puisse
-être utilisé avec n'importe quelle interface de pilotage, nous avons créé une interface ControleurDrone qui doit être implémentée par les controleurs, ainsi si on veut
+être utilisé avec n'importe quelle interface de pilotage, nous avons créé une interface Controleur qui doit être implémentée par les controleurs, ainsi si on veut
 rajouter un nouveau controleur pour une nouvelle interface de pilotage, il suffit de créer une nouvelle classe qui implémente l'interface ControleurDrone. Dans notre cas
 nous l'avons implémentée pour ArduSub, mais il est possible de l'implémenter pour n'importe quelle autre interface de pilotage.
 
@@ -110,10 +111,17 @@ nous l'avons implémentée pour ArduSub, mais il est possible de l'implémenter 
     \label{fig:uc}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[p]
     \makeincudegraphics[width=\textwidth]{conn_pilote_seq.png}
     \caption{Connexion d'un pilote avec rendu à distance.}
     \label{fig:conn_pilote_seq}
+\end{figure}
+
+\begin{figure}[p]
+    \centering
+    \makeincudegraphics[width=1\textwidth]{classes.png}
+    \caption{Diagramme de classes}
+    \label{fig:classes}
 \end{figure}
 
 \section{Fonctionnalités et descriptif technique}
@@ -149,7 +157,7 @@ Le client JMonkeyEngine (\texttt{fr.univtln.infomath.dronsim.client.renderer.Sim
 il est soit sur la machine serveur (mode cloud) soit sur la machine du pilote (mode local). Il reçoit les positions de chaque drone et chaque évènement à chaque tick serveur
 et les mets à jour dans la scène 3D. Il s'occupe aussi de l'affichage de l'eau, de la lumière et des textures mais ne contient aucun élément de physique.
 Il va dans les deux modes (local et cloud) capturer chaque frame de la scène 3D et l'envoyer à QGroundControl via un logiciel standard d'encodage vidéo
-(Gstreamer) et son implémentation en Java (voir \texttt{fr.univtln.infomath.dronsim.server.simulation.client} et\\
+(Gstreamer) et son implémentation en Java (voir \texttt{fr.univtln.infomath.dronsim.server.simulation.client.FrameCaptureProcessor} et\\
 \texttt{fr.univtln.infomath.dronsim.server.utils.GstreamerSender}). À noter qu'il faut que Gstreamer soit installé sur la machine pour
 faire fonctionner le client JMonkeyEngine (c'est fait dans le script d'installation fourni).
 
@@ -406,6 +414,49 @@ faire fonctionner le client JMonkeyEngine (c'est fait dans le script d'installat
 
 \section{Organisation du projet}
 
+Le projet s'est déroulé en 6 sprints de une semaine chacun. Les deux premiers sprints ont eu considérablement moins
+d'heures dédié au projet que les 4 derniers sprints à cause de cours et d'examens qui se sont placés à ce moment là.
+Le premier sprint à été consacré à de la recherche et de la documentation principalement sur le fonctionnement et l'installation d'Ardupilot, QGroundControl,
+la compréhension du protocole MAVLink, de la recherche sur la mise en place d'une application client-serveur avec JMonkeyEngine,
+,le streaming vidéo avec Gstreamer et l'aspect sécurité de notre futur application. Pour procéder nous nous sommes répartis les tâches, chacun faisant ses recherches
+sur un ou deux sujet en particulier et en partageant les connaissances acquises au fur et à mesure avec le reste du groupe.
+Concernant la recherche en elle même nous nous sommes grandement aidé de LLM comme ChatGPT et Copilot afin de nous donner des pistes de recherche et de
+nous aider à comprendre certains concepts et comment les différents composants allaient fonctionner ensemble, mais bien évidemment il a fallu se méfier
+des fausses informations et des incohérences que peuvent produire ces outils. C'est pour cela qu'il est important d'aller vérifier toutes les informations
+obtenues par ces outils et de les croiser avec d'autres sources comme les documentations officielles.
+Malgré tout, ces outils nous ont été d'une grande aide pour la recherche et la compréhension de certains concepts et composants de notre future application.\\
+
+Le second sprint, lui aussi écourté par les examens, a été aux dernières recherches et à la modélisation. Nous avons mis au point
+une première version des diagrammes que vous avez vu précédemment, ainsi que les différents scénarios et enfin le backlog.
+À partir de ce moment là l'organisation fut la suivante : le lundi matin était consacré à la finition du sprint en cours
+et à la mise en commun du travail effectué par chacun dans la mesure du possible, puis l'après-midi était réservé à la mise en place du nouveau sprint : on regardait les
+user stories du backlog, on séparait celles qui étaient conséquentes en plusieurs tâches qu'on chiffrait en nombre d'heures et qu'on se répartissait en fonction des
+préférences de chacun. La version finale du backlog est disponible à cette adresse : \href{https://docs.google.com/spreadsheets/d/1_9b835ZHfRBKW2wKLp_8N-aMPw3WcvQoGiQM7r9oeu4/edit?usp=sharing}{Backlog Google Sheets}.
+Concernant le versionage du code, nous avons utilisé GitHub, chaque membre avait au moins une branche sur laquelle il développait sa fonctionnalité et à la fin d'un sprint lorsque c'était possible ou
+pendant le sprint lorsque c'était nécessaire, nous faisions des merge sur la branche dev qui était réservée à la mise en commun du travail de chacun.\\
+
+Le troisième sprint (noté sprint 1 dans le backlog) a marqué le début du développement. Durant ce sprint nous avons commencé la mise en place du serveur JMonkeyEngine et sa connexion avec un client,
+géré le streaming vidéo avec Gstreamer, initialisé un environnement JMonkeyEngine qui fonctionne entièrement en local afin de pouvoir effectuer des tests sans avoir à gérer le côté client/serveur,
+et nous avons essayé d'établir une première connexion entre QGroundControl, Ardupilot et un programme Java de test.\\
+
+Durant le quatrième sprint (noté sprint 2 dans le backlog), nous avons continué le développement du client/serveur JMonkeyEngine, nous avons mis au point le GUI du launcher,
+nous nous sommes mis d'accord sur l'interface Controleur qu'il allait falloir implémenter et commencé l'implémentation Controleur Ardupilot. La fin du sprint marquait la moitié du développement de l'application,
+le projet étant dans un état convenable, nous avons fait un premier merge sur la branche master et fait un premier tag appelé 0.0.1 .\\
+
+Le cinquième sprint (noté sprint 3 dans le backlog) a été consacré à msie en place de la bibliothèque Geotools dans le controleur Ardusub afin de gérer le GPS, la mise en place du serveur REST (Manager) ainsi que de son client
+et de le mettre en lien avec le GUI du launcher, la mise en place de l'authentification des utilisateurs et la gestion des rôles (pilote, MDJ, observateur, administrateur) ainsi que la gestion des drones virtuels. On a aussi commencé
+à travailler sur la gestion des évènements dans le simulateur. Nous avons aussi à ce moment là mis en place un script d'installation afin de faciliter l'installation des
+différents composants qui était fastidieuse à faire à la main.\\
+
+
+
+Au début du cinquième sprint nous avions prévu pour le sixième de mettre en place les protocoles de crypto pour sécuriser les échanges entre Ardupilot et le simulateur ainsi qu'un
+chiffrement/déchiffrement des flux vidéo, mais nous avons rapidement réalisé que nous n'aurions pas le temps de le faire correctement et qu'il nous aurait fallu une à deux semaines de plus pour le faire.
+C'est pourquoi nous avons décidé de mettre cette aspect de côté pour se concentrer sur finir proprement tout ce qui avait été commencé comme la physique (voir la section \ref{sec:problemes}) et l'implémentation
+des évènements sur le serveur et de l'authentification. Nous avons aussi écrit la documentation du projet et préparé la présentation du projet pour la soutenance.
+
+
+
 
 \section{Problèmes rencontrés}
 \label{sec:problemes}
@@ -414,37 +465,5 @@ faire fonctionner le client JMonkeyEngine (c'est fait dans le script d'installat
 
 \section{Perspectives d'évolution}
 
-
-
-
-
-\section {Brouillon}
-Le Maitre du Jeu (MDJ) gère les drones virtuelles et peut modifier leurs environnement.
-Le \emph{Système de Pilotage} (figure \ref{fig:uc})
-est implanter dans les figures
-\ref{fig:fwclient} et \ref{fig:fwserveur}.
-
-
-
-
-Le serveur d'authentification, le simulateur, et le renderer (quand il est coté serveur)
-partagent les clés de chiffrement et l'adresse des flux vidéo comme nécessaire.
-%
-
-
-L'interface \verb|Controler| correspond au micro contrôleur du drone virtuelle.
-La classe \verb|ArduSubControler| gère les messages MAVLink envoyé par une instance du ArduSub SITL.
-Le drone virtuelle appelle au contrôleur pour appliquer les forces/torseurs dynamiques
-(\enquote{screw} en anglais)
-sur le drone.
-Chaque drone a un \verb|Renderer| pour l'afficher dans la scène.
-Le rendu est ensuite envoyé sur le réseau.
-%
-\begin{figure}
-    \centering
-    \makeincudegraphics[width=0.8\textwidth]{classes.png}
-    \caption{Diagramme de classes}
-    \label{fig:classes}
-\end{figure}
 
 \end{document}
