@@ -138,7 +138,15 @@ et faciliter la gestion des packages (il aurait probablement fallu faire un repo
 % TODO: André parler de l'authentification ICI
 
 \subsection{Launcher}
-% TODO: Emad parler du GUI ici
+Le \textit{launcher} constitue l'entrée principale du système pour tous les types d'utilisateurs (pilotes, observateurs, maîtres de jeu, administrateurs). Développé en JavaFX, il fournit une interface graphique claire, moderne et ergonomique permettant d'interagir avec le simulateur de manière centralisée.
+
+L'interface GUI du launcher s'adapte dynamiquement au rôle de l'utilisateur identifié après connexion. Celle-ci se fait via un formulaire de login qui interroge le serveur Manager REST. Une fois l'utilisateur authentifié, le GUI propose différentes fonctionnalités selon son profil :
+\begin{itemize}
+    \item \textbf{Pilote} : l'interface permet de démarrer le client de simulation JMonkeyEngine, qui leur offre un contrôle direct sur le drone qui leur est attribué.
+    \item \textbf{Observateur} : sélection d'un drone à suivre (vue embarquée ou externe), ou navigation libre dans la scène.
+    \item \textbf{Maître du jeu} : interface complète de gestion (ajout de drones, événements, déclenchement de la simulation server, etc.).
+    \item \textbf{Administrateur} : interface de gestion des utilisateurs (liste, ajout, modification, suppression).
+\end{itemize}
 
 Le rôle du launcher est aussi comme son nom l'indique de lancer Ardupilot et QGroundControl correctement mais aussi le renderer lorsque
 on est en mode rendu local en renseignant automatiquement les paramètres de connexion au simulateur en fonction des réponses qu'il aura obtenu du Manager
