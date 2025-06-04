@@ -159,6 +159,11 @@ de la vitesse de chaque moteur, faire évoluer les évènements, gérer les coll
 (pilotes et observateurs).
 
 %TODO: Yann parler un peu de la physique ici
+Il est important de souligner que l’application des forces dans notre simulation se veut réaliste.
+Les forces sont appliquées au niveau de chaque moteur.
+Un moteur ne peut changer ni sa position ni sa direction relative au drone auquel il est attaché.
+Un moteur ne peut qu'avancer ou reculer.
+Donc, pour effectuer un mouvement, le pilote ne peut agir que sur la puissance des moteurs.
 
 \subsection{Client JMonkeyEngine}
 Le client JMonkeyEngine (\texttt{fr.univtln.infomath.dronsim.client.renderer.SimulatorClient}) est le composant qui permet de visualiser la simulation. Selon le mode choisi,
@@ -465,7 +470,66 @@ des évènements sur le serveur et de l'authentification et bien évidemment fai
 \section{Problèmes rencontrés}
 \label{sec:problemes}
 %Yann et André : parler de la physique et du controler Ardupilot et autres problèmes ici
+Durant le déroulement du projet, nous avons rencontré beaucoup de problèmes qui ont ralenti et perturbé son bon déroulement.
+Certains de ces problèmes nous ont ralenti dans la progression du projet.
+Ces ralentissements nous ont forcé à abandonner certains aspects du projet, comme la cryptographie.
 
+\subsection{Contraintes de temps}
+Tout d'abord, il y a eu la contrainte temporelle pour réaliser le projet.
+En tout, nous avons eu cinq semaines pour le mener à bien.
+À cause des jours fériés et des ponts, trois de ces semaines ont été réduites à trois jours au lieu de cinq.
+Des cours et examens se sont greffés aux deux premières semaines du projet.
+
+\subsection{Un domaine inconnu}
+La plupart des problèmes rencontrés sont dus à notre difficulté à trouver de l'information.
+Ce projet est notre tout premier travail où la recherche d'information a une telle importance et prend autant de temps.
+Au début du projet, nous n'avions quasiment aucune connaissance dans le domaine de la simulation de drone.
+Aucun d'entre nous n'avait entendu parler d'Ardupilot ou d'Ardusub.
+Nous ne savions pas ce que c'était, ce que ça faisait, et encore moins comment l'utiliser dans le cadre de notre projet.
+Plus on en apprenait sur Ardupilot, plus les sujets de recherche se multipliaient :
+\begin{itemize}
+    \item Le protocole MavLink, qui est le protocole de communication utilisé par Ardupilot.
+    \item QGroundControl, l'application de contrôle de drone recommandée avec Ardupilot.
+    \item Le Software In The Loop (SITL), qui est le cœur de la simulation d'Ardupilot.
+\end{itemize}
+À cause des jours fériés, des cours et des examens, il nous a fallu deux semaines pour avoir une compréhension générale de tous ces sujets.
+
+\subsection{Simulateur d'Ardupilot et simulateur du projet}
+Le premier sujet de recherche bloquant était de pouvoir faire fonctionner Ardupilot avec la simulation de notre serveur.
+Nous nous sommes donc mis à chercher plusieurs pistes.
+Tout d'abord, nous avons cherché à savoir comment Ardupilot et QGroundControl interagissent ensemble.
+En découvrant qu'ils communiquent avec le protocole Mavlink, nous avons donc fait des recherches pour savoir comment l'utiliser avec notre serveur.
+Il nous a fallu, tout d'abord, trouver une bibliothèque pour pouvoir lire et écrire des messages Mavlink avec Java.
+Après quelques recherches, il nous a semblé que Mavlink a été pensé pour être utilisé avec les langages Python ou C.
+Les bibliothèques Java officielles de Mavlink s’installent avec Gradle par défaut, alors que nous avons appris à utiliser Maven.
+Nous avons finalement réussi à installer la bibliothèque Dronefleet avec Maven.
+Une fois installée, nous avons remarqué que les méthodes UDP de Java n'étaient pas compatibles avec Dronefleet.
+Or, Ardupilot utilise des connexions UDP de base.
+Nous avons finalement réussi à faire en sorte qu'Ardupilot utilise une connexion TCP.
+Il était aussi possible de créer des méthodes en Java pour pallier le problème, mais par manque de temps, nous nous sommes abstenus.
+
+Durant les tests, nous avons rapidement été capables de récupérer la puissance des moteurs.
+Cependant, nous avons bloqué sur la façon de forcer une position à Ardupilot.
+Comme dit plus tôt, Ardupilot a sa propre simulation.
+Mais cette simulation ne connaît pas notre terrain et ne possède aucune gestion d'obstacle ou de perturbation comme les courants marins.
+D'où l'importance de pouvoir forcer les positions.
+
+Comme après plusieurs jours aucune solution n'a été trouvée, nous avons cherché plusieurs autres pistes.
+Nous avons appris que le SITL d’Ardupilot était fait pour être réécrit.
+Il s'agit d'une façon plus propre que de passer par des paquets Mavlink.
+Finalement, grâce à la découverte du problème de position avec Mavlink, et à cause du temps restant pour finir le projet, nous sommes restés sur les échanges Mavlink.
+
+L’inconvénient est qu’à part la position, nous n’avons pas réussi à réécrire d’autres informations,
+comme par exemple l’orientation ou l’inclinaison du drone.
+Nous n’avons pas eu le temps d’implémenter la transmission de données de capteurs comme le compas ou le baromètre.
+
+\subsection{La physique}
+Le deuxième sujet de recherche bloquant était la physique du drone.
+Plus précisément, nous avons eu du mal à appliquer de manière réaliste les forces pour chaque moteur.
+À cause de la mauvaise documentation de certaines méthodes clés, il nous a fallu six jours pour régler ce problème.
+Si la documentation avait été correctement remplie, nous aurions pu finir la physique en deux ou trois jours.
+La physique fut mise en place le dernier jour de développement du projet.
+Sans le temps perdu, il aurait été possible de s'occuper de la partie cryptographie.
 
 
 \section{Perspectives d'évolution et Conclusion}
