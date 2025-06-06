@@ -4,7 +4,7 @@ rapport.pdf:
 	pandoc -s $< -o $@
 
 %.pdf: %.tex
-	latexmk -interaction=nonstopmode -pdf -use-make -M -MP -MF $(@:.pdf=.d) $<
+	latexmk -interaction=nonstopmode -pdf $(LATEXMK_OPTIONS) -use-make -M -MP -MF $(@:.pdf=.d) $<
 
 plantuml.d: *.puml
 	awk '                                                                   \

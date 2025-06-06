@@ -22,7 +22,7 @@
 \newcommand{\eg}{\textit{e.g.}\@\xspace}
 
 % pour que make/latexmk genère les fichiers manquantes
-\newcommand{\makeincudegraphics}[2][]{%
+\newcommand{\makeincludegraphics}[2][]{%
     \IfFileExists{#2}{\includegraphics[#1]{#2}}{\typeout{No file #2.}}}
 
 % pour avoir \verb dans les notes de bas de page
@@ -94,32 +94,32 @@ nous l'avons implémentée pour ArduSub, mais il est possible de l'implémenter 
 
 
 \begin{figure}[p]
-    \makeincudegraphics[width=1.1\textwidth]{ardupilot_server_components.png}
+    \makeincludegraphics[width=1.1\textwidth]{ardupilot_server_components.png}
     \caption{Diagramme de composantes (rendu côté serveur)}
     \label{fig:fwserveur}
 \end{figure}
 
 \begin{figure}[p]
-    \makeincudegraphics[width=1.1\textwidth]{ardupilot_client_components.png}
+    \makeincludegraphics[width=1.1\textwidth]{ardupilot_client_components.png}
     \caption{Diagramme de composantes (rendu côté client)}
     \label{fig:fwclient}
 \end{figure}
 
 \begin{figure}[p]
-    \makeincudegraphics[width=\textwidth]{simulateur_uc.png}
+    \makeincludegraphics[width=\textwidth]{simulateur_uc.png}
     \caption{Diagramme de cas d'usage}
     \label{fig:uc}
 \end{figure}
 
 \begin{figure}[p]
-    \makeincudegraphics[width=\textwidth]{conn_pilote_seq.png}
+    \makeincludegraphics[width=\textwidth]{conn_pilote_seq.png}
     \caption{Connexion d'un pilote avec rendu à distance.}
     \label{fig:conn_pilote_seq}
 \end{figure}
 
 \begin{figure}[p]
     \centering
-    \makeincudegraphics[width=1\textwidth]{classes.png}
+    \makeincludegraphics[width=1\textwidth]{classes.png}
     \caption{Diagramme de classes}
     \label{fig:classes}
 \end{figure}
