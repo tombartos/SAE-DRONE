@@ -1,4 +1,4 @@
-# Simulateur de Drone Français (French Drone Simulator)
+# SAE Drone Simulator
 This project is a submarine drone simulator written in Java by a group of students from the University of Toulon. The main goal was to make an API for a submarine drone simulator that runs with JMonkey Engine. In this project you will find a JMonkey Engine client/server application that runs the simulation, a REST API to connect to the simulation and manage it, and an implementation of a controler that uses Ardupilot and QGround Control to control the drone through MAVLink protocol. The application is designed so that it is easy to extend and add new features, such as new sensors, new drones, or new controlers.
 
 Here is a short demo video : https://youtu.be/NY9NBr8bRIw
