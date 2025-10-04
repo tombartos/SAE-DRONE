@@ -1,6 +1,8 @@
 # Simulateur de Drone Français (French Drone Simulator)
 This project is a submarine drone simulator written in Java by a group of students from the University of Toulon. The main goal was to make an API for a submarine drone simulator that runs with JMonkey Engine. In this project you will find a JMonkey Engine client/server application that runs the simulation, a REST API to connect to the simulation and manage it, and an implementation of a controler that uses Ardupilot and QGround Control to control the drone through MAVLink protocol. The application is designed so that it is easy to extend and add new features, such as new sensors, new drones, or new controlers.
 
+Here is a short demo video : https://youtu.be/NY9NBr8bRIw
+
 
 # Installation
 ## Prerequisites
@@ -10,11 +12,13 @@ This project is a submarine drone simulator written in Java by a group of studen
 
 ## Launching the server
 Note : The server can run on both Linux and Windows, but the client with Ardupilot and QGround Control is only supported on Linux. The simulator can run on mode "cloud" or "local", the "cloud" mode means that the JMonkey Renderer of the client runs on the server machine and send the video stream to the client, while the "local" mode means that the JMonkey Renderer runs on the client machine and connects to the server to get the simulation data. The Game Master chose the mode individually for each pilot, but the server machine must have a GUI OS and a GPU to run the JMonkey Renderer in "cloud" mode.
+0. Download the data archive here and extract it https://drive.google.com/file/d/1xNfOcD7I-pth_xxCfXF0SZVBEMvVvFQJ/view?usp=sharing 
+
 1. If it is not already done, clone this repository
 
 2. Open a terminal and navigate to the root directory of the project
 
-3. Put the `data` directory at the root of the project (the directory where the `pom.xml` file is located).
+3. Put the `data` directory (from the archive) at the root of the project (the directory where the `pom.xml` file is located).
 
 4. Compile the project with the following command:
    ```bash
