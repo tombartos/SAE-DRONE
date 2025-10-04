@@ -12,6 +12,7 @@ Here is a short demo video : https://youtu.be/NY9NBr8bRIw
 
 ## Launching the server
 Note : The server can run on both Linux and Windows, but the client with Ardupilot and QGround Control is only supported on Linux. The simulator can run on mode "cloud" or "local", the "cloud" mode means that the JMonkey Renderer of the client runs on the server machine and send the video stream to the client, while the "local" mode means that the JMonkey Renderer runs on the client machine and connects to the server to get the simulation data. The Game Master chose the mode individually for each pilot, but the server machine must have a GUI OS and a GPU to run the JMonkey Renderer in "cloud" mode.
+
 0. Download the data archive here and extract it https://drive.google.com/file/d/1xNfOcD7I-pth_xxCfXF0SZVBEMvVvFQJ/view?usp=sharing 
 
 1. If it is not already done, clone this repository
